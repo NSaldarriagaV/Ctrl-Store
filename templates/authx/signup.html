@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load form_extras %}
+{% block title %}Crear cuenta – Ctrl+Store{% endblock %}
+
+{% block content %}
+<h1>Crear cuenta</h1>
+
+<form method="post" novalidate aria-labelledby="signup-title" class="form-card">
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+  <div class="alert alert-error" role="alert">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <div class="grid cols-2 gap">
+    <div class="field">
+      <label for="id_username">Usuario</label>
+      {{ form.username|add_class:"input" }}
+      {% if form.username.errors %}
+        <small class="error">{{ form.username.errors|striptags }}</small>
+      {% endif %}
+    </div>
+
+    <div class="field">
+      <label for="id_email">Email (opcional)</label>
+      {{ form.email|add_class:"input" }}
+      {% if form.email.errors %}
+        <small class="error">{{ form.email.errors|striptags }}</small>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="grid cols-2 gap">
+    <div class="field">
+      <label for="id_password1">Contraseña</label>
+      {{ form.password1|add_class:"input" }}
+      {% if form.password1.errors %}
+        <small class="error">{{ form.password1.errors|striptags }}</small>
+      {% endif %}
+    </div>
+
+    <div class="field">
+      <label for="id_password2">Confirmar contraseña</label>
+      {{ form.password2|add_class:"input" }}
+      {% if form.password2.errors %}
+        <small class="error">{{ form.password2.errors|striptags }}</small>
+      {% endif %}
+    </div>
+  </div>
+
+  <button class="button" type="submit">Crear cuenta</button>
+</form>
+
+<p class="muted">
+  ¿Ya tienes cuenta?
+  <a href="{% url 'authx:login' %}">Inicia sesión</a>
+</p>
+{% endblock %}

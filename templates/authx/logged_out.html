@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Sesión cerrada – Ctrl+Store{% endblock %}
+
+{% block content %}
+<h1>Has cerrado sesión</h1>
+<p class="muted">Tu sesión se cerró correctamente.</p>
+<p><a class="button button-secondary" href="{% url 'catalog:product_list' %}">Volver al catálogo</a></p>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load form_extras %}
+
+{% block title %}Iniciar sesión – Ctrl+Store{% endblock %}
+
+{% block content %}
+<h1>Iniciar sesión</h1>
+
+<form method="post" novalidate aria-labelledby="login-title" class="form-card">
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+  <div class="alert alert-error" role="alert">
+    {{ form.non_field_errors }}
+  </div>
+  {% endif %}
+
+  <div class="field">
+    <label for="id_username">Usuario</label>
+    {{ form.username|add_class:"input" }}
+    {% if form.username.errors %}
+      <small class="error">{{ form.username.errors|striptags }}</small>
+    {% endif %}
+  </div>
+
+  <div class="field">
+    <label for="id_password">Contraseña</label>
+    {{ form.password|add_class:"input" }}
+    {% if form.password.errors %}
+      <small class="error">{{ form.password.errors|striptags }}</small>
+    {% endif %}
+  </div>
+
+  {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+  <button class="button" type="submit">Entrar</button>
+</form>
+
+<p class="muted">
+  ¿No tienes cuenta?
+  <a href="{% url 'authx:signup' %}">Regístrate</a>
+</p>
+{% endblock %}
