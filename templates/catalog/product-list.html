@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Catálogo – Ctrl+Store{% endblock %}
+{% block content %}
+<h1>Catálogo</h1>
+
+<form method="get" style="margin:12px 0">
+    <!-- prettier-ignore-start -->
+    <select name="cat">
+        <option value="">Todas las categorías</option>
+        {% for c in categories %}
+        <option value="{{ c.slug }}" {% if selected_cat == c.slug %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select>
+    <!-- prettier-ignore-end -->
+    <label><input type="checkbox" name="gaming" value="1" {% if request.GET.gaming %}checked{% endif %}> Gaming</label>
+    <button class="button">Filtrar</button>
+</form>
+
+<div class="grid cols-3">
+    {% for p in object_list %}
+    <article class="card">
+        <h3><a href="{% url 'catalog:product_detail' p.pk %}">{{ p.name }}</a></h3>
+        <div class="badge">{{ p.category.name }}</div>
+        <p>${{ p.price }}</p>
+        <a class="button primary" href="#">Agregar al carrito</a>
+    </article>
+    {% empty %}
+    <p>No se encontraron resultados.</p>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<p>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</p>
+{% endif %}
+{% endblock %}

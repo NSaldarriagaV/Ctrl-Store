@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ object.name }} – Ctrl+Store{% endblock %}
+{% block content %}
+<article class="card">
+    <h1>{{ object.name }}</h1>
+    <p class="badge">{{ object.category.name }}</p>
+    <p><strong>Marca:</strong> {{ object.brand }}</p>
+    <p><strong>Precio:</strong> ${{ object.price }}</p>
+    {% if object.is_gaming %}<p class="badge">Gaming</p>{% endif %}
+    <p>{{ object.description }}</p>
+    <a class="button primary" href="#">Agregar al carrito</a>
+</article>
+{% endblock %}
