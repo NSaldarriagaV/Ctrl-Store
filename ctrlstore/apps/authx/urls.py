@@ -1,14 +1,26 @@
 from __future__ import annotations
 
-from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
-from .views import SignupView
+from .views import (
+    AdminDashboardView,
+    AdminRolesView,
+    AdminUsersView,
+    CustomLoginView,
+    CustomLogoutView,
+    SignupView,
+)
 
 app_name = "authx"
 
 urlpatterns = [
-    path("login/", LoginView.as_view(template_name="authx/login.html"), name="login"),
-    path("logout/", LogoutView.as_view(template_name="authx/logged_out.html"), name="logout"),
+    # Autenticación básica
+    path("login/", CustomLoginView.as_view(), name="login"),
+    path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("signup/", SignupView.as_view(), name="signup"),
+    
+    # Panel de administración
+    path("admin/dashboard/", AdminDashboardView.as_view(), name="admin_dashboard"),
+    path("admin/users/", AdminUsersView.as_view(), name="admin_users"),
+    path("admin/roles/", AdminRolesView.as_view(), name="admin_roles"),
 ]
