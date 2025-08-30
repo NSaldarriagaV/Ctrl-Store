@@ -1,0 +1,332 @@
+{% extends "authx/admin/base.html" %}
+
+{% block admin_title %}Gestión de Usuarios{% endblock %}
+
+{% block admin_content %}
+{% csrf_token %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Usuarios del Sistema</h3>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="admin-table">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="role_filter" class="form-label">Filtrar por Rol</label>
+                        <select name="role" id="role_filter" class="form-select">
+                            <option value="">Todos los roles</option>
+                            {% for role in roles %}
+                                <option value="{{ role.id }}" {% if request.GET.role == role.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ role.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="status_filter" class="form-label">Estado</label>
+                        <select name="status" id="status_filter" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Activos</option>
+                            <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactivos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Buscar</label>
+                        <input type="text" name="search" id="search" class="form-control" 
+                               placeholder="Nombre, email o username" value="{{ request.GET.search }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-search me-2"></i>Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Usuarios -->
+<div class="admin-table">
+    <div class="card-body">
+        {% if users %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                                                 <tr>
+                             <th>Usuario</th>
+                             <th>Email</th>
+                             <th>Rol</th>
+                             <th>Estado</th>
+                             <th>Fecha de Registro</th>
+                             <th>Acciones</th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        {{ user.first_name|first|upper|default:user.username|first|upper }}
+                                    </div>
+                                    <div>
+                                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                        <br>
+                                        <small class="text-muted">@{{ user.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.role %}
+                                    <span class="badge bg-secondary">{{ user.role.name }}</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">Sin rol</span>
+                                {% endif %}
+                            </td>
+                                                         <td>
+                                 {% if user.is_active %}
+                                     <span class="badge bg-success">Activo</span>
+                                 {% else %}
+                                     <span class="badge bg-danger">Inactivo</span>
+                                 {% endif %}
+                             </td>
+                             <td>{{ user.date_joined|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'authx:user_edit' user.id %}" 
+                                       class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'authx:user_detail' user.id %}" 
+                                       class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if user.is_active %}
+                                        <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                onclick="toggleUserStatus({{ user.id }})" title="Desactivar">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-outline-success" 
+                                                onclick="toggleUserStatus({{ user.id }})" title="Activar">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay usuarios registrados</h5>
+                <p class="text-muted">Comienza agregando el primer usuario del sistema.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<script>
+function toggleUserStatus(userId) {
+    if (confirm('¿Estás seguro de que quieres cambiar el estado de este usuario?')) {
+        fetch(`/auth/admin/users/${userId}/toggle-status/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Recargar la página para mostrar los cambios
+                location.reload();
+            } else {
+                alert('Error al cambiar el estado del usuario');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cambiar el estado del usuario');
+        });
+    }
+}
+</script>
+
+<style>
+/* Dark theme for tables */
+.table {
+    background: #2d2d2d !important;
+    color: #ecf0f1;
+}
+
+.table th {
+    background: #3a3a3a !important;
+    color: #ecf0f1 !important;
+    border-color: #404040 !important;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table td {
+    background: #2d2d2d !important;
+    color: #ecf0f1 !important;
+    border-color: #404040 !important;
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    background: #2d2d2d !important;
+    color: #ecf0f1 !important;
+}
+
+.table tbody tr:hover {
+    background: #6c757d !important;
+    color: white !important;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover .text-muted {
+    color: #dee2e6 !important;
+}
+
+.table tbody tr:hover .badge {
+    background-color: #495057 !important;
+    color: white !important;
+}
+
+/* Form controls dark theme */
+.form-control, .form-select {
+    background: #3a3a3a !important;
+    border-color: #404040 !important;
+    color: #ecf0f1 !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background: #3a3a3a !important;
+    border-color: #6f42c1 !important;
+    color: #ecf0f1 !important;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
+}
+
+.form-label {
+    color: #ecf0f1 !important;
+    font-weight: 500;
+}
+
+/* Card styling */
+.admin-table {
+    background: #2d2d2d !important;
+    border: 1px solid #404040 !important;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-body {
+    background: #2d2d2d !important;
+    color: #ecf0f1;
+}
+
+/* Button styling */
+.btn-outline-primary {
+    color: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: #6f42c1 !important;
+    color: white !important;
+    border-color: #6f42c1 !important;
+}
+
+.btn-outline-info {
+    color: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+    background: transparent !important;
+}
+
+.btn-outline-info:hover {
+    background: #17a2b8 !important;
+    color: white !important;
+    border-color: #17a2b8 !important;
+}
+
+.btn-outline-warning {
+    color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    background: transparent !important;
+}
+
+.btn-outline-warning:hover {
+    background: #ffc107 !important;
+    color: #212529 !important;
+    border-color: #ffc107 !important;
+}
+
+.btn-outline-success {
+    color: #28a745 !important;
+    border-color: #28a745 !important;
+    background: transparent !important;
+}
+
+.btn-outline-success:hover {
+    background: #28a745 !important;
+    color: white !important;
+    border-color: #28a745 !important;
+}
+
+/* Badge styling */
+.badge.bg-light {
+    background: #3a3a3a !important;
+    color: #ecf0f1 !important;
+}
+
+.badge.bg-secondary {
+    background: #6c757d !important;
+    color: white !important;
+}
+
+.badge.bg-success {
+    background: #28a745 !important;
+    color: white !important;
+}
+
+.badge.bg-danger {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+/* Avatar styling */
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Text colors */
+.text-muted {
+    color: #bdc3c7 !important;
+}
+
+h3, h5 {
+    color: #ecf0f1 !important;
+}
+</style>
+{% endblock %}

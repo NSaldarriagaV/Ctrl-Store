@@ -34,7 +34,9 @@ class User(AbstractUser):
     # Campos adicionales
     phone = models.CharField(max_length=15, blank=True, verbose_name=_("Teléfono"))
     address = models.TextField(blank=True, verbose_name=_("Dirección"))
-    is_verified = models.BooleanField(default=False, verbose_name=_("Verificado"))
+    
+    # Hacer email obligatorio
+    email = models.EmailField(_("Dirección de correo electrónico"), unique=True)
     
     # Relación con roles
     role = models.ForeignKey(

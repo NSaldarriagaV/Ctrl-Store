@@ -9,6 +9,9 @@ from .views import (
     CustomLoginView,
     CustomLogoutView,
     SignupView,
+    UserDetailView,
+    UserEditView,
+    UserToggleStatusView,
 )
 
 app_name = "authx"
@@ -23,4 +26,9 @@ urlpatterns = [
     path("admin/dashboard/", AdminDashboardView.as_view(), name="admin_dashboard"),
     path("admin/users/", AdminUsersView.as_view(), name="admin_users"),
     path("admin/roles/", AdminRolesView.as_view(), name="admin_roles"),
+    
+    # Acciones de usuarios
+    path("admin/users/<int:user_id>/detail/", UserDetailView.as_view(), name="user_detail"),
+    path("admin/users/<int:user_id>/edit/", UserEditView.as_view(), name="user_edit"),
+    path("admin/users/<int:user_id>/toggle-status/", UserToggleStatusView.as_view(), name="user_toggle_status"),
 ]

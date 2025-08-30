@@ -1,0 +1,462 @@
+{% extends "authx/admin/base.html" %}
+
+{% block admin_title %}Gestión de Roles{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Roles del Sistema</h3>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+        <i class="fas fa-plus me-2"></i>Crear Rol
+    </button>
+</div>
+
+<!-- Tabla de Roles -->
+<div class="admin-table">
+    <div class="card-body">
+        {% if roles %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Rol</th>
+                            <th>Descripción</th>
+                            <th>Usuarios</th>
+                            <th>Estado</th>
+                            <th>Fecha de Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for role in roles %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        {{ role.name|first|upper }}
+                                    </div>
+                                    <div>
+                                        <strong>{{ role.name }}</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if role.description %}
+                                    {{ role.description|truncatewords:10 }}
+                                {% else %}
+                                    <span class="text-muted">Sin descripción</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ role.users.count }} usuarios</span>
+                            </td>
+                            <td>
+                                {% if role.is_active %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ role.created_at|date:"d/m/Y" }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" data-bs-target="#editRoleModal{{ role.id }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-info" 
+                                            data-bs-toggle="modal" data-bs-target="#viewRoleModal{{ role.id }}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    {% if role.users.count == 0 %}
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                onclick="deleteRole({{ role.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-outline-warning" disabled 
+                                                title="No se puede eliminar un rol con usuarios asignados">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-user-tag fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay roles creados</h5>
+                <p class="text-muted">Comienza creando los roles básicos del sistema.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Roles Predefinidos Sugeridos -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="admin-table">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Roles Sugeridos
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h6 class="text-primary">Administrador</h6>
+                            <p class="text-muted small">Acceso completo al sistema</p>
+                            <button class="btn btn-sm btn-outline-primary">Crear</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h6 class="text-success">Staff</h6>
+                            <p class="text-muted small">Gestión de productos y pedidos</p>
+                            <button class="btn btn-sm btn-outline-success">Crear</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h6 class="text-warning">Cliente</h6>
+                            <p class="text-muted small">Acceso básico de compras</p>
+                            <button class="btn btn-sm btn-outline-warning">Crear</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h6 class="text-info">Vendedor</h6>
+                            <p class="text-muted small">Gestión de ventas</p>
+                            <button class="btn btn-sm btn-outline-info">Crear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="admin-table">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Estadísticas de Roles
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stats-number text-primary">{{ roles.count }}</div>
+                        <div class="text-muted">Total de Roles</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stats-number text-success">{{ active_roles|default:0 }}</div>
+                        <div class="text-muted">Roles Activos</div>
+                    </div>
+                </div>
+                <hr>
+                <h6>Distribución de Usuarios por Rol:</h6>
+                {% for role in roles %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>{{ role.name }}</span>
+                        <span class="badge bg-secondary">{{ role.users.count }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Rol -->
+<div class="modal fade" id="addRoleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Rol</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'authx:admin_roles' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="role_name" class="form-label">Nombre del Rol</label>
+                        <input type="text" class="form-control" id="role_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role_description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="role_description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="role_active" name="is_active" checked>
+                            <label class="form-check-label" for="role_active">
+                                Rol activo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Rol</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function deleteRole(roleId) {
+    if (confirm('¿Estás seguro de que quieres eliminar este rol?')) {
+        // Aquí iría la lógica para eliminar el rol
+        console.log('Eliminando rol:', roleId);
+    }
+}
+</script>
+
+<style>
+/* Dark theme for tables */
+.table {
+    background: #2d2d2d !important;
+    color: #ecf0f1;
+}
+
+.table th {
+    background: #3a3a3a !important;
+    color: #ecf0f1 !important;
+    border-color: #404040 !important;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table td {
+    background: #2d2d2d !important;
+    color: #ecf0f1 !important;
+    border-color: #404040 !important;
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    background: #2d2d2d !important;
+    color: #ecf0f1 !important;
+}
+
+.table tbody tr:hover {
+    background: #6c757d !important;
+    color: white !important;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover .text-muted {
+    color: #dee2e6 !important;
+}
+
+.table tbody tr:hover .badge {
+    background-color: #495057 !important;
+    color: white !important;
+}
+
+/* Card styling */
+.admin-table {
+    background: #2d2d2d !important;
+    border: 1px solid #404040 !important;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-body {
+    background: #2d2d2d !important;
+    color: #ecf0f1;
+}
+
+.card-header {
+    background: #3a3a3a !important;
+    border-bottom: 1px solid #404040 !important;
+    color: #ecf0f1;
+}
+
+/* Button styling */
+.btn-outline-primary {
+    color: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: #6f42c1 !important;
+    color: white !important;
+    border-color: #6f42c1 !important;
+}
+
+.btn-outline-info {
+    color: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+    background: transparent !important;
+}
+
+.btn-outline-info:hover {
+    background: #17a2b8 !important;
+    color: white !important;
+    border-color: #17a2b8 !important;
+}
+
+.btn-outline-warning {
+    color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    background: transparent !important;
+}
+
+.btn-outline-warning:hover {
+    background: #ffc107 !important;
+    color: #212529 !important;
+    border-color: #ffc107 !important;
+}
+
+.btn-outline-danger {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    background: transparent !important;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+.btn-outline-success {
+    color: #28a745 !important;
+    border-color: #28a745 !important;
+    background: transparent !important;
+}
+
+.btn-outline-success:hover {
+    background: #28a745 !important;
+    color: white !important;
+    border-color: #28a745 !important;
+}
+
+/* Badge styling */
+.badge.bg-info {
+    background: #17a2b8 !important;
+    color: white !important;
+}
+
+.badge.bg-secondary {
+    background: #6c757d !important;
+    color: white !important;
+}
+
+.badge.bg-success {
+    background: #28a745 !important;
+    color: white !important;
+}
+
+.badge.bg-danger {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+/* Avatar styling */
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Text colors */
+.text-muted {
+    color: #bdc3c7 !important;
+}
+
+.text-primary {
+    color: #6f42c1 !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+/* Border styling */
+.border {
+    border-color: #404040 !important;
+}
+
+/* Modal styling */
+.modal-content {
+    background: #2d2d2d !important;
+    color: #ecf0f1;
+    border: 1px solid #404040;
+}
+
+.modal-header {
+    background: #3a3a3a !important;
+    border-bottom: 1px solid #404040 !important;
+    color: #ecf0f1;
+}
+
+.modal-footer {
+    background: #3a3a3a !important;
+    border-top: 1px solid #404040 !important;
+    color: #ecf0f1;
+}
+
+/* Form controls */
+.form-control, .form-select {
+    background: #3a3a3a !important;
+    border-color: #404040 !important;
+    color: #ecf0f1 !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background: #3a3a3a !important;
+    border-color: #6f42c1 !important;
+    color: #ecf0f1 !important;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
+}
+
+.form-label {
+    color: #ecf0f1 !important;
+    font-weight: 500;
+}
+
+.form-check-label {
+    color: #ecf0f1 !important;
+}
+
+/* Headers */
+h3, h5, h6 {
+    color: #ecf0f1 !important;
+}
+
+/* Stats styling */
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Divider */
+hr {
+    border-color: #404040 !important;
+}
+</style>
+{% endblock %}

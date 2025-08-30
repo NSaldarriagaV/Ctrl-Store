@@ -37,13 +37,11 @@ class UserAdmin(BaseUserAdmin):
         "first_name", 
         "last_name", 
         "role", 
-        "is_verified",
         "is_staff", 
         "is_active"
     ]
     list_filter = [
         "role", 
-        "is_verified", 
         "is_staff", 
         "is_active", 
         "created_at"
@@ -62,7 +60,6 @@ class UserAdmin(BaseUserAdmin):
                 "is_active",
                 "is_staff",
                 "is_superuser",
-                "is_verified",
                 "groups",
                 "user_permissions",
             ),
