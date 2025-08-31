@@ -1,13 +1,375 @@
 {% extends "base.html" %}
 {% block title %}{{ object.name }} – Ctrl+Store{% endblock %}
+
 {% block content %}
-<article class="card">
-    <h1>{{ object.name }}</h1>
-    <p class="badge">{{ object.category.name }}</p>
-    <p><strong>Marca:</strong> {{ object.brand }}</p>
-    <p><strong>Precio:</strong> ${{ object.price }}</p>
-    {% if object.is_gaming %}<p class="badge">Gaming</p>{% endif %}
-    <p>{{ object.description }}</p>
-    <a class="button primary" href="#">Agregar al carrito</a>
-</article>
+<div class="product-detail-container">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="product-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'catalog:product_list' %}">
+                        <i class="fas fa-home me-1"></i>Catálogo
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'catalog:product_list' %}?cat={{ object.category.slug }}">
+                        {{ object.category.name }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">{{ object.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Imagen del Producto -->
+            <div class="col-lg-6 mb-4">
+                <div class="product-image-section">
+                    <div class="main-image">
+                        {% if object.main_image %}
+                            <img src="{{ object.main_image.url }}" alt="{{ object.name }}" class="img-fluid">
+                        {% else %}
+                            <div class="placeholder-image">
+                                <i class="fas fa-{% if object.category.category_type == 'celulares_tablets' %}mobile-alt{% elif object.category.category_type == 'computadores' %}laptop{% elif object.category.category_type == 'componentes' %}microchip{% elif object.category.category_type == 'audio_video' %}tv{% elif object.category.category_type == 'gaming' %}gamepad{% else %}box{% endif %} fa-5x"></i>
+                                <p>Imagen no disponible</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Badges del producto -->
+                    <div class="product-badges">
+                        {% if object.is_featured %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-star me-1"></i>Destacado
+                            </span>
+                        {% endif %}
+                        {% if object.category.category_type == 'gaming' %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-gamepad me-1"></i>Gaming
+                            </span>
+                        {% endif %}
+                        {% if not object.is_in_stock %}
+                            <span class="badge bg-secondary">Sin stock</span>
+                        {% else %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>En stock ({{ object.stock_quantity }})
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Producto -->
+            <div class="col-lg-6">
+                <div class="product-info-section">
+                    <!-- Header -->
+                    <div class="product-header">
+                        <div class="product-category">
+                            <i class="fas fa-tag me-2"></i>{{ object.category.name }}
+                        </div>
+                        <h1 class="product-title">{{ object.name }}</h1>
+                        <div class="product-brand">
+                            <i class="fas fa-industry me-2"></i>{{ object.brand }}
+                        </div>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="product-pricing">
+                        <span class="price-label">Precio</span>
+                        <span class="price-value">${{ object.price }}</span>
+                    </div>
+
+                    <!-- Descripción corta -->
+                    {% if object.short_description %}
+                        <div class="product-summary">
+                            <h3><i class="fas fa-info-circle me-2"></i>Resumen</h3>
+                            <p>{{ object.short_description }}</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Especificaciones principales -->
+                    {% if object.get_main_specs %}
+                        <div class="product-highlights">
+                            <h3><i class="fas fa-star me-2"></i>Características Principales</h3>
+                            <div class="specs-grid">
+                                {% for spec_name, spec_value in object.get_main_specs.items %}
+                                    <div class="spec-highlight">
+                                        <strong>{{ spec_name }}</strong>
+                                        <span>{{ spec_value }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Acciones -->
+                    <div class="product-actions">
+                        {% if object.is_in_stock %}
+                            <button class="btn btn-primary btn-lg">
+                                <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                            </button>
+                        {% else %}
+                            <button class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-times me-2"></i>Agotado
+                            </button>
+                        {% endif %}
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Descripción completa -->
+        {% if object.description %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="description-section">
+                    <h3><i class="fas fa-align-left me-2"></i>Descripción Completa</h3>
+                    <p>{{ object.description|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Tema oscuro para detalle del producto */
+.product-detail-container {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    min-height: 100vh;
+    color: #ecf0f1;
+    padding: 2rem 0;
+}
+
+.breadcrumb {
+    background: #2d3748;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.breadcrumb-item a {
+    color: #9ca3af;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #6f42c1;
+}
+
+.breadcrumb-item.active {
+    color: #f7fafc;
+}
+
+/* Imagen del producto */
+.main-image {
+    background: #2d3748;
+    border-radius: 1rem;
+    overflow: hidden;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #4a5568;
+    position: relative;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-image {
+    text-align: center;
+    color: #9ca3af;
+}
+
+.placeholder-image p {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.product-badges {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Información del producto */
+.product-info-section {
+    padding-left: 2rem;
+}
+
+.product-category {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.product-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f7fafc;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.product-brand {
+    color: #d1d5db;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.product-pricing {
+    background: #2d3748;
+    border: 1px solid #4a5568;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.price-label {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.price-value {
+    color: #10b981;
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.product-summary {
+    background: #374151;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.product-summary h3 {
+    color: #f7fafc;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.product-summary p {
+    color: #d1d5db;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.product-highlights {
+    background: #2d3748;
+    border: 1px solid #4a5568;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.product-highlights h3 {
+    color: #f7fafc;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.spec-highlight {
+    background: #374151;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.spec-highlight strong {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.spec-highlight span {
+    color: #f7fafc;
+    font-weight: 600;
+}
+
+.product-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.product-actions .btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+.description-section {
+    background: #2d3748;
+    border: 1px solid #4a5568;
+    border-radius: 1rem;
+    padding: 2rem;
+}
+
+.description-section h3 {
+    color: #f7fafc;
+    margin-bottom: 1.5rem;
+}
+
+.description-section p {
+    color: #d1d5db;
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-info-section {
+        padding-left: 0;
+        margin-top: 2rem;
+    }
+    
+    .product-title {
+        font-size: 2rem;
+    }
+    
+    .price-value {
+        font-size: 2.5rem;
+    }
+    
+    .product-actions {
+        flex-direction: column;
+    }
+    
+    .product-actions .btn {
+        flex: none;
+        min-width: auto;
+    }
+    
+    .specs-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 {% endblock %}

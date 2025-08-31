@@ -6,6 +6,11 @@ from .views import (
     AdminDashboardView,
     AdminRolesView,
     AdminUsersView,
+    AdminProductsView,
+    AdminProductCreateView,
+    AdminProductEditView,
+    AdminProductDeleteView,
+    AdminCategoriesView,
     CustomLoginView,
     CustomLogoutView,
     SignupView,
@@ -26,6 +31,13 @@ urlpatterns = [
     path("admin/dashboard/", AdminDashboardView.as_view(), name="admin_dashboard"),
     path("admin/users/", AdminUsersView.as_view(), name="admin_users"),
     path("admin/roles/", AdminRolesView.as_view(), name="admin_roles"),
+    
+    # Gestión de productos
+    path("admin/products/", AdminProductsView.as_view(), name="admin_products"),
+    path("admin/products/create/", AdminProductCreateView.as_view(), name="admin_product_create"),
+    path("admin/products/<int:product_id>/edit/", AdminProductEditView.as_view(), name="admin_product_edit"),
+    path("admin/products/<int:product_id>/delete/", AdminProductDeleteView.as_view(), name="admin_product_delete"),
+    path("admin/categories/", AdminCategoriesView.as_view(), name="admin_categories"),
     
     # Acciones de usuarios
     path("admin/users/<int:user_id>/detail/", UserDetailView.as_view(), name="user_detail"),

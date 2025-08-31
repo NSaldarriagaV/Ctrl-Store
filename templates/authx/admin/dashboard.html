@@ -6,7 +6,7 @@
 <!-- Welcome Section -->
 <div class="row mb-5">
     <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
             <div class="card-body p-4">
                 <div class="row align-items-center">
                     <div class="col-md-8">
@@ -31,7 +31,7 @@
 <!-- Statistics Cards -->
 <div class="row mb-5">
     <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card clickable-card" onclick="window.location.href='{% url 'authx:admin_users' %}'">
             <div class="card-body text-center p-4">
                 <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3" style="width: 60px; height: 60px;">
                     <i class="fas fa-users fa-2x text-purple"></i>
@@ -39,14 +39,14 @@
                 <h2 class="fw-bold text-purple mb-1">{{ total_users }}</h2>
                 <p class="text-muted mb-0">Usuarios Registrados</p>
                 <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>+12% este mes
+                    <i class="fas fa-eye me-1"></i>Gestionar
                 </small>
             </div>
         </div>
     </div>
     
     <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card clickable-card" onclick="window.location.href='{% url 'authx:admin_products' %}'">
             <div class="card-body text-center p-4">
                 <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-circle mb-3" style="width: 60px; height: 60px;">
                     <i class="fas fa-box fa-2x text-info"></i>
@@ -54,29 +54,29 @@
                 <h2 class="fw-bold text-info mb-1">{{ total_products }}</h2>
                 <p class="text-muted mb-0">Productos</p>
                 <small class="text-success">
-                    <i class="fas fa-arrow-up me-1"></i>+8% este mes
+                    <i class="fas fa-eye me-1"></i>Gestionar
                 </small>
             </div>
         </div>
     </div>
     
     <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card clickable-card" onclick="window.location.href='{% url 'authx:admin_categories' %}'">
             <div class="card-body text-center p-4">
                 <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle mb-3" style="width: 60px; height: 60px;">
                     <i class="fas fa-tags fa-2x text-warning"></i>
                 </div>
                 <h2 class="fw-bold text-warning mb-1">{{ total_categories }}</h2>
                 <p class="text-muted mb-0">Categorías</p>
-                <small class="text-info">
-                    <i class="fas fa-minus me-1"></i>Sin cambios
+                <small class="text-success">
+                    <i class="fas fa-eye me-1"></i>Ver todas
                 </small>
             </div>
         </div>
     </div>
     
     <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
             <div class="card-body text-center p-4">
                 <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 rounded-circle mb-3" style="width: 60px; height: 60px;">
                     <i class="fas fa-gamepad fa-2x text-danger"></i>
@@ -95,8 +95,8 @@
 <div class="row mb-5">
     <!-- Recent Users -->
     <div class="col-lg-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-4">
-            <div class="card-header bg-gradient-purple text-white border-0 rounded-top-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="fas fa-user-plus me-2"></i>Usuarios Recientes
@@ -155,13 +155,13 @@
     
     <!-- Recent Products -->
     <div class="col-lg-6 mb-4">
-        <div class="card border-0 shadow-sm h-100 rounded-4">
-            <div class="card-header bg-gradient-info text-white border-0 rounded-top-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="fas fa-box me-2"></i>Productos Recientes
                     </h5>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-pill">
+                    <a href="{% url 'authx:admin_products' %}" class="btn btn-outline-light btn-sm rounded-pill">
                         <i class="fas fa-external-link-alt me-1"></i>Ver Todos
                     </a>
                 </div>
@@ -191,12 +191,28 @@
                                         <span class="fw-bold text-success">${{ product.price }}</span>
                                     </td>
                                     <td class="pe-4">
-                                        {% if product.is_gaming %}
+                                        {% if product.category.category_type == 'gaming' %}
                                             <span class="badge bg-danger rounded-pill">
                                                 <i class="fas fa-gamepad me-1"></i>Gaming
                                             </span>
+                                        {% elif product.category.category_type == 'celulares_tablets' %}
+                                            <span class="badge bg-primary rounded-pill">
+                                                <i class="fas fa-mobile-alt me-1"></i>Móvil
+                                            </span>
+                                        {% elif product.category.category_type == 'computadores' %}
+                                            <span class="badge bg-info rounded-pill">
+                                                <i class="fas fa-laptop me-1"></i>PC
+                                            </span>
+                                        {% elif product.category.category_type == 'componentes' %}
+                                            <span class="badge bg-warning rounded-pill">
+                                                <i class="fas fa-microchip me-1"></i>Componente
+                                            </span>
+                                        {% elif product.category.category_type == 'audio_video' %}
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="fas fa-tv me-1"></i>A/V
+                                            </span>
                                         {% else %}
-                                            <span class="badge bg-secondary rounded-pill">Regular</span>
+                                            <span class="badge bg-secondary rounded-pill">General</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -218,8 +234,8 @@
 <!-- Quick Actions -->
 <div class="row">
     <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-gradient-purple text-white border-0 rounded-top-4">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
                 <h5 class="mb-0">
                     <i class="fas fa-bolt me-2"></i>Acciones Rápidas
                 </h5>
@@ -237,12 +253,12 @@
                         </button>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <button type="button" class="btn btn-transparent w-100">
+                        <button type="button" class="btn btn-transparent w-100" onclick="window.location.href='{% url 'authx:admin_product_create' %}'">
                             <i class="fas fa-plus me-2"></i>Agregar Producto
                         </button>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <button type="button" class="btn btn-transparent w-100">
+                        <button type="button" class="btn btn-transparent w-100" onclick="window.location.href='{% url 'authx:admin_categories' %}'">
                             <i class="fas fa-tags me-2"></i>Gestionar Categorías
                         </button>
                     </div>
@@ -401,6 +417,27 @@
 
 .rounded-pill {
     border-radius: 50rem !important;
+}
+
+/* Cards clickeables */
+.clickable-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    border-color: #6f42c1 !important;
+}
+
+.clickable-card:hover .card-body {
+    background: #4a5568 !important;
+}
+
+.clickable-card:hover small {
+    color: #6f42c1 !important;
+    font-weight: 600;
 }
 </style>
 {% endblock %}
