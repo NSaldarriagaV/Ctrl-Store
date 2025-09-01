@@ -34,7 +34,6 @@ pip install -r requirements-dev.txt
 
 $env:DJANGO_SETTINGS_MODULE = "ctrlstore.settings.dev"
 
-
 ### 5. Migraciones y base de datos
 ```bash
 python manage.py migrate
