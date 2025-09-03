@@ -1,0 +1,655 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+      "name": "Audio y Video",
+      "slug": "audio-y-video",
+      "category_type": "audio_video",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+      "name": "Celulares y Tablets",
+      "slug": "celulares-y-tablets",
+      "category_type": "celulares_tablets",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+      "name": "Componentes y Hardware",
+      "slug": "componentes-y-hardware",
+      "category_type": "componentes",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 4,
+    "fields": {
+      "name": "Computadores y Periféricos",
+      "slug": "computadores-y-perifericos",
+      "category_type": "computadores",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 5,
+    "fields": {
+      "name": "Gaming",
+      "slug": "gaming",
+      "category_type": "gaming",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 10,
+    "fields": {
+      "name": "Audífonos",
+      "slug": "audifonos",
+      "category_type": "audio_video",
+      "parent": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 11,
+    "fields": {
+      "name": "Televisores",
+      "slug": "televisores",
+      "category_type": "audio_video",
+      "parent": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 20,
+    "fields": {
+      "name": "Smartphones",
+      "slug": "smartphones",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 21,
+    "fields": {
+      "name": "Tablets",
+      "slug": "tablets",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 22,
+    "fields": {
+      "name": "Smartwatches",
+      "slug": "smartwatches",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 23,
+    "fields": {
+      "name": "Accesorios Móviles",
+      "slug": "accesorios-moviles",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 30,
+    "fields": {
+      "name": "Componentes",
+      "slug": "componentes",
+      "category_type": "componentes",
+      "parent": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 40,
+    "fields": {
+      "name": "Laptops",
+      "slug": "laptops",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 41,
+    "fields": {
+      "name": "PC de Escritorio",
+      "slug": "pc-de-escritorio",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 42,
+    "fields": {
+      "name": "Monitores",
+      "slug": "monitores",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 43,
+    "fields": {
+      "name": "Portátiles",
+      "slug": "portatiles",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 44,
+    "fields": {
+      "name": "Accesorios",
+      "slug": "accesorios",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 50,
+    "fields": {
+      "name": "Consolas",
+      "slug": "consolas",
+      "category_type": "gaming",
+      "parent": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 51,
+    "fields": {
+      "name": "Videojuegos",
+      "slug": "videojuegos",
+      "category_type": "gaming",
+      "parent": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+      "name": "iPhone 15 Pro Max",
+      "slug": "iphone-15-pro-max",
+      "description": "El iPhone más avanzado con chip A17 Pro, sistema de cámaras profesional y pantalla Super Retina XDR de 6.7 pulgadas. Diseñado con titanio de grado aeroespacial.",
+      "short_description": "iPhone 15 Pro Max con chip A17 Pro y cámara profesional",
+      "price": "1299.99",
+      "category": 20,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 15
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 1,
+    "fields": {
+      "product": 1,
+      "brand": "Apple",
+      "model": "iPhone 15 Pro Max",
+      "operating_system": "iOS 17",
+      "screen_size": "6.70",
+      "screen_resolution": "2796 x 1290",
+      "ram_memory": "8GB",
+      "internal_storage": "256GB",
+      "main_camera": "48MP + 12MP + 12MP",
+      "front_camera": "12MP TrueDepth",
+      "battery_capacity": "4441 mAh",
+      "connectivity": "5G, Wi-Fi 6E, Bluetooth 5.3, USB-C"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+      "name": "Samsung Galaxy S24 Ultra",
+      "slug": "samsung-galaxy-s24-ultra",
+      "description": "Smartphone premium con S Pen integrado, cámara de 200MP y pantalla Dynamic AMOLED 2X de 6.8 pulgadas. Potenciado por Snapdragon 8 Gen 3.",
+      "short_description": "Galaxy S24 Ultra con S Pen y cámara de 200MP",
+      "price": "1199.99",
+      "category": 20,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 12
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 2,
+    "fields": {
+      "product": 2,
+      "brand": "Samsung",
+      "model": "Galaxy S24 Ultra",
+      "operating_system": "Android 14",
+      "screen_size": "6.80",
+      "screen_resolution": "3120 x 1440",
+      "ram_memory": "12GB",
+      "internal_storage": "512GB",
+      "main_camera": "200MP + 50MP + 12MP + 10MP",
+      "front_camera": "12MP",
+      "battery_capacity": "5000 mAh",
+      "connectivity": "5G, Wi-Fi 7, Bluetooth 5.3, USB-C"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+      "name": "iPad Pro 12.9\" M2",
+      "slug": "ipad-pro-12-9-m2",
+      "description": "La tablet más potente de Apple con chip M2, pantalla Liquid Retina XDR de 12.9 pulgadas y soporte para Apple Pencil de 2ª generación.",
+      "short_description": "iPad Pro con chip M2 y pantalla Liquid Retina XDR",
+      "price": "1099.99",
+      "category": 21,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 8
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 3,
+    "fields": {
+      "product": 3,
+      "brand": "Apple",
+      "model": "iPad Pro 12.9\" M2",
+      "operating_system": "iPadOS 17",
+      "screen_size": "12.90",
+      "screen_resolution": "2732 x 2048",
+      "processor": "Apple M2 (8-core CPU, 10-core GPU)",
+      "ram_memory": "16GB",
+      "internal_storage": "512GB",
+      "main_camera": "12MP + 10MP",
+      "front_camera": "12MP TrueDepth",
+      "connectivity": "Wi-Fi 6E, Bluetooth 5.3, USB-C"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+      "name": "Apple Watch Series 9",
+      "slug": "apple-watch-series-9",
+      "description": "El smartwatch más avanzado con chip S9, pantalla Always-On Retina y nuevas funciones de salud. Disponible en múltiples tamaños y colores.",
+      "short_description": "Apple Watch Series 9 con chip S9 y pantalla Always-On",
+      "price": "399.99",
+      "category": 22,
+      "is_active": true,
+      "is_featured": false,
+      "stock_quantity": 25
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 4,
+    "fields": {
+      "product": 4,
+      "brand": "Apple",
+      "model": "Watch Series 9",
+      "operating_system": "watchOS 10",
+      "screen_size": "1.90",
+      "screen_resolution": "484 x 396",
+      "battery_capacity": "18 horas",
+      "connectivity": "Wi-Fi, Bluetooth 5.3, GPS"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 5,
+    "fields": {
+      "name": "MacBook Pro 16\" M3 Max",
+      "slug": "macbook-pro-16-m3-max",
+      "description": "La laptop más potente de Apple con chip M3 Max, pantalla Liquid Retina XDR de 16 pulgadas y hasta 128GB de memoria unificada. Perfecta para profesionales creativos.",
+      "short_description": "MacBook Pro con chip M3 Max y pantalla Liquid Retina XDR",
+      "price": "3499.99",
+      "category": 40,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 6
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 5,
+    "fields": {
+      "product": 5,
+      "brand": "Apple",
+      "model": "MacBook Pro 16\" M3 Max",
+      "operating_system": "macOS Sonoma",
+      "screen_size": "16.20",
+      "screen_resolution": "3456 x 2234",
+      "processor": "Apple M3 Max (12-core CPU, 40-core GPU)",
+      "ram_memory": "128GB",
+      "storage_type": "SSD",
+      "storage_capacity": "8TB",
+      "weight": "2.16",
+      "connectivity": "Wi-Fi 6E, Bluetooth 5.3, Thunderbolt 4"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 6,
+    "fields": {
+      "name": "ASUS TUF Gaming A15",
+      "slug": "asus-tuf-gaming-a15",
+      "description": "Laptop gaming con procesador AMD Ryzen 7, tarjeta gráfica RTX 4060, pantalla de 144Hz y diseño resistente certificado por estándares militares.",
+      "short_description": "Laptop gaming AMD Ryzen 7 con RTX 4060 y pantalla 144Hz",
+      "price": "1399.99",
+      "category": 40,
+      "is_active": true,
+      "is_featured": false,
+      "stock_quantity": 18
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 6,
+    "fields": {
+      "product": 6,
+      "brand": "ASUS",
+      "model": "TUF Gaming A15",
+      "operating_system": "Windows 11",
+      "screen_size": "15.60",
+      "screen_resolution": "1920 x 1080",
+      "processor": "AMD Ryzen 7 7735HS",
+      "graphics_card": "NVIDIA GeForce RTX 4060",
+      "ram_memory": "16GB DDR5",
+      "storage_type": "SSD NVMe",
+      "storage_capacity": "1TB",
+      "weight": "2.30",
+      "connectivity": "Wi-Fi 6, Bluetooth 5.3, USB-C, HDMI 2.1"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 7,
+    "fields": {
+      "name": "Samsung Odyssey G7 32\"",
+      "slug": "samsung-odyssey-g7-32",
+      "description": "Monitor gaming curvo de 32 pulgadas con resolución QHD, 240Hz, tiempo de respuesta de 1ms y tecnología QLED. Perfecto para gaming competitivo.",
+      "short_description": "Monitor gaming curvo QHD 240Hz con tecnología QLED",
+      "price": "899.99",
+      "category": 42,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 20
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 7,
+    "fields": {
+      "product": 7,
+      "brand": "Samsung",
+      "model": "Odyssey G7 32\"",
+      "screen_size": "32.00",
+      "screen_resolution": "2560 x 1440",
+      "connectivity": "HDMI 2.1, DisplayPort 1.4, USB 3.0"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 8,
+    "fields": {
+      "name": "LG OLED C3 55\"",
+      "slug": "lg-oled-c3-55",
+      "description": "Smart TV OLED de 55 pulgadas con resolución 4K, HDR Dolby Vision, webOS 23 y soporte para gaming con HDMI 2.1 y VRR.",
+      "short_description": "Smart TV OLED 4K con HDR Dolby Vision y webOS 23",
+      "price": "1499.99",
+      "category": 11,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 10
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 8,
+    "fields": {
+      "product": 8,
+      "brand": "LG",
+      "model": "OLED C3 55\"",
+      "screen_size": "55.00",
+      "screen_resolution": "3840 x 2160",
+      "display_technology": "OLED",
+      "refresh_rate": "120Hz",
+      "connectivity": "Wi-Fi 6, Bluetooth 5.1, HDMI 2.1, USB"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 9,
+    "fields": {
+      "name": "Sony WH-1000XM5",
+      "slug": "sony-wh-1000xm5",
+      "description": "Audífonos inalámbricos premium con cancelación de ruido líder en la industria, sonido Hi-Res y hasta 30 horas de batería.",
+      "short_description": "Audífonos premium con cancelación de ruido y 30h de batería",
+      "price": "399.99",
+      "category": 10,
+      "is_active": true,
+      "is_featured": false,
+      "stock_quantity": 30
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 9,
+    "fields": {
+      "product": 9,
+      "brand": "Sony",
+      "model": "WH-1000XM5",
+      "battery_capacity": "30 horas",
+      "connectivity": "Bluetooth 5.2, USB-C, 3.5mm"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 10,
+    "fields": {
+      "name": "PlayStation 5 Pro",
+      "slug": "playstation-5-pro",
+      "description": "La consola de videojuegos más avanzada de Sony con GPU mejorada, ray tracing avanzado y soporte para 8K. Incluye tecnología PlayStation Spectral Super Resolution.",
+      "short_description": "PS5 Pro con GPU mejorada y ray tracing avanzado",
+      "price": "699.99",
+      "category": 50,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 12
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 10,
+    "fields": {
+      "product": 10,
+      "brand": "Sony",
+      "model": "PlayStation 5 Pro",
+      "processor": "AMD Zen 2 8-core CPU @ 3.85GHz",
+      "graphics_card": "AMD RDNA 3 GPU - 16.7 TFLOPS",
+      "ram_memory": "16GB GDDR6",
+      "storage_type": "SSD NVMe",
+      "storage_capacity": "2TB",
+      "connectivity": "Wi-Fi 7, Bluetooth 5.1, Ethernet, USB-C, HDMI 2.1"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 11,
+    "fields": {
+      "name": "Xbox Series X",
+      "slug": "xbox-series-x",
+      "description": "Consola de videojuegos de Microsoft con arquitectura Zen 2, GPU RDNA 2, soporte para 4K/120fps y tecnología Quick Resume. Incluye 1TB de almacenamiento SSD.",
+      "short_description": "Xbox Series X con soporte 4K/120fps y SSD de 1TB",
+      "price": "499.99",
+      "category": 50,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 25
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 11,
+    "fields": {
+      "product": 11,
+      "brand": "Microsoft",
+      "model": "Xbox Series X",
+      "processor": "AMD Zen 2 8-core CPU @ 3.8GHz",
+      "graphics_card": "AMD RDNA 2 GPU - 12 TFLOPS",
+      "ram_memory": "16GB GDDR6",
+      "storage_type": "SSD NVMe",
+      "storage_capacity": "1TB",
+      "connectivity": "Wi-Fi 6, Bluetooth 5.1, Ethernet, USB 3.2, HDMI 2.1"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 12,
+    "fields": {
+      "name": "Logitech MX Master 3S",
+      "slug": "logitech-mx-master-3s",
+      "description": "Mouse inalámbrico premium con sensor de 8000 DPI, rueda de desplazamiento electromagnética y conectividad multi-dispositivo. Ideal para productividad.",
+      "short_description": "Mouse inalámbrico premium con sensor de 8000 DPI",
+      "price": "99.99",
+      "category": 44,
+      "is_active": true,
+      "is_featured": false,
+      "stock_quantity": 35
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 12,
+    "fields": {
+      "product": 12,
+      "brand": "Logitech",
+      "model": "MX Master 3S",
+      "connectivity": "Bluetooth, USB-C, Logi Bolt",
+      "battery_capacity": "70 días de uso"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 13,
+    "fields": {
+      "name": "NVIDIA GeForce RTX 4090",
+      "slug": "nvidia-geforce-rtx-4090",
+      "description": "La tarjeta gráfica más potente para gaming y creación de contenido. Con arquitectura Ada Lovelace, 24GB GDDR6X y ray tracing de 3ª generación.",
+      "short_description": "GPU RTX 4090 con 24GB GDDR6X y ray tracing avanzado",
+      "price": "1599.99",
+      "category": 30,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 8
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 13,
+    "fields": {
+      "product": 13,
+      "brand": "NVIDIA",
+      "model": "GeForce RTX 4090",
+      "graphics_card": "Ada Lovelace",
+      "ram_memory": "24GB GDDR6X",
+      "power_consumption": "450W",
+      "connectivity": "HDMI 2.1, DisplayPort 1.4"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 14,
+    "fields": {
+      "name": "The Legend of Zelda: Tears of the Kingdom",
+      "slug": "zelda-tears-of-the-kingdom",
+      "description": "La secuela épica de Breath of the Wild. Explora los cielos, la superficie y las profundidades de Hyrule en una aventura que redefine los límites de la creatividad.",
+      "short_description": "Aventura épica en los cielos y profundidades de Hyrule",
+      "price": "69.99",
+      "category": 51,
+      "is_active": true,
+      "is_featured": true,
+      "stock_quantity": 50
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 14,
+    "fields": {
+      "product": 14,
+      "brand": "Nintendo",
+      "model": "Switch Game",
+      "platform_compatibility": "Nintendo Switch",
+      "genre": "Aventura, Acción",
+      "age_rating": "E10+",
+      "multiplayer": false
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 15,
+    "fields": {
+      "name": "Funda iPhone 15 Pro MagSafe",
+      "slug": "funda-iphone-15-pro-magsafe",
+      "description": "Funda oficial de Apple con tecnología MagSafe, fabricada en cuero premium. Protección completa con acceso a todos los puertos y compatibilidad con carga inalámbrica.",
+      "short_description": "Funda oficial Apple con MagSafe en cuero premium",
+      "price": "59.99",
+      "category": 23,
+      "is_active": true,
+      "is_featured": false,
+      "stock_quantity": 40
+    }
+  },
+  {
+    "model": "catalog.productspecification",
+    "pk": 15,
+    "fields": {
+      "product": 15,
+      "brand": "Apple",
+      "model": "iPhone 15 Pro Case",
+      "connectivity": "MagSafe compatible"
+    }
+  }
+]

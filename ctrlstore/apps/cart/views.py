@@ -16,7 +16,7 @@ Product = apps.get_model("catalog", "Product")
 def cart_detail(request):
     cart = get_or_create_cart(request)
     items = cart.items.select_related("product")
-    return render(request, "cart/cart_detail.html", {"cart": cart, "items": items})
+    return render(request, "cart/cart-detail.html", {"cart": cart, "items": items})
 
 
 @require_POST

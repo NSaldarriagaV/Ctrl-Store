@@ -2,9 +2,214 @@
 {% block title %}Checkout – Ctrl+Store{% endblock %}
 
 {% block content %}
-<div class="checkout-container">
-    <h1>🧾 Checkout</h1>
-    <p>Esta es una vista de prueba del checkout. 🚧</p>
-    <a href="{% url 'cart:detail' %}" class="btn btn-secondary">⬅️ Volver al carrito</a>
+<div class="container my-5">
+  <h1 class="mb-4"><i class="fas fa-credit-card me-2"></i>Checkout</h1>
+
+  <div class="row g-4">
+    <!-- Resumen del carrito -->
+    <div class="col-lg-6">
+      <div class="bg-dark text-light p-3 rounded-3">
+        <h4 class="mb-3">Tu pedido</h4>
+
+        {% for it in items %}
+        <div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2">
+          <div class="me-3">
+            <div class="fw-semibold">{{ it.product.name }}</div>
+            <small class="text-muted">x{{ it.quantity }}</small>
+          </div>
+          <div class="text-end">
+            <div>${{ it.subtotal }}</div>
+            <small class="text-muted">${{ it.unit_price }} c/u</small>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-flex justify-content-between mt-3">
+          <span>Subtotal</span><strong>${{ subtotal }}</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Envío</span><strong>${{ shipping }}</strong>
+        </div>
+        <div class="d-flex justify-content-between fs-5 mt-2">
+          <span>Total</span><strong class="text-success">${{ grand_total }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos del comprador / envío -->
+    <div class="col-lg-6">
+      <div class="bg-dark text-light p-3 rounded-3">
+        <h4 class="mb-3">Datos del comprador y entrega</h4>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <!-- Nombre completo -->
+          <div class="mb-3">
+            <label for="id_full_name" class="form-label">Nombre completo</label>
+            <input
+              type="text"
+              name="full_name"
+              id="id_full_name"
+              class="form-control bg-dark text-light border-secondary"
+              value="{{ form.full_name.value|default_if_none:'' }}"
+              required
+            >
+            {% if form.full_name.errors %}
+              <div class="text-danger small mt-1">{{ form.full_name.errors|striptags }}</div>
+            {% endif %}
+          </div>
+
+          <div class="row">
+            <!-- Correo -->
+            <div class="col-md-6 mb-3">
+              <label for="id_email" class="form-label">Correo</label>
+              {% if request.user.is_authenticated and request.user.email %}
+                <input
+                  type="email"
+                  name="email"
+                  id="id_email"
+                  class="form-control bg-dark text-light border-secondary"
+                  value="{{ request.user.email }}"
+                  readonly
+                >
+                <div class="form-text text-muted">Usando el correo de tu cuenta.</div>
+              {% else %}
+                <input
+                  type="email"
+                  name="email"
+                  id="id_email"
+                  class="form-control bg-dark text-light border-secondary"
+                  value="{{ form.email.value|default_if_none:'' }}"
+                  required
+                >
+              {% endif %}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Teléfono -->
+            <div class="col-md-6 mb-3">
+              <label for="id_phone" class="form-label">Teléfono</label>
+              <input
+                type="text"
+                name="phone"
+                id="id_phone"
+                class="form-control bg-dark text-light border-secondary"
+                value="{{ form.phone.value|default_if_none:'' }}"
+              >
+              {% if form.phone.errors %}
+                <div class="text-danger small mt-1">{{ form.phone.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Dirección -->
+          <div class="mb-3">
+            <label for="id_address_line1" class="form-label">Dirección</label>
+            <input
+              type="text"
+              name="address_line1"
+              id="id_address_line1"
+              class="form-control bg-dark text-light border-secondary"
+              value="{{ form.address_line1.value|default_if_none:'' }}"
+              required
+            >
+            {% if form.address_line1.errors %}
+              <div class="text-danger small mt-1">{{ form.address_line1.errors|striptags }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Complemento -->
+          <div class="mb-3">
+            <label for="id_address_line2" class="form-label">Complemento</label>
+            <input
+              type="text"
+              name="address_line2"
+              id="id_address_line2"
+              class="form-control bg-dark text-light border-secondary"
+              value="{{ form.address_line2.value|default_if_none:'' }}"
+            >
+            {% if form.address_line2.errors %}
+              <div class="text-danger small mt-1">{{ form.address_line2.errors|striptags }}</div>
+            {% endif %}
+          </div>
+
+          <div class="row">
+            <!-- Ciudad -->
+            <div class="col-md-6 mb-3">
+              <label for="id_city" class="form-label">Ciudad</label>
+              <input
+                type="text"
+                name="city"
+                id="id_city"
+                class="form-control bg-dark text-light border-secondary"
+                value="{{ form.city.value|default_if_none:'' }}"
+                required
+              >
+              {% if form.city.errors %}
+                <div class="text-danger small mt-1">{{ form.city.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Departamento/Estado -->
+            <div class="col-md-6 mb-3">
+              <label for="id_state" class="form-label">Departamento/Estado</label>
+              <input
+                type="text"
+                name="state"
+                id="id_state"
+                class="form-control bg-dark text-light border-secondary"
+                value="{{ form.state.value|default_if_none:'' }}"
+              >
+              {% if form.state.errors %}
+                <div class="text-danger small mt-1">{{ form.state.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Código Postal -->
+            <div class="col-md-6 mb-3">
+              <label for="id_postal_code" class="form-label">Código Postal</label>
+              <input
+                type="text"
+                name="postal_code"
+                id="id_postal_code"
+                class="form-control bg-dark text-light border-secondary"
+                value="{{ form.postal_code.value|default_if_none:'' }}"
+              >
+              {% if form.postal_code.errors %}
+                <div class="text-danger small mt-1">{{ form.postal_code.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <!-- País -->
+            <div class="col-md-6 mb-3">
+              <label for="id_country" class="form-label">País</label>
+              <input
+                type="text"
+                name="country"
+                id="id_country"
+                class="form-control bg-dark text-light border-secondary"
+                value="{{ form.country.value|default_if_none:'Colombia' }}"
+                required
+              >
+              {% if form.country.errors %}
+                <div class="text-danger small mt-1">{{ form.country.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button class="btn btn-primary btn-lg" type="submit">
+              <i class="fas fa-lock me-2"></i>Ir a pagar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
