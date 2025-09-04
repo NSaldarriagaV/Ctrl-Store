@@ -4,6 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
 
+from django.http import HttpResponse, HttpResponseBadRequest, Http404
+from django.template.loader import get_template
+from django.utils import timezone
+import io
+from xhtml2pdf import pisa
+
 from ctrlstore.apps.order.models import Order
 from .forms import CardPaymentForm
 from .models import Payment
@@ -150,3 +156,48 @@ def confirm(request, payment_id: int):
     # Mostramos resumen del pedido, costo, datos de checkout y método de pago (enmascarado)
     items = order.items.select_related("product")
     return render(request, "payment/confirm.html", {"payment": payment, "order": order, "items": items})
+
+# Helper: render un template HTML a PDF
+def render_to_pdf(template_src: str, context: dict) -> HttpResponse | None:
+    template = get_template(template_src)
+    html = template.render(context)
+    result = io.BytesIO()
+    pdf = pisa.CreatePDF(io.BytesIO(html.encode("utf-8")), dest=result, encoding="utf-8")
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type="application/pdf")
+    return None
+
+@login_required
+@require_GET
+def invoice_pdf(request, payment_id: int):
+    payment = get_object_or_404(Payment, pk=payment_id, order__user=request.user)
+    if payment.status != "captured":
+        return HttpResponseBadRequest("La factura solo está disponible para pagos aprobados.")
+    order = payment.order
+    items = order.items.select_related("product")
+
+    created_local = timezone.localtime(payment.created_at)
+    invoice_number = f"INV-{payment.id}-{created_local.strftime('%Y%m%d')}"
+    context = {
+        "invoice_number": invoice_number,
+        "created_at": created_local,
+        "payment": payment,
+        "order": order,
+        "items": items,
+        # Datos del emisor (ajusta a tu negocio)
+        "company": {
+            "name": "Ctrl+Store S.A.S.",
+            "tax_id": "NIT 900.000.000-1",
+            "address": "Calle 123 #45-67, Medellín, Colombia",
+            "email": "facturacion@ctrlstore.com",
+            "phone": "+57 300 000 0000",
+        },
+    }
+
+    pdf_resp = render_to_pdf("payment/invoice.html", context)
+    if pdf_resp is None:
+        raise Http404("No se pudo generar el PDF.")
+
+    filename = f"Factura-{invoice_number}.pdf"
+    pdf_resp["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return pdf_resp

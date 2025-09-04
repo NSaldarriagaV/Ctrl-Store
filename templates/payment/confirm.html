@@ -89,10 +89,15 @@
       </div>
     </div>
   </div>
-
-  <div class="mt-4">
-    <a class="btn btn-outline-primary" href="{% url 'order:checkout' %}">Volver a la tienda</a>
+  <div class="mt-4 d-flex gap-2">
+    <a class="btn btn-outline-purple" href="{% url 'order:checkout' %}">Volver a la tienda</a>
+    {% if payment.status == 'captured' %}
+      <a class="btn btn-purple" href="{% url 'payment:invoice_pdf' payment.id %}" target="_blank" rel="noopener">
+        Descargar factura (PDF)
+      </a>
+    {% endif %}
   </div>
+
 </div>
 {% endblock %}
 
@@ -102,4 +107,61 @@
   .list-group-item.bg-dark { background-color: #1f1f1f !important; }
   .list-group-item.border-secondary { border-color: #2f2f2f !important; }
 </style>
+
+<style>
+  /* Morado sólido (ya usado en el botón de factura) */
+  .btn-purple{
+    background-color:#6f42c1; border-color:#6f42c1; color:#fff;
+  }
+  .btn-purple:hover,.btn-purple:focus{ background-color:#5a32a3; border-color:#5a32a3; color:#fff; }
+  .btn-purple:active{ background-color:#512b93; border-color:#512b93; color:#fff; }
+
+  /* Morado contorneado sobre fondo oscuro */
+  .btn-outline-purple{
+    background-color: transparent;           /* mismo fondo de la página */
+    border:1px solid #6f42c1;                /* marco morado */
+    color:#b993ff;                            /* texto morado (un poco más claro para contraste) */
+  }
+  .btn-outline-purple:hover,
+  .btn-outline-purple:focus{
+    background-color: rgba(111,66,193,.12);   /* leve realce sin perder estilo */
+    border-color:#5a32a3;
+    color:#d8c6ff;
+  }
+  .btn-outline-purple:active{
+    background-color: rgba(111,66,193,.18);
+    border-color:#512b93;
+    color:#e8ddff;
+  }
+  .btn-outline-purple:disabled{
+    background-color: transparent;
+    border-color:#6f42c1; color:#b993ff; opacity:.65;
+  }
+</style>
+
+<style>
+  .btn-purple {
+    background-color: #6f42c1;   /* morado oscuro */
+    border-color: #6f42c1;
+    color: #fff;
+  }
+  .btn-purple:hover,
+  .btn-purple:focus {
+    background-color: #5a32a3;
+    border-color: #5a32a3;
+    color: #fff;
+  }
+  .btn-purple:active {
+    background-color: #512b93;
+    border-color: #512b93;
+    color: #fff;
+  }
+  .btn-purple:disabled {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+    color: #fff;
+    opacity: .65;
+  }
+</style>
+
 {% endblock %}
