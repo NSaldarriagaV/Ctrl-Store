@@ -116,4 +116,5 @@ def checkout(request):
 def pay(request, order_id):
     # Placeholder para integrar tu pasarela (Wompi/PayU/Stripe)
     order = get_object_or_404(Order, pk=order_id, user=request.user)
-    return render(request, "order/pay.html", {"order": order})
+    return redirect("payment:pay", order_id=order.id)
+

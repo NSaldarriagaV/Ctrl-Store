@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Pagar orden – Ctrl+Store{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h1 class="mb-4">Pagar orden</h1>
+
+  <div class="row g-4">
+    <!-- Resumen -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Resumen del pedido</h5>
+          <ul class="list-group list-group-flush">
+            {% for it in order.items.all %}
+              <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
+                <div>
+                  <div class="fw-semibold">{{ it.product.name }}</div>
+                  <small class="text-muted">x{{ it.quantity }} · ${{ it.unit_price }}</small>
+                </div>
+                <div><strong>${{ it.line_total }}</strong></div>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="mt-3">
+            <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ order.subtotal_amount }}</span></div>
+            <div class="d-flex justify-content-between"><span>Envío</span><span>${{ order.shipping_amount }}</span></div>
+            <div class="d-flex justify-content-between fs-4 fw-bold border-top pt-2">
+              <span>Total</span><span>${{ order.total_amount }} COP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3 shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="card-title mb-2">Datos de envío</h5>
+          <p class="mb-1"><strong>Nombre:</strong> {{ order.full_name }}</p>
+          <p class="mb-1"><strong>Dirección:</strong> {{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}</p>
+          <p class="mb-1"><strong>Ciudad/Estado:</strong> {{ order.city }}{% if order.state %}, {{ order.state }}{% endif %}</p>
+          <p class="mb-1"><strong>Código Postal:</strong> {{ order.postal_code|default:"—" }}</p>
+          <p class="mb-1"><strong>País:</strong> {{ order.country }}</p>
+          <p class="mb-0"><strong>Contacto:</strong> {{ order.email }}{% if order.phone %} · {{ order.phone }}{% endif %}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pago -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Pagar con tarjeta</h5>
+
+          <form method="post" action="{% url 'payment:process' order.id %}" novalidate autocomplete="off">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Titular</label>
+                {{ form.cardholder_name }}
+                {{ form.cardholder_name.errors }}
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Número de tarjeta</label>
+                <div class="input-group">
+                  {{ form.card_number }}
+                  <span class="input-group-text bg-dark text-light border-secondary" id="brandSlot" style="display:none;">
+                    <span class="brand-badge" id="brandBadge">CARD</span>
+                    <!-- Si usas SVGs en static/payment/, descomenta:
+                    <img id="brandIcon" alt="brand" height="16" style="display:none;">
+                    -->
+                  </span>
+                </div>
+                {{ form.card_number.errors }}
+              </div>
+
+              <div class="col-6">
+                <label class="form-label">Vencimiento (MM/YY)</label>
+                {{ form.expiry }}
+                {{ form.expiry.errors }}
+              </div>
+
+              <div class="col-6">
+                <label class="form-label">CVV</label>
+                {{ form.cvv }}
+                {{ form.cvv.errors }}
+              </div>
+
+              <div class="col-6">
+                <label class="form-label">Código Postal (opcional)</label>
+                {{ form.zip_code }}
+                {{ form.zip_code.errors }}
+              </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+              <button class="btn btn-primary" type="submit">Pagar ahora</button>
+              <a href="{% url 'order:checkout' %}" class="btn btn-outline-secondary">Volver</a>
+            </div>
+
+            <p class="text-muted small mt-3 mb-0">
+              Usa números de prueba. Terminar en <code>0005</code>, <code>3333</code> o <code>6666</code> fuerza fallos simulados.
+            </p>
+            <p class="text-muted small mb-0">
+              No almacenamos CVV ni el número completo de la tarjeta. Solo se registran marca y últimos 4 dígitos.
+            </p>
+
+            <!-- ========= JS INLINE: autoformato + detección de marca ========= -->
+            <script>
+              (function(){
+                const numberInput = document.getElementById('id_card_number');
+                const expiryInput = document.getElementById('id_expiry');
+                const brandSlot  = document.getElementById('brandSlot');
+                const brandBadge = document.getElementById('brandBadge');
+                const brandIcon  = document.getElementById('brandIcon'); // opcional
+
+                function detectBrandLocal(digits){
+                  if (!digits) return 'card';
+                  if (/^4/.test(digits)) return 'visa';
+                  if (/^(5[1-5])/.test(digits)) return 'mastercard';
+                  const bin4 = parseInt((digits.slice(0,4) || '0'), 10);
+                  if (bin4 >= 2221 && bin4 <= 2720) return 'mastercard';
+                  if (/^(34|37)/.test(digits)) return 'amex';
+                  if (/^(6011|65)/.test(digits)) return 'discover';
+                  return 'card';
+                }
+
+                function renderBrand(brand){
+                  if (!brandSlot) return;
+                  if (brand === 'card') { brandSlot.style.display = 'none'; return; }
+                  brandSlot.style.display = '';
+                  if (brandBadge){
+                    brandBadge.textContent =
+                      brand === 'amex' ? 'AMEX' :
+                      brand === 'mastercard' ? 'MC' :
+                      brand === 'discover' ? 'DISC' : 'VISA';
+                    brandBadge.className = 'brand-badge';
+                    if (brand === 'visa') brandBadge.classList.add('brand-visa');
+                    if (brand === 'mastercard') brandBadge.classList.add('brand-mastercard');
+                    if (brand === 'amex') brandBadge.classList.add('brand-amex');
+                    if (brand === 'discover') brandBadge.classList.add('brand-discover');
+                  }
+                  if (brandIcon){
+                    const map = {
+                      visa: "{% static 'payment/visa.svg' %}",
+                      mastercard: "{% static 'payment/mastercard.svg' %}",
+                      amex: "{% static 'payment/amex.svg' %}",
+                      discover: "{% static 'payment/discover.svg' %}",
+                    };
+                    if (map[brand]) { brandIcon.src = map[brand]; brandIcon.style.display=''; if (brandBadge) brandBadge.style.display='none'; }
+                  }
+                }
+
+                function formatCardNumber(val){
+                  let digits = (val || '').replace(/\D/g, '').slice(0,19);
+                  return digits.replace(/(.{4})/g, '$1 ').trim();
+                }
+                function onNumberInput(){
+                  if (!numberInput) return;
+                  const digits = numberInput.value.replace(/\D/g,'');
+                  numberInput.value = formatCardNumber(numberInput.value);
+                  renderBrand(detectBrandLocal(digits));
+                }
+                function onExpiryInput(){
+                  if (!expiryInput) return;
+                  let v = expiryInput.value.replace(/\D/g,'').slice(0,4);
+                  if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+                  expiryInput.value = v;
+                }
+
+                if (numberInput){
+                  ['input','change','paste','keyup'].forEach(e=>numberInput.addEventListener(e, onNumberInput));
+                  onNumberInput();
+                }
+                if (expiryInput){
+                  ['input','change','paste','keyup'].forEach(e=>expiryInput.addEventListener(e, onExpiryInput));
+                  onExpiryInput();
+                }
+              })();
+            </script>
+            <!-- ============================================================= -->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .card .form-control { width: 100%; background-color:#1f1f1f; color:#e6e6e6; border-color:#2f2f2f; }
+  .card .form-control::placeholder { color:#8b8b8b; }
+  .card.rounded-4 { border-radius: 1rem; }
+  .list-group-item.bg-dark { background-color: #1f1f1f !important; }
+  .list-group-item.border-secondary { border-color: #2f2f2f !important; }
+  .brand-badge { display:inline-block; font-size:.75rem; line-height:1; font-weight:600; padding:.25rem .5rem; border-radius:.5rem; background:#2b2b2b; color:#e6e6e6; }
+  .brand-visa{ background:#1a2e52; color:#e6e6e6; }
+  .brand-mastercard{ background:#3b1a1a; color:#ffd2d2; }
+  .brand-amex{ background:#0a3a5e; color:#d7f2ff; }
+  .brand-discover{ background:#3a2a00; color:#ffd9a3; }
+</style>
+{% endblock %}

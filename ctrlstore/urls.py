@@ -9,6 +9,7 @@ urlpatterns = [
     path("auth/", include(("ctrlstore.apps.authx.urls", "authx"), namespace="authx")),
     path("cart/", include("ctrlstore.apps.cart.urls", namespace="cart")),
     path("order/", include("ctrlstore.apps.order.urls", namespace="order")),
+    path("payment/", include("ctrlstore.apps.payment.urls")),
 ]
 
 if settings.DEBUG:
