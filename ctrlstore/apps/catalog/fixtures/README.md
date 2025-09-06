@@ -75,3 +75,4 @@ Si necesitas agregar más productos de demostración:
 3. Incluye especificaciones completas
 4. Mantén precios realistas
 5. Configura stock y estado apropiados
+

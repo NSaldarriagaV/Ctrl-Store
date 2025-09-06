@@ -45,7 +45,7 @@
                 <!-- User Actions -->
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        {% if user.is_admin %}
+                        {% if user.is_admin or user.is_superuser %}
                             <li class="nav-item">
                                 <a class="nav-link btn btn-primary mx-2" href="{% url 'authx:admin_dashboard' %}">
                                     <i class="fas fa-cog me-2"></i>Panel Admin

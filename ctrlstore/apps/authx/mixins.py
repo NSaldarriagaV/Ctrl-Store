@@ -17,7 +17,8 @@ class AdminRequiredMixin:
             messages.error(request, "Debes iniciar sesión para acceder al panel de administración.")
             return redirect(reverse_lazy("authx:login"))
         
-        if not hasattr(request.user, 'is_admin') or not request.user.is_admin:
+        # Permitir acceso si el usuario es superusuario o cumple la regla de rol admin
+        if not (getattr(request.user, 'is_superuser', False) or getattr(request.user, 'is_admin', False)):
             messages.error(request, "No tienes permisos para acceder al panel de administración.")
             return redirect(reverse_lazy("catalog:product_list"))
         
