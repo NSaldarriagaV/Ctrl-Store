@@ -1,0 +1,588 @@
+{% extends "authx/admin/base.html" %}
+
+{% block admin_title %}{{ title }}{% endblock %}
+
+{% block admin_content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="fw-bold text-purple mb-2">
+                            <i class="fas fa-{% if action == 'create' %}plus{% else %}edit{% endif %} me-2"></i>{{ title }}
+                        </h3>
+                        <p class="text-muted mb-0">
+                            {% if action == 'create' %}
+                                Completa la información del nuevo producto
+                            {% else %}
+                                Modifica la información del producto
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="{% url 'authx:admin_products' %}" class="btn btn-outline-secondary rounded-pill">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a Productos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mensajes de Error/Éxito -->
+{% if messages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+<!-- Formulario -->
+<form method="post" enctype="multipart/form-data" id="productForm">
+    {% csrf_token %}
+    
+    <div class="row">
+        <!-- Información Básica -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+                <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Información Básica
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="name" class="form-label">Nombre del Producto *</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{% if product %}{{ product.name }}{% endif %}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="price" class="form-label">Precio *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="text" class="form-control" id="price" name="price" 
+                                       value="{% if product %}{{ product.price }}{% endif %}" 
+                                       required placeholder="100.00" pattern="[0-9]+(\.[0-9]{1,2})?"
+                                       title="Ingrese un precio válido (ej: 100.00)">
+                            </div>
+                            <small class="form-text text-muted">Formato: 100 o 100.50 (use punto como separador decimal)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Categoría *</label>
+                            <select class="form-select" id="category" name="category" required onchange="toggleSpecFields()">
+                                <option value="">Selecciona una categoría</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" 
+                                            data-type="{{ category.category_type }}"
+                                            {% if product and product.category.id == category.id %}selected{% endif %}>
+                                        {{ category }}
+                                    </option>
+                                {% empty %}
+                                    <option value="" disabled>No hay categorías disponibles</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="stock_quantity" class="form-label">Cantidad en Stock</label>
+                            <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" 
+                                   min="0" value="{% if product %}{{ product.stock_quantity }}{% else %}0{% endif %}">
+                        </div>
+                        <div class="col-12">
+                            <label for="short_description" class="form-label">Descripción Corta</label>
+                            <input type="text" class="form-control" id="short_description" name="short_description" 
+                                   maxlength="200" value="{% if product %}{{ product.short_description }}{% endif %}"
+                                   placeholder="Breve descripción para el catálogo">
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label">Descripción Detallada</label>
+                            <textarea class="form-control" id="description" name="description" rows="4"
+                                      placeholder="Descripción completa del producto">{% if product %}{{ product.description }}{% endif %}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estado y Configuración -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+                <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>Estado
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if action == 'edit' %}
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                               {% if product.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">
+                            <i class="fas fa-check-circle text-success me-1"></i>Producto Activo
+                        </label>
+                    </div>
+                    {% endif %}
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" 
+                               {% if product and product.is_featured %}checked{% endif %}>
+                        <label class="form-check-label" for="is_featured">
+                            <i class="fas fa-star text-warning me-1"></i>Producto Destacado
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <label for="main_image" class="form-label">Imagen Principal</label>
+                        <input type="file" class="form-control" id="main_image" name="main_image" accept="image/*">
+                        {% if product and product.main_image %}
+                            <div class="mt-2">
+                                <img src="{{ product.main_image.url }}" alt="Imagen actual" class="img-thumbnail" style="max-width: 150px;">
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Especificaciones Técnicas -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+                <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                    <h5 class="mb-0">
+                        <i class="fas fa-microchip me-2"></i>Especificaciones Técnicas
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Información General -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="brand" class="form-label">Marca</label>
+                            <input type="text" class="form-control" id="brand" name="brand" 
+                                   value="{% if product.specifications %}{{ product.specifications.brand }}{% endif %}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="model" class="form-label">Modelo</label>
+                            <input type="text" class="form-control" id="model" name="model" 
+                                   value="{% if product.specifications %}{{ product.specifications.model }}{% endif %}">
+                        </div>
+                    </div>
+                    
+                    <!-- Especificaciones por Categoría -->
+                    
+                    <!-- Celulares y Tablets -->
+                    <div id="specs-celulares_tablets" class="category-specs" style="display: none;">
+                        <h6 class="text-primary mb-3"><i class="fas fa-mobile-alt me-2"></i>Especificaciones Móviles</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="operating_system" class="form-label">Sistema Operativo</label>
+                                <input type="text" class="form-control" id="operating_system" name="operating_system" 
+                                       value="{% if product.specifications %}{{ product.specifications.operating_system }}{% endif %}"
+                                       placeholder="ej: Android 14, iOS 17">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="screen_size" class="form-label">Tamaño Pantalla (pulgadas)</label>
+                                <input type="number" class="form-control" id="screen_size" name="screen_size" 
+                                       step="0.1" value="{% if product.specifications %}{{ product.specifications.screen_size }}{% endif %}"
+                                       placeholder="ej: 6.7">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="screen_resolution" class="form-label">Resolución</label>
+                                <input type="text" class="form-control" id="screen_resolution" name="screen_resolution" 
+                                       value="{% if product.specifications %}{{ product.specifications.screen_resolution }}{% endif %}"
+                                       placeholder="ej: 2778 x 1284">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ram_memory" class="form-label">Memoria RAM</label>
+                                <input type="text" class="form-control" id="ram_memory" name="ram_memory" 
+                                       value="{% if product.specifications %}{{ product.specifications.ram_memory }}{% endif %}"
+                                       placeholder="ej: 8GB">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="internal_storage" class="form-label">Almacenamiento</label>
+                                <input type="text" class="form-control" id="internal_storage" name="internal_storage" 
+                                       value="{% if product.specifications %}{{ product.specifications.internal_storage }}{% endif %}"
+                                       placeholder="ej: 256GB">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="battery_capacity" class="form-label">Batería (mAh)</label>
+                                <input type="text" class="form-control" id="battery_capacity" name="battery_capacity" 
+                                       value="{% if product.specifications %}{{ product.specifications.battery_capacity }}{% endif %}"
+                                       placeholder="ej: 4500">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="main_camera" class="form-label">Cámara Principal</label>
+                                <input type="text" class="form-control" id="main_camera" name="main_camera" 
+                                       value="{% if product.specifications %}{{ product.specifications.main_camera }}{% endif %}"
+                                       placeholder="ej: 48MP + 12MP ultra angular">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="front_camera" class="form-label">Cámara Frontal</label>
+                                <input type="text" class="form-control" id="front_camera" name="front_camera" 
+                                       value="{% if product.specifications %}{{ product.specifications.front_camera }}{% endif %}"
+                                       placeholder="ej: 12MP">
+                            </div>
+                            <div class="col-12">
+                                <label for="connectivity" class="form-label">Conectividad</label>
+                                <textarea class="form-control" id="connectivity" name="connectivity" rows="2"
+                                          placeholder="ej: 5G, WiFi 6, Bluetooth 5.3, NFC">{% if product.specifications %}{{ product.specifications.connectivity }}{% endif %}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Computadores -->
+                    <div id="specs-computadores" class="category-specs" style="display: none;">
+                        <h6 class="text-info mb-3"><i class="fas fa-laptop me-2"></i>Especificaciones de Computador</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="processor" class="form-label">Procesador</label>
+                                <input type="text" class="form-control" id="processor" name="processor" 
+                                       value="{% if product.specifications %}{{ product.specifications.processor }}{% endif %}"
+                                       placeholder="ej: Intel Core i7-13700H">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="graphics_card" class="form-label">Tarjeta Gráfica</label>
+                                <input type="text" class="form-control" id="graphics_card" name="graphics_card" 
+                                       value="{% if product.specifications %}{{ product.specifications.graphics_card }}{% endif %}"
+                                       placeholder="ej: NVIDIA RTX 4060">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="storage_type" class="form-label">Tipo Almacenamiento</label>
+                                <input type="text" class="form-control" id="storage_type" name="storage_type" 
+                                       value="{% if product.specifications %}{{ product.specifications.storage_type }}{% endif %}"
+                                       placeholder="ej: SSD NVMe">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="storage_capacity" class="form-label">Capacidad</label>
+                                <input type="text" class="form-control" id="storage_capacity" name="storage_capacity" 
+                                       value="{% if product.specifications %}{{ product.specifications.storage_capacity }}{% endif %}"
+                                       placeholder="ej: 1TB">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="weight" class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" id="weight" name="weight" 
+                                       step="0.1" value="{% if product.specifications %}{{ product.specifications.weight }}{% endif %}"
+                                       placeholder="ej: 2.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Componentes -->
+                    <div id="specs-componentes" class="category-specs" style="display: none;">
+                        <h6 class="text-warning mb-3"><i class="fas fa-microchip me-2"></i>Especificaciones de Componente</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="socket_type" class="form-label">Socket/Compatibilidad</label>
+                                <input type="text" class="form-control" id="socket_type" name="socket_type" 
+                                       value="{% if product.specifications %}{{ product.specifications.socket_type }}{% endif %}"
+                                       placeholder="ej: LGA 1700, AM5">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="frequency" class="form-label">Frecuencia</label>
+                                <input type="text" class="form-control" id="frequency" name="frequency" 
+                                       value="{% if product.specifications %}{{ product.specifications.frequency }}{% endif %}"
+                                       placeholder="ej: 3.2 GHz base, 5.2 GHz boost">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="power_consumption" class="form-label">Consumo (TDP)</label>
+                                <input type="text" class="form-control" id="power_consumption" name="power_consumption" 
+                                       value="{% if product.specifications %}{{ product.specifications.power_consumption }}{% endif %}"
+                                       placeholder="ej: 65W">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="memory_type" class="form-label">Tipo de Memoria</label>
+                                <input type="text" class="form-control" id="memory_type" name="memory_type" 
+                                       value="{% if product.specifications %}{{ product.specifications.memory_type }}{% endif %}"
+                                       placeholder="ej: DDR5-4800">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Audio y Video -->
+                    <div id="specs-audio_video" class="category-specs" style="display: none;">
+                        <h6 class="text-danger mb-3"><i class="fas fa-tv me-2"></i>Especificaciones Audio/Video</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="display_technology" class="form-label">Tecnología Pantalla</label>
+                                <input type="text" class="form-control" id="display_technology" name="display_technology" 
+                                       value="{% if product.specifications %}{{ product.specifications.display_technology }}{% endif %}"
+                                       placeholder="ej: OLED, QLED, LED">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="refresh_rate" class="form-label">Frecuencia Refresco</label>
+                                <input type="text" class="form-control" id="refresh_rate" name="refresh_rate" 
+                                       value="{% if product.specifications %}{{ product.specifications.refresh_rate }}{% endif %}"
+                                       placeholder="ej: 120Hz">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="audio_power" class="form-label">Potencia Audio (W)</label>
+                                <input type="text" class="form-control" id="audio_power" name="audio_power" 
+                                       value="{% if product.specifications %}{{ product.specifications.audio_power }}{% endif %}"
+                                       placeholder="ej: 40W RMS">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="channels" class="form-label">Canales</label>
+                                <input type="text" class="form-control" id="channels" name="channels" 
+                                       value="{% if product.specifications %}{{ product.specifications.channels }}{% endif %}"
+                                       placeholder="ej: 2.1, 5.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gaming -->
+                    <div id="specs-gaming" class="category-specs" style="display: none;">
+                        <h6 class="text-success mb-3"><i class="fas fa-gamepad me-2"></i>Especificaciones Gaming</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="platform_compatibility" class="form-label">Compatibilidad</label>
+                                <input type="text" class="form-control" id="platform_compatibility" name="platform_compatibility" 
+                                       value="{% if product.specifications %}{{ product.specifications.platform_compatibility }}{% endif %}"
+                                       placeholder="ej: PS5, Xbox Series X/S, PC">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="genre" class="form-label">Género</label>
+                                <input type="text" class="form-control" id="genre" name="genre" 
+                                       value="{% if product.specifications %}{{ product.specifications.genre }}{% endif %}"
+                                       placeholder="ej: Acción, RPG">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="age_rating" class="form-label">Clasificación</label>
+                                <input type="text" class="form-control" id="age_rating" name="age_rating" 
+                                       value="{% if product.specifications %}{{ product.specifications.age_rating }}{% endif %}"
+                                       placeholder="ej: T, M">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="multiplayer" name="multiplayer" 
+                                           {% if product.specifications and product.specifications.multiplayer %}checked{% endif %}>
+                                    <label class="form-check-label" for="multiplayer">
+                                        <i class="fas fa-users me-1"></i>Multijugador
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botones de Acción -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+                <div class="card-body p-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill me-3">
+                        <i class="fas fa-save me-2"></i>
+                        {% if action == 'create' %}Crear Producto{% else %}Actualizar Producto{% endif %}
+                    </button>
+                    <a href="{% url 'authx:admin_products' %}" class="btn btn-outline-secondary btn-lg rounded-pill">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+function toggleSpecFields() {
+    const categorySelect = document.getElementById('category');
+    const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+    const categoryType = selectedOption.getAttribute('data-type');
+    
+    // Ocultar todas las secciones de especificaciones
+    const allSpecs = document.querySelectorAll('.category-specs');
+    allSpecs.forEach(spec => spec.style.display = 'none');
+    
+    // Mostrar la sección correspondiente
+    if (categoryType) {
+        const targetSpec = document.getElementById('specs-' + categoryType);
+        if (targetSpec) {
+            targetSpec.style.display = 'block';
+        }
+    }
+}
+
+// Ejecutar al cargar la página si hay una categoría seleccionada
+document.addEventListener('DOMContentLoaded', function() {
+    toggleSpecFields();
+});
+
+// Validación visual del precio en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const priceInput = document.getElementById('price');
+    
+    priceInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        // Solo validación visual, no bloquear el envío
+        if (value && (isNaN(parseFloat(value)) || parseFloat(value) <= 0)) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (value) {
+            this.classList.add('is-valid');
+            this.classList.remove('is-invalid');
+        } else {
+            this.classList.remove('is-invalid', 'is-valid');
+        }
+    });
+});
+</script>
+
+<style>
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.text-purple {
+    color: #6f42c1 !important;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}
+
+.rounded-top-4 {
+    border-top-left-radius: 1rem !important;
+    border-top-right-radius: 1rem !important;
+}
+
+.rounded-pill {
+    border-radius: 50rem !important;
+}
+
+/* Tema gris para formularios */
+.bg-admin-card {
+    background: #4a5568 !important;
+    border: 1px solid #5a6570 !important;
+}
+
+.bg-admin-header {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+}
+
+.card {
+    background: #4a5568 !important;
+    border: 1px solid #5a6570 !important;
+}
+
+.card-body {
+    background: #f7fafc !important;
+    color: #2d3748 !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+    border-bottom: 1px solid #5a6570 !important;
+}
+
+/* Formularios y inputs */
+.form-control {
+    background: #f7fafc !important;
+    border: 1px solid #cbd5e0 !important;
+    color: #2d3748 !important;
+}
+
+.form-control:focus {
+    background: #ffffff !important;
+    border-color: #6f42c1 !important;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
+}
+
+.form-select {
+    background: #f7fafc !important;
+    border: 1px solid #cbd5e0 !important;
+    color: #2d3748 !important;
+}
+
+.form-label {
+    color: #4a5568 !important;
+    font-weight: 600;
+}
+
+.form-check-label {
+    color: #4a5568 !important;
+}
+
+.input-group-text {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e0 !important;
+    color: #4a5568 !important;
+}
+
+.category-specs {
+    padding: 1rem;
+    background: #e2e8f0 !important;
+    border-radius: 0.5rem;
+    border-left: 4px solid #6f42c1;
+    color: #2d3748 !important;
+}
+
+.category-specs h6 {
+    color: #2d3748 !important;
+}
+
+/* Estados de validación */
+.form-control.is-valid {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 0.75rem;
+    border: none;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: rgba(40, 167, 69, 0.1) !important;
+    color: #28a745 !important;
+    border: 1px solid rgba(40, 167, 69, 0.3) !important;
+}
+
+.alert-danger {
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+}
+</style>
+{% endblock %}

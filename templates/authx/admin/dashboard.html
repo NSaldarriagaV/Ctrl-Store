@@ -1,0 +1,443 @@
+{% extends "authx/admin/base.html" %}
+
+{% block admin_title %}Dashboard{% endblock %}
+
+{% block admin_content %}
+<!-- Welcome Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold text-purple mb-2">
+                            <i class="fas fa-chart-line me-2"></i>Bienvenido al Panel de Control
+                        </h3>
+                        <p class="text-muted mb-0">
+                            Aquí puedes gestionar usuarios, productos y monitorear la actividad de Ctrl+Store
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="badge bg-success fs-6 rounded-pill">
+                            <i class="fas fa-check-circle me-1"></i>Sistema Activo
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-5">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card clickable-card" onclick="window.location.href='{% url 'authx:admin_users' %}'">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-users fa-2x text-purple"></i>
+                </div>
+                <h2 class="fw-bold text-purple mb-1">{{ total_users }}</h2>
+                <p class="text-muted mb-0">Usuarios Registrados</p>
+                <small class="text-success">
+                    <i class="fas fa-eye me-1"></i>Gestionar
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card clickable-card" onclick="window.location.href='{% url 'authx:admin_products' %}'">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-box fa-2x text-info"></i>
+                </div>
+                <h2 class="fw-bold text-info mb-1">{{ total_products }}</h2>
+                <p class="text-muted mb-0">Productos</p>
+                <small class="text-success">
+                    <i class="fas fa-eye me-1"></i>Gestionar
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card clickable-card" onclick="window.location.href='{% url 'authx:admin_categories' %}'">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-tags fa-2x text-warning"></i>
+                </div>
+                <h2 class="fw-bold text-warning mb-1">{{ total_categories }}</h2>
+                <p class="text-muted mb-0">Categorías</p>
+                <small class="text-success">
+                    <i class="fas fa-eye me-1"></i>Ver todas
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="fas fa-gamepad fa-2x text-danger"></i>
+                </div>
+                <h2 class="fw-bold text-danger mb-1">{{ gaming_products|default:0 }}</h2>
+                <p class="text-muted mb-0">Productos Gaming</p>
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>+15% este mes
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row mb-5">
+    <!-- Recent Users -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Usuarios Recientes
+                    </h5>
+                    <a href="{% url 'authx:admin_users' %}" class="btn btn-outline-light btn-sm rounded-pill">
+                        <i class="fas fa-external-link-alt me-1"></i>Ver Todos
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_users %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 ps-4">Usuario</th>
+                                    <th class="border-0">Rol</th>
+                                    <th class="border-0 pe-4">Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in recent_users %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-light text-dark rounded-circle d-flex align-items-center justify-content-center me-3">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ user.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary rounded-pill">{{ user.get_role_display_name }}</span>
+                                    </td>
+                                    <td class="pe-4">
+                                        <small class="text-muted">{{ user.date_joined|date:"d/m/Y" }}</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay usuarios registrados</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Products -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-box me-2"></i>Productos Recientes
+                    </h5>
+                    <a href="{% url 'authx:admin_products' %}" class="btn btn-outline-light btn-sm rounded-pill">
+                        <i class="fas fa-external-link-alt me-1"></i>Ver Todos
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_products %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 ps-4">Producto</th>
+                                    <th class="border-0">Categoría</th>
+                                    <th class="border-0">Precio</th>
+                                    <th class="border-0 pe-4">Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in recent_products %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <strong>{{ product.name }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info rounded-pill">{{ product.category.name }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">${{ product.price }}</span>
+                                    </td>
+                                    <td class="pe-4">
+                                        {% if product.category.category_type == 'gaming' %}
+                                            <span class="badge bg-danger rounded-pill">
+                                                <i class="fas fa-gamepad me-1"></i>Gaming
+                                            </span>
+                                        {% elif product.category.category_type == 'celulares_tablets' %}
+                                            <span class="badge bg-primary rounded-pill">
+                                                <i class="fas fa-mobile-alt me-1"></i>Móvil
+                                            </span>
+                                        {% elif product.category.category_type == 'computadores' %}
+                                            <span class="badge bg-info rounded-pill">
+                                                <i class="fas fa-laptop me-1"></i>PC
+                                            </span>
+                                        {% elif product.category.category_type == 'componentes' %}
+                                            <span class="badge bg-warning rounded-pill">
+                                                <i class="fas fa-microchip me-1"></i>Componente
+                                            </span>
+                                        {% elif product.category.category_type == 'audio_video' %}
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="fas fa-tv me-1"></i>A/V
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary rounded-pill">General</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay productos registrados</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>Acciones Rápidas
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <button type="button" class="btn btn-transparent w-100" onclick="window.location.href='{% url 'authx:admin_users' %}'">
+                            <i class="fas fa-users me-2"></i>Gestionar Usuarios
+                        </button>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <button type="button" class="btn btn-transparent w-100" onclick="window.location.href='{% url 'authx:admin_roles' %}'">
+                            <i class="fas fa-user-tag me-2"></i>Gestionar Roles
+                        </button>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <button type="button" class="btn btn-transparent w-100" onclick="window.location.href='{% url 'authx:admin_product_create' %}'">
+                            <i class="fas fa-plus me-2"></i>Agregar Producto
+                        </button>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <button type="button" class="btn btn-transparent w-100" onclick="window.location.href='{% url 'authx:admin_categories' %}'">
+                            <i class="fas fa-tags me-2"></i>Gestionar Categorías
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+}
+
+.text-purple {
+    color: #6f42c1 !important;
+}
+
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+
+.bg-purple.bg-opacity-10 {
+    background-color: rgba(111, 66, 193, 0.1) !important;
+}
+
+.card {
+    transition: all 0.3s ease;
+    border-radius: 1rem !important;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+
+.btn {
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.btn-transparent {
+    background-color: transparent !important;
+    border: 2px solid #6f42c1 !important;
+    color: #6f42c1 !important;
+    transition: all 0.3s ease;
+}
+
+.btn-transparent:hover {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    border-color: #6f42c1 !important;
+}
+
+.btn-sm {
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light {
+    color: white;
+    border-color: white;
+    background: transparent;
+}
+
+.btn-outline-light:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+}
+
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 2rem;
+}
+
+.table th {
+    font-weight: 600;
+    color: #ecf0f1;
+    background: #3a3a3a;
+    border: none;
+    padding: 1rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: #404040;
+    background: #2d2d2d;
+    color: #ecf0f1;
+}
+
+.table tbody tr {
+    background: #2d2d2d;
+    color: #ecf0f1;
+}
+
+.table tbody tr:hover {
+    background: #6c757d !important;
+    color: white !important;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover .text-muted {
+    color: #dee2e6 !important;
+}
+
+.table tbody tr:hover .badge {
+    background-color: #495057 !important;
+    color: white !important;
+}
+
+.table-light {
+    background: #3a3a3a !important;
+    color: #ecf0f1;
+}
+
+.table-light th {
+    background: #3a3a3a !important;
+    color: #ecf0f1 !important;
+}
+
+.table-light td {
+    background: #2d2d2d !important;
+    color: #ecf0f1;
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}
+
+.rounded-top-4 {
+    border-top-left-radius: 1rem !important;
+    border-top-right-radius: 1rem !important;
+}
+
+.rounded-pill {
+    border-radius: 50rem !important;
+}
+
+/* Cards clickeables */
+.clickable-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    border-color: #6f42c1 !important;
+}
+
+.clickable-card:hover .card-body {
+    background: #4a5568 !important;
+}
+
+.clickable-card:hover small {
+    color: #6f42c1 !important;
+    font-weight: 600;
+}
+</style>
+{% endblock %}

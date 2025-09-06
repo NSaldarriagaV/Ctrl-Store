@@ -1,0 +1,236 @@
+{% extends "authx/admin/base.html" %}
+
+{% block admin_title %}Gestión de Categorías{% endblock %}
+
+{% block admin_content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold text-purple mb-2">
+                            <i class="fas fa-tags me-2"></i>Gestión de Categorías
+                        </h3>
+                        <p class="text-muted mb-0">Organiza el catálogo por categorías de productos electrónicos</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="badge bg-success fs-6 rounded-pill">
+                            <i class="fas fa-check-circle me-1"></i>{{ active_categories }} Activas
+                        </div>
+                        <div class="mt-2">
+                            <a href="/admin/catalog/category/add/" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Agregar Categoría
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3" style="width: 50px; height: 50px;">
+                    <i class="fas fa-layer-group fa-lg text-primary"></i>
+                </div>
+                <h4 class="fw-bold text-primary mb-1">{{ total_categories }}</h4>
+                <p class="text-muted mb-0">Total Categorías</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle mb-3" style="width: 50px; height: 50px;">
+                    <i class="fas fa-check-circle fa-lg text-success"></i>
+                </div>
+                <h4 class="fw-bold text-success mb-1">{{ active_categories }}</h4>
+                <p class="text-muted mb-0">Activas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4 bg-admin-card">
+            <div class="card-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 rounded-circle mb-3" style="width: 50px; height: 50px;">
+                    <i class="fas fa-sitemap fa-lg text-info"></i>
+                </div>
+                <h4 class="fw-bold text-info mb-1">{{ main_categories.count }}</h4>
+                <p class="text-muted mb-0">Principales</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de Categorías -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>Todas las Categorías
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if categories %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 ps-4">Categoría</th>
+                                    <th class="border-0">Tipo</th>
+                                    <th class="border-0">Productos</th>
+                                    <th class="border-0">Estado</th>
+                                    <th class="border-0 pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <i class="fas fa-{% if category.parent %}tag{% else %}folder{% endif %} text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>
+                                                    {% if category.parent %}
+                                                        {{ category.parent.name }} > {{ category.name }}
+                                                    {% else %}
+                                                        {{ category.name }}
+                                                    {% endif %}
+                                                </strong>
+                                                <br>
+                                                <small class="text-muted">{{ category.slug }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if category.category_type == 'celulares_tablets' %}
+                                            <span class="badge bg-primary rounded-pill">📱 Móviles</span>
+                                        {% elif category.category_type == 'computadores' %}
+                                            <span class="badge bg-info rounded-pill">💻 PC</span>
+                                        {% elif category.category_type == 'componentes' %}
+                                            <span class="badge bg-warning rounded-pill">🔧 Componentes</span>
+                                        {% elif category.category_type == 'audio_video' %}
+                                            <span class="badge bg-success rounded-pill">📺 A/V</span>
+                                        {% elif category.category_type == 'gaming' %}
+                                            <span class="badge bg-danger rounded-pill">🎮 Gaming</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary rounded-pill">📦 General</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info rounded-pill">{{ category.products.count }}</span>
+                                    </td>
+                                    <td>
+                                        {% if category.is_active %}
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="fas fa-check me-1"></i>Activa
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary rounded-pill">
+                                                <i class="fas fa-times me-1"></i>Inactiva
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a href="/admin/catalog/category/{{ category.id }}/change/" target="_blank" 
+                                               class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'catalog:product_list' %}?cat={{ category.slug }}" target="_blank"
+                                               class="btn btn-sm btn-outline-info" title="Ver productos">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-tags fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted mb-3">No hay categorías disponibles</h3>
+                        <p class="text-muted mb-4">Crea categorías para organizar tu catálogo de productos</p>
+                        <a href="/admin/catalog/category/add/" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Primera Categoría
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información y Acciones -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Estructura del Catálogo
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-3"><i class="fas fa-lightbulb me-2"></i>Tipos de Categorías</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-mobile-alt text-primary me-2"></i>📱 Celulares y Tablets</li>
+                            <li class="mb-2"><i class="fas fa-laptop text-info me-2"></i>💻 Computadores y Periféricos</li>
+                            <li class="mb-2"><i class="fas fa-microchip text-warning me-2"></i>🔧 Componentes y Hardware</li>
+                            <li class="mb-2"><i class="fas fa-tv text-success me-2"></i>📺 Audio y Video</li>
+                            <li class="mb-2"><i class="fas fa-gamepad text-danger me-2"></i>🎮 Gaming</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-warning mb-3"><i class="fas fa-cogs me-2"></i>Funcionalidades</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Organización jerárquica</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Especificaciones dinámicas</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Filtros automáticos</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Conteo de productos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 bg-admin-card">
+            <div class="card-header bg-admin-header text-white border-0 rounded-top-4">
+                <h5 class="mb-0">
+                    <i class="fas fa-tools me-2"></i>Acciones Rápidas
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-grid gap-3">
+                    <a href="/admin/catalog/category/add/" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Agregar Categoría
+                    </a>
+                    <a href="/admin/catalog/category/" target="_blank" class="btn btn-outline-primary">
+                        <i class="fas fa-cogs me-2"></i>Gestión Avanzada
+                    </a>
+                    <a href="{% url 'catalog:product_list' %}" target="_blank" class="btn btn-outline-info">
+                        <i class="fas fa-store me-2"></i>Ver Catálogo
+                    </a>
+                    <a href="{% url 'authx:admin_products' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-box me-2"></i>Gestionar Productos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

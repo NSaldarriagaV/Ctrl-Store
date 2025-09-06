@@ -1,0 +1,142 @@
+{% extends "authx/admin/base.html" %}
+
+{% block admin_title %}Detalles del Usuario{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Detalles del Usuario</h3>
+    <div>
+        <a href="{% url 'authx:user_edit' user_detail.id %}" class="btn btn-primary">
+            <i class="fas fa-edit me-2"></i>Editar Usuario
+        </a>
+        <a href="{% url 'authx:admin_users' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="admin-table">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-user me-2"></i>Información del Usuario
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Username:</label>
+                            <p class="form-control-plaintext">{{ user_detail.username }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email:</label>
+                            <p class="form-control-plaintext">{{ user_detail.email }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre:</label>
+                            <p class="form-control-plaintext">{{ user_detail.first_name|default:"No especificado" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Apellido:</label>
+                            <p class="form-control-plaintext">{{ user_detail.last_name|default:"No especificado" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Rol:</label>
+                            <p class="form-control-plaintext">
+                                {% if user_detail.role %}
+                                    <span class="badge bg-secondary">{{ user_detail.role.name }}</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">Sin rol</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Estado:</label>
+                            <p class="form-control-plaintext">
+                                {% if user_detail.is_active %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactivo</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Superusuario:</label>
+                            <p class="form-control-plaintext">
+                                {% if user_detail.is_superuser %}
+                                    <span class="badge bg-danger">Sí</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="admin-table">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock me-2"></i>Información Temporal
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Fecha de Registro:</label>
+                    <p class="form-control-plaintext">{{ user_detail.date_joined|date:"d/m/Y H:i" }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Último Login:</label>
+                    <p class="form-control-plaintext">
+                        {% if user_detail.last_login %}
+                            {{ user_detail.last_login|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Nunca
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Fecha de Creación:</label>
+                    <p class="form-control-plaintext">{{ user_detail.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Última Actualización:</label>
+                    <p class="form-control-plaintext">{{ user_detail.updated_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        {% if user_detail.phone or user_detail.address %}
+        <div class="admin-table mt-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-address-card me-2"></i>Información Adicional
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user_detail.phone %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Teléfono:</label>
+                    <p class="form-control-plaintext">{{ user_detail.phone }}</p>
+                </div>
+                {% endif %}
+                {% if user_detail.address %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Dirección:</label>
+                    <p class="form-control-plaintext">{{ user_detail.address }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

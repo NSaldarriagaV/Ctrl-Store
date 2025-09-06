@@ -1,0 +1,609 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Administración - Ctrl Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-sidebar {
+        background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        min-height: 100vh;
+        color: white;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .admin-sidebar .nav-link {
+        color: #ecf0f1;
+        padding: 1.2rem 1.8rem;
+        border-radius: 15px;
+        margin: 0.5rem 0.8rem;
+        transition: all 0.4s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+    
+    .admin-sidebar .nav-link:hover {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        transform: translateX(8px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+        border-radius: 20px;
+    }
+    
+    .admin-sidebar .nav-link.active {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.5);
+        border-radius: 20px;
+        transform: translateX(5px);
+    }
+    
+    .admin-sidebar .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 5px;
+        background: #e74c3c;
+        border-radius: 0 3px 3px 0;
+    }
+    
+    .admin-sidebar .nav-link i {
+        transition: all 0.3s ease;
+        margin-right: 12px;
+        font-size: 1.1rem;
+    }
+    
+    .admin-sidebar .nav-link:hover i {
+        transform: scale(1.2);
+    }
+    
+    .admin-content {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        min-height: 100vh;
+        color: #ecf0f1;
+    }
+    
+    .admin-header {
+        background: #2d2d2d;
+        border-bottom: 1px solid #404040;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        color: #ecf0f1;
+    }
+    
+    .admin-header .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        margin: 0 0.5rem;
+        border: 2px solid transparent;
+    }
+    
+    .admin-header .btn-outline-primary {
+        color: #6f42c1;
+        border-color: #6f42c1;
+        background: transparent;
+    }
+    
+    .admin-header .btn-outline-primary:hover {
+        background: #6f42c1;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.3);
+    }
+    
+    .admin-header .btn-primary {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        border: none;
+        color: white;
+    }
+    
+    .admin-header .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+    }
+    
+    .admin-header .btn-danger {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        border: none;
+        color: white;
+    }
+    
+    .admin-header .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+    }
+    
+    .stats-card {
+        background: #2d2d2d;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        margin-bottom: 1.5rem;
+        border: 1px solid #404040;
+        transition: all 0.3s ease;
+        color: #ecf0f1;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .admin-table {
+        background: #2d2d2d;
+        border-radius: 1rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        border: 1px solid #404040;
+        overflow: hidden;
+        color: #ecf0f1;
+    }
+    
+    .admin-table .card-header {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+    }
+    
+    .admin-table .table {
+        margin-bottom: 0;
+        background: #2d2d2d;
+        color: #ecf0f1;
+    }
+    
+    .admin-table .table th {
+        background: #3a3a3a;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        color: #ecf0f1;
+    }
+    
+    .admin-table .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-color: #404040;
+        color: #ecf0f1;
+    }
+    
+    .admin-table .table tbody tr:hover {
+        background: #404040;
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+        color: #ecf0f1;
+    }
+    
+    .avatar-sm {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 2rem;
+    }
+    
+    .btn-group .btn {
+        border-radius: 1rem;
+        margin: 0 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-group .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .sidebar-brand {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        margin: -1rem -1rem 2rem -1rem;
+        padding: 2.5rem 1rem;
+        text-align: center;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+    
+    .sidebar-brand h4 {
+        margin: 0;
+        font-weight: bold;
+        color: white;
+        font-size: 1.4rem;
+        letter-spacing: 1px;
+    }
+    
+    .sidebar-brand p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    
+    .user-info {
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        font-size: 1.8rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+    }
+    
+    .text-purple {
+        color: #6f42c1 !important;
+    }
+    
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+    
+    .nav-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        margin: 2rem 1rem;
+        border: none;
+    }
+    
+    /* TEMA GRIS Y NEGRO OSCURO PARA TODO EL PANEL ADMIN */
+    .bg-admin-card {
+        background: #2d3748 !important;
+        border: 1px solid #4a5568 !important;
+    }
+
+    .bg-admin-header {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+    }
+
+    .bg-admin-content {
+        background: #374151 !important;
+    }
+
+    /* Cards globales */
+    .admin-content .card {
+        background: #2d3748 !important;
+        border: 1px solid #4a5568 !important;
+    }
+
+    .admin-content .card-body {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+    }
+
+    .admin-content .card-header {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+        border-bottom: 1px solid #4a5568 !important;
+        color: #f7fafc !important;
+    }
+
+    /* Tabla con tema gris oscuro */
+    .admin-content .table {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+    }
+
+    .admin-content .table th {
+        background: #4a5568 !important;
+        color: #f7fafc !important;
+        border-color: #6b7280 !important;
+        font-weight: 600;
+    }
+
+    .admin-content .table td {
+        border-color: #4a5568 !important;
+        color: #e2e8f0 !important;
+        background: #374151 !important;
+    }
+
+    .admin-content .table tbody tr:hover {
+        background: #4a5568 !important;
+        color: #f7fafc !important;
+    }
+
+    .admin-content .table tbody tr:hover .text-muted {
+        color: #d1d5db !important;
+    }
+
+    .admin-content .table-light {
+        background: #4a5568 !important;
+    }
+
+    .admin-content .table-light th {
+        background: #4a5568 !important;
+        color: #f7fafc !important;
+    }
+
+    /* Formularios y inputs oscuros */
+    .admin-content .form-control {
+        background: #4a5568 !important;
+        border: 1px solid #6b7280 !important;
+        color: #f7fafc !important;
+    }
+
+    .admin-content .form-control:focus {
+        background: #374151 !important;
+        border-color: #6f42c1 !important;
+        box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
+        color: #f7fafc !important;
+    }
+
+    .admin-content .form-select {
+        background: #4a5568 !important;
+        border: 1px solid #6b7280 !important;
+        color: #f7fafc !important;
+    }
+
+    .admin-content .form-label {
+        color: #e2e8f0 !important;
+        font-weight: 600;
+    }
+
+    .admin-content .form-check-label {
+        color: #e2e8f0 !important;
+    }
+
+    /* Input groups */
+    .admin-content .input-group-text {
+        background: #4a5568 !important;
+        border-color: #6b7280 !important;
+        color: #e2e8f0 !important;
+    }
+
+    /* Botones */
+    .admin-content .btn-primary {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%) !important;
+        border: none !important;
+    }
+
+    .admin-content .btn-outline-primary {
+        color: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+        background: transparent !important;
+    }
+
+    .admin-content .btn-outline-primary:hover {
+        background: #6f42c1 !important;
+        color: white !important;
+    }
+
+    .admin-content .btn-outline-secondary {
+        color: #6c757d !important;
+        border-color: #6c757d !important;
+        background: transparent !important;
+    }
+
+    .admin-content .btn-outline-secondary:hover {
+        background: #6c757d !important;
+        color: white !important;
+    }
+
+    /* Modal oscuro */
+    .admin-content .modal-content {
+        background: #374151 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #4a5568 !important;
+    }
+
+    .admin-content .modal-header {
+        background: #4a5568 !important;
+        border-bottom: 1px solid #6b7280 !important;
+    }
+
+    .admin-content .modal-title {
+        color: #f7fafc !important;
+    }
+
+    /* Badges */
+    .admin-content .badge {
+        font-weight: 600;
+    }
+
+    /* Texto */
+    .admin-content .text-muted {
+        color: #9ca3af !important;
+    }
+
+    /* Paginación oscura */
+    .admin-content .pagination .page-link {
+        background: #4a5568 !important;
+        border-color: #6b7280 !important;
+        color: #e2e8f0 !important;
+    }
+
+    .admin-content .pagination .page-link:hover {
+        background: #374151 !important;
+        color: #f7fafc !important;
+    }
+
+    .admin-content .pagination .page-item.active .page-link {
+        background: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+    }
+
+    /* Especificaciones por categoría oscuras */
+    .admin-content .category-specs {
+        padding: 1rem;
+        background: #4a5568 !important;
+        border-radius: 0.5rem;
+        border-left: 4px solid #6f42c1;
+        color: #e2e8f0 !important;
+    }
+
+    .admin-content .category-specs h6 {
+        color: #f7fafc !important;
+    }
+
+    /* Checkboxes oscuros */
+    .admin-content .form-check-input {
+        background-color: #4a5568 !important;
+        border-color: #6b7280 !important;
+    }
+
+    .admin-content .form-check-input:checked {
+        background-color: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+    }
+
+    /* Textarea oscuro */
+    .admin-content textarea.form-control {
+        background: #4a5568 !important;
+        border: 1px solid #6b7280 !important;
+        color: #f7fafc !important;
+    }
+
+    /* File input oscuro */
+    .admin-content input[type="file"].form-control {
+        background: #4a5568 !important;
+        border: 1px solid #6b7280 !important;
+        color: #f7fafc !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-4">
+                <!-- Brand -->
+                <div class="sidebar-brand">
+                    <i class="fas fa-gamepad fa-2x mb-3"></i>
+                    <h4>Ctrl+Store</h4>
+                    <p>Panel de Administración</p>
+                </div>
+                
+                <!-- User Info -->
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="fw-bold fs-5">{{ user.get_full_name|default:user.username }}</div>
+                    <small class="opacity-75">Panel de Administración</small>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="nav flex-column">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" 
+                       href="{% url 'authx:admin_dashboard' %}">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}" 
+                       href="{% url 'authx:admin_users' %}">
+                        <i class="fas fa-users"></i>Usuarios
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin_roles' %}active{% endif %}" 
+                       href="{% url 'authx:admin_roles' %}">
+                        <i class="fas fa-user-tag"></i>Roles
+                    </a>
+                    
+                    <hr class="nav-divider">
+                    
+                    <a class="nav-link {% if 'admin_product' in request.resolver_match.url_name %}active{% endif %}" 
+                       href="{% url 'authx:admin_products' %}">
+                        <i class="fas fa-box"></i>Productos
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin_categories' %}active{% endif %}" 
+                       href="{% url 'authx:admin_categories' %}">
+                        <i class="fas fa-tags"></i>Categorías
+                    </a>
+                    
+                    <hr class="nav-divider">
+                    
+                    <a class="nav-link" href="{% url 'catalog:product_list' %}">
+                        <i class="fas fa-home"></i>Volver al Sitio
+                    </a>
+                    <a class="nav-link text-danger" href="{% url 'authx:logout' %}">
+                        <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 admin-content">
+            <!-- Header -->
+            <div class="admin-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0 fw-bold">
+                            <i class="fas fa-cog me-3 text-purple"></i>
+                            {% block admin_title %}Panel de Administración{% endblock %}
+                        </h2>
+                        <p class="text-muted mb-0 mt-2">
+                            <i class="fas fa-clock me-2"></i>
+                            Panel de Administración • Ctrl+Store
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-catalog me-2"></i>Catálogo
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart me-2"></i>Carrito
+                        </a>
+                        <a href="{% url 'authx:admin_dashboard' %}" class="btn btn-primary">
+                            <i class="fas fa-cog me-2"></i>Panel Admin
+                        </a>
+                        <form method="post" action="{% url 'authx:logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i>Salir
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block admin_content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

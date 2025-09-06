@@ -1,10 +1,13 @@
 from pathlib import Path
+import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+env = environ.Env()
+environ.Env.read_env(BASE_DIR / ".env")
 
-SECRET_KEY = "dev-only"
-DEBUG = True
-ALLOWED_HOSTS: list[str] = []
+SECRET_KEY = env("SECRET_KEY", default="dev-only-secret")
+DEBUG = env.bool("DEBUG", default=True)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 INSTALLED_APPS = [
     # Django core
@@ -14,6 +17,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     # Nuestras apps
     "ctrlstore.apps.authx",
     "ctrlstore.apps.catalog",
@@ -22,7 +26,7 @@ INSTALLED_APPS = [
     "ctrlstore.apps.payment",
     "ctrlstore.apps.billing",
     "ctrlstore.apps.analytics",
-    "ctrlstore.apps.common.apps.CommonConfig",
+    "ctrlstore.apps.common",
 ]
 
 MIDDLEWARE = [
@@ -40,7 +44,7 @@ ROOT_URLCONF = "ctrlstore.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # base.html global
+        "DIRS": [BASE_DIR / "templates"],  # base.html aquí
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -55,10 +59,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ctrlstore.wsgi.application"
 
+# DB: por defecto sqlite; en prod usar envs para Postgres
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": env("DB_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": env("DB_NAME", default=BASE_DIR / "db.sqlite3"),
+        "USER": env("DB_USER", default=""),
+        "PASSWORD": env("DB_PASSWORD", default=""),
+        "HOST": env("DB_HOST", default=""),
+        "PORT": env("DB_PORT", default=""),
     }
 }
 
@@ -80,6 +89,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Configuración del modelo de usuario personalizado
+AUTH_USER_MODEL = "authx.User"
+
 LOGIN_URL = "authx:login"
 LOGIN_REDIRECT_URL = "catalog:product_list"
-# LOGOUT_REDIRECT_URL = "catalog:product_list"
+LOGOUT_REDIRECT_URL = "catalog:product_list"

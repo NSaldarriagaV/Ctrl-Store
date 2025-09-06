@@ -3,58 +3,191 @@
 {% block title %}Crear cuenta – Ctrl+Store{% endblock %}
 
 {% block content %}
-<h1>Crear cuenta</h1>
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100 justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+            <div class="bg-gradient-primary rounded-5 p-4 shadow-lg">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-primary text-white text-center py-4 rounded-top-4">
+                        <div class="mb-3">
+                            <i class="fas fa-gamepad fa-3x"></i>
+                        </div>
+                        <h2 class="mb-0 fw-bold">Ctrl+Store</h2>
+                        <p class="mb-0 opacity-75">Únete a la comunidad gaming</p>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <h4 class="text-center mb-4 fw-bold text-dark">
+                            <i class="fas fa-user-plus me-4"></i>Crear Cuenta
+                        </h4>
 
-<form method="post" novalidate aria-labelledby="signup-title" class="form-card">
-  {% csrf_token %}
+                        <form method="post" novalidate>
+                            {% csrf_token %}
 
-  {% if form.non_field_errors %}
-  <div class="alert alert-error" role="alert">
-    {{ form.non_field_errors }}
-  </div>
-  {% endif %}
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-triangle me-3"></i>
+                                {{ form.non_field_errors }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endif %}
 
-  <div class="grid cols-2 gap">
-    <div class="field">
-      <label for="id_username">Usuario</label>
-      {{ form.username|add_class:"input" }}
-      {% if form.username.errors %}
-        <small class="error">{{ form.username.errors|striptags }}</small>
-      {% endif %}
+                            <div class="form-group mb-3">
+                                <label for="id_username" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-4"></i>Usuario
+                                </label>
+                                {{ form.username|add_class:"form-control" }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="fas fa-exclamation-circle me-3"></i>
+                                        {{ form.username.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="id_email" class="form-label fw-semibold">
+                                    <i class="fas fa-envelope me-4"></i>Email
+                                </label>
+                                {{ form.email|add_class:"form-control" }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="fas fa-exclamation-circle me-3"></i>
+                                        {{ form.email.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="id_password1" class="form-label fw-semibold">
+                                    <i class="fas fa-lock me-4"></i>Contraseña
+                                </label>
+                                {{ form.password1|add_class:"form-control" }}
+                                {% if form.password1.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="fas fa-exclamation-circle me-3"></i>
+                                        {{ form.password1.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label for="id_password2" class="form-label fw-semibold">
+                                    <i class="fas fa-lock me-4"></i>Confirmar Contraseña
+                                </label>
+                                {{ form.password2|add_class:"form-control" }}
+                                {% if form.password2.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="fas fa-exclamation-circle me-3"></i>
+                                        {{ form.password2.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-lg fw-bold" type="submit">
+                                    <i class="fas fa-user-plus me-4"></i>Crear Cuenta
+                                </button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <p class="text-muted mb-2">
+                                ¿Ya tienes cuenta?
+                            </p>
+                            <a href="{% url 'authx:login' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt me-4"></i>Iniciar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'catalog:product_list' %}" class="text-white text-decoration-none">
+                        <i class="fas fa-arrow-left me-4"></i>Volver al catálogo
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="field">
-      <label for="id_email">Email (opcional)</label>
-      {{ form.email|add_class:"input" }}
-      {% if form.email.errors %}
-        <small class="error">{{ form.email.errors|striptags }}</small>
-      {% endif %}
-    </div>
-  </div>
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+}
 
-  <div class="grid cols-2 gap">
-    <div class="field">
-      <label for="id_password1">Contraseña</label>
-      {{ form.password1|add_class:"input" }}
-      {% if form.password1.errors %}
-        <small class="error">{{ form.password1.errors|striptags }}</small>
-      {% endif %}
-    </div>
+.rounded-5 {
+    border-radius: 2rem !important;
+}
 
-    <div class="field">
-      <label for="id_password2">Confirmar contraseña</label>
-      {{ form.password2|add_class:"input" }}
-      {% if form.password2.errors %}
-        <small class="error">{{ form.password2.errors|striptags }}</small>
-      {% endif %}
-    </div>
-  </div>
+.card {
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
 
-  <button class="button" type="submit">Crear cuenta</button>
-</form>
+.card-header {
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%) !important;
+    border: none;
+}
 
-<p class="muted">
-  ¿Ya tienes cuenta?
-  <a href="{% url 'authx:login' %}">Inicia sesión</a>
-</p>
+.rounded-4 {
+    border-radius: 1.5rem !important;
+}
+
+.rounded-top-4 {
+    border-top-left-radius: 1.5rem !important;
+    border-top-right-radius: 1.5rem !important;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+    outline: none;
+}
+
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: #6f42c1;
+    color: #6f42c1;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+    transform: translateY(-2px);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+</style>
 {% endblock %}
