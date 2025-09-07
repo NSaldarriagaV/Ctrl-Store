@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Comparador de Productos - Ctrl+Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-light mb-3">
+                    <i class="fas fa-balance-scale text-purple me-3"></i>
+                    Comparador de Productos
+                </h1>
+                <p class="lead text-muted">
+                    Selecciona una categoría para comparar productos lado a lado
+                </p>
+            </div>
+
+            <!-- Categorías -->
+            <div class="row g-4">
+                {% for category in categories %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 compare-category-card">
+                        <div class="card-body text-center p-4">
+                            <div class="category-icon mb-3">
+                                {% if category.category_type == 'celulares_tablets' %}
+                                    <i class="fas fa-mobile-alt fa-3x text-primary"></i>
+                                {% elif category.category_type == 'computadores' %}
+                                    <i class="fas fa-laptop fa-3x text-info"></i>
+                                {% elif category.category_type == 'componentes' %}
+                                    <i class="fas fa-microchip fa-3x text-warning"></i>
+                                {% elif category.category_type == 'audio_video' %}
+                                    <i class="fas fa-tv fa-3x text-success"></i>
+                                {% elif category.category_type == 'gaming' %}
+                                    <i class="fas fa-gamepad fa-3x text-danger"></i>
+                                {% else %}
+                                    <i class="fas fa-box fa-3x text-secondary"></i>
+                                {% endif %}
+                            </div>
+                            <h5 class="card-title text-light">{{ category.name }}</h5>
+                            <p class="card-text text-muted small">
+                                {{ category.products.count }} producto{{ category.products.count|pluralize }}
+                            </p>
+                            <a href="{% url 'catalog:compare_product_select' category.id %}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-arrow-right me-2"></i>Comparar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No hay categorías disponibles para comparar.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Información adicional -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body">
+                            <h5 class="card-title text-light">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                ¿Cómo funciona el comparador?
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                         style="width: 40px; height: 40px;">1</div>
+                                    <p class="text-muted small">Selecciona una categoría</p>
+                                </div>
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                         style="width: 40px; height: 40px;">2</div>
+                                    <p class="text-muted small">Elige 2 productos</p>
+                                </div>
+                                <div class="col-md-4 text-center mb-3">
+                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                         style="width: 40px; height: 40px;">3</div>
+                                    <p class="text-muted small">Compara características</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.compare-category-card {
+    transition: all 0.3s ease;
+    border: 1px solid #404040;
+}
+
+.compare-category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border-color: #6f42c1;
+}
+
+.category-icon {
+    transition: transform 0.3s ease;
+}
+
+.compare-category-card:hover .category-icon {
+    transform: scale(1.1);
+}
+
+.step-number {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}
