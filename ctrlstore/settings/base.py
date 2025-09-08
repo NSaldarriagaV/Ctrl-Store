@@ -52,6 +52,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "ctrlstore.apps.cart.context_processors.cart_info",
             ],
         },
     },
@@ -95,3 +96,6 @@ AUTH_USER_MODEL = "authx.User"
 LOGIN_URL = "authx:login"
 LOGIN_REDIRECT_URL = "catalog:product_list"
 LOGOUT_REDIRECT_URL = "catalog:product_list"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
