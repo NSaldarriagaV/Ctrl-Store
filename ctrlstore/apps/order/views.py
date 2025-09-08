@@ -15,9 +15,8 @@ def _login_with_next_url() -> str:
     No modifica authx ni depende de settings; usa el name namespaced 'authx:login'.
     """
     try:
-        login_url = reverse("authx:login")  # usa tu CustomLoginView ya existente
+        login_url = reverse("authx:login")
     except NoReverseMatch:
-        # Fallback por si el include en urls raíz usa otra ruta base (ajústala si fuera necesario)
         login_url = "/auth/login/"
     next_url = reverse("order:checkout")
     return f"{login_url}?next={next_url}"

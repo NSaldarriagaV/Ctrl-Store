@@ -10,6 +10,7 @@ urlpatterns = [
     path("cart/", include("ctrlstore.apps.cart.urls", namespace="cart")),
     path("order/", include("ctrlstore.apps.order.urls", namespace="order")),
     path("payment/", include("ctrlstore.apps.payment.urls")),
+    path("analytics/", include(("ctrlstore.apps.analytics.urls", "analytics"), namespace="analytics")),
 ]
 
 if settings.DEBUG:
