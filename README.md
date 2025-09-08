@@ -15,7 +15,7 @@ cd Ctrl-Store
 **Windows (PowerShell):**
 ```powershell
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate
 ```
 
 ### 3. Instalar dependencias
@@ -30,21 +30,17 @@ pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
-### 4. Configurar variable de entorno para usar settings de desarrollo
-
-$env:DJANGO_SETTINGS_MODULE = "ctrlstore.settings.dev"
-
-### 5. Migraciones y base de datos
+### 4. Migraciones y base de datos
 ```bash
 python manage.py migrate
 ```
 
-### 6. Crear superusuario (para usar el admin de Django)
+### 5. Crear superusuario (para usar el admin de Django)
 ```bash
 python manage.py createsuperuser
 ```
 
-### 7. Correr el servidor
+### 6. Correr el servidor
 ```bash
 python manage.py runserver
 ```
