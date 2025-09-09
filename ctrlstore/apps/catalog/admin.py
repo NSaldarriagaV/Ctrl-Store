@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from .models import Category, Product, ProductSpecification
 
 @admin.register(Category)
@@ -73,6 +74,12 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('main_image',)
         }),
     )
+
+    def main_image_preview(self, obj):
+        if obj.main_image:
+            return mark_safe(f'<img src="{obj.main_image.url}" style="max-height:140px;border-radius:8px" />')
+        return "—"
+    main_image_preview.short_description = "Vista previa"
     
     def brand(self, obj):
         return obj.brand
