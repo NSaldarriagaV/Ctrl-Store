@@ -1,0 +1,131 @@
+{% load tz %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Factura {{ invoice_number }}</title>
+  <style>
+    /* Compatibles con xhtml2pdf */
+    @page { size: A4; margin: 22mm 16mm; }
+    body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; color: #222; }
+    h1, h2, h3, h4 { margin: 0; }
+    .header { width: 100%; margin-bottom: 16px; }
+    .left  { float: left; width: 60%; }
+    .right { float: right; width: 40%; text-align: right; }
+    .clearfix { clear: both; }
+
+    /* Bloque compacto de info (sin cajas) */
+    .info-blocks { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .info-blocks td { vertical-align: top; width: 50%; padding: 0 6px 0 0; }
+
+    .section-title { font-weight: bold; font-size: 13px; margin: 0 0 6px 0; }
+    .kv { width: 100%; border-collapse: collapse; }
+    .kv td { padding: 3px 0; }
+    .kv td.label { width: 42%; color: #555; font-weight: bold; }
+    .kv td.value { width: 58%; text-align: left; }
+
+    /* Tabla de ítems (igual que antes) */
+    table.items { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    table.items th, table.items td { padding: 8px; border-bottom: 1px solid #ddd; }
+    table.items th { background: #f2f2f2; text-align: left; }
+    .total-row td { border-top: 1px solid #444; }
+
+    .small { font-size: 10px; color: #666; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="left">
+      <h2>{{ company.name }}</h2>
+      <div class="small">{{ company.tax_id }}</div>
+      <div class="small">{{ company.address }}</div>
+      <div class="small">{{ company.email }} · {{ company.phone }}</div>
+    </div>
+    <div class="right">
+      <h2>Factura</h2>
+      <div class="small">No: <strong>{{ invoice_number }}</strong></div>
+      <div class="small">Fecha: <strong>{{ created_at|date:"Y-m-d H:i" }}</strong></div>
+      <div class="small">Orden: <strong>#{{ order.id }}</strong></div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <!-- Bloque compacto: Datos + Pago (sin cajas) -->
+  <table class="info-blocks">
+    <tr>
+      <td>
+        <div class="section-title">Datos de facturación / envío</div>
+        <table class="kv">
+          <tr><td class="label">Nombre</td><td class="value">{{ order.full_name }}</td></tr>
+          <tr>
+            <td class="label">Dirección</td>
+            <td class="value">{{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}</td>
+          </tr>
+          <tr>
+            <td class="label">Ciudad/Estado</td>
+            <td class="value">{{ order.city }}{% if order.state %}, {{ order.state }}{% endif %}</td>
+          </tr>
+          <tr><td class="label">Código Postal</td><td class="value">{{ order.postal_code|default:"—" }}</td></tr>
+          <tr><td class="label">País</td><td class="value">{{ order.country }}</td></tr>
+          <tr>
+            <td class="label">Contacto</td>
+            <td class="value">{{ order.email }}{% if order.phone %} · {{ order.phone }}{% endif %}</td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <div class="section-title">Pago</div>
+        <table class="kv">
+          <tr>
+            <td class="label">Método</td>
+            <td class="value">{{ payment.brand|title }} •••• {{ payment.last4 }} ({{ payment.method }})</td>
+          </tr>
+          <tr><td class="label">Estado</td><td class="value">{{ payment.status }}</td></tr>
+          <tr><td class="label">ID Pago</td><td class="value">#{{ payment.id }}</td></tr>
+          <tr><td class="label">Fecha</td><td class="value">{{ payment.created_at|date:"Y-m-d H:i" }}</td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Tabla de ítems (sin cambios) -->
+  <table class="items">
+    <thead>
+      <tr>
+        <th style="width: 50%;">Producto</th>
+        <th style="width: 15%;">Cantidad</th>
+        <th style="width: 15%;">Precio</th>
+        <th style="width: 20%;">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for it in items %}
+      <tr>
+        <td>{{ it.product.name }}</td>
+        <td>{{ it.quantity }}</td>
+        <td>${{ it.unit_price }}</td>
+        <td>${{ it.line_total }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="total-row">
+        <td colspan="3" style="text-align:right;">Subtotal</td>
+        <td>${{ order.subtotal_amount }}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align:right;">Envío</td>
+        <td>${{ order.shipping_amount }}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align:right;"><strong>Total</strong></td>
+        <td><strong>${{ order.total_amount }}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="small" style="margin-top: 12px;">
+    Gracias por tu compra. Esta factura fue generada electrónicamente el {{ created_at|date:"Y-m-d H:i" }}.
+  </p>
+
+</body>
+</html>

@@ -549,21 +549,20 @@ class AdminProductCreateView(AdminRequiredMixin, TemplateView):
 
 
 class AdminProductEditView(AdminRequiredMixin, TemplateView):
-    """Vista para editar productos."""
     template_name = "authx/admin/product_form.html"
-    
+
     def get_context_data(self, **kwargs):
         from ctrlstore.apps.catalog.models import Product, Category
-        
+        from django.shortcuts import get_object_or_404
+
         context = super().get_context_data(**kwargs)
         product_id = kwargs.get('product_id')
         product = get_object_or_404(Product, id=product_id)
-        
-        # Obtener categorías disponibles
+
         all_categories = Category.objects.all()
         subcategories = Category.objects.filter(parent__isnull=False)
         categories_to_show = subcategories if subcategories.exists() else all_categories
-        
+
         context.update({
             'product': product,
             'categories': categories_to_show,
@@ -571,65 +570,64 @@ class AdminProductEditView(AdminRequiredMixin, TemplateView):
             'title': f'Editar Producto: {product.name}'
         })
         return context
-    
+
     def post(self, request, product_id):
-        from ctrlstore.apps.catalog.models import Product, ProductSpecification, Category
+        from ctrlstore.apps.catalog.models import Product, ProductSpecification
+        from django.shortcuts import get_object_or_404, redirect
         from django.utils.text import slugify
         from django.contrib import messages
-        
+        from django.core.files.uploadedfile import UploadedFile
+
         product = get_object_or_404(Product, id=product_id)
-        
+
         try:
-            # Validar datos obligatorios
-            name = request.POST.get('name', '').strip()
+            name = (request.POST.get('name') or '').strip()
             category_id = request.POST.get('category')
-            price_str = request.POST.get('price', '').strip()
-            
+            price_str = (request.POST.get('price') or '').strip()
+
             if not name or not category_id or not price_str:
                 messages.error(request, 'Nombre, categoría y precio son obligatorios.')
                 return redirect('authx:admin_product_edit', product_id=product_id)
-            
+
             try:
-                price = float(price_str.replace(',', '.'))  # Permitir comas como separador decimal
+                price = float(price_str.replace(',', '.'))
                 if price <= 0:
-                    raise ValueError("El precio debe ser mayor a 0")
-            except (ValueError, TypeError):
+                    raise ValueError
+            except Exception:
                 messages.error(request, f'El precio "{price_str}" no es válido. Use un número mayor a 0 (ej: 100.00).')
                 return redirect('authx:admin_product_edit', product_id=product_id)
-            
+
             try:
-                stock_quantity = int(request.POST.get('stock_quantity', 0))
+                stock_quantity = int(request.POST.get('stock_quantity') or 0)
                 if stock_quantity < 0:
                     stock_quantity = 0
-            except (ValueError, TypeError):
+            except Exception:
                 stock_quantity = 0
-            
-            # Actualizar datos básicos
+
+            # --- Actualizar datos básicos ---
             product.name = name
             product.category_id = category_id
             product.price = price
-            product.description = request.POST.get('description', '')
-            product.short_description = request.POST.get('short_description', '')
+            product.description = request.POST.get('description') or ''
+            product.short_description = request.POST.get('short_description') or ''
             product.stock_quantity = stock_quantity
             product.is_featured = request.POST.get('is_featured') == 'on'
             product.is_active = request.POST.get('is_active') == 'on'
             product.slug = slugify(product.name)
+
+            # --- Imagen principal (NUEVO) ---
+            file = request.FILES.get("main_image")
+            if request.POST.get("remove_main_image") == "on":
+                if product.main_image:
+                    product.main_image.delete(save=False)
+                product.main_image = None
+            elif isinstance(file, UploadedFile):
+                product.main_image.save(file.name, file, save=False)
+
             product.save()
-            
-            # Actualizar especificaciones
-            specs, created = ProductSpecification.objects.get_or_create(product=product)
-            
-            spec_fields = [
-                'brand', 'model', 'operating_system', 'screen_size', 'screen_resolution',
-                'ram_memory', 'internal_storage', 'main_camera', 'front_camera',
-                'battery_capacity', 'connectivity', 'processor', 'graphics_card',
-                'storage_type', 'storage_capacity', 'weight', 'socket_type',
-                'power_consumption', 'frequency', 'memory_type', 'display_technology',
-                'refresh_rate', 'audio_power', 'channels', 'platform_compatibility',
-                'genre', 'age_rating'
-            ]
-            
-            # Campos de texto normales - solo actualizar si existen en el POST
+
+            # --- Especificaciones ---
+            specs, _ = ProductSpecification.objects.get_or_create(product=product)
             text_fields = [
                 'brand', 'model', 'operating_system', 'screen_resolution',
                 'ram_memory', 'internal_storage', 'main_camera', 'front_camera',
@@ -639,37 +637,31 @@ class AdminProductEditView(AdminRequiredMixin, TemplateView):
                 'refresh_rate', 'audio_power', 'channels', 'platform_compatibility',
                 'genre', 'age_rating'
             ]
-            
             for field in text_fields:
-                if field in request.POST:  # Solo actualizar si el campo existe en el formulario
-                    value = request.POST.get(field, '').strip()
-                    setattr(specs, field, value)
-            
-            # Campos decimales especiales - solo actualizar si tienen valor
-            if 'screen_size' in request.POST and request.POST.get('screen_size', '').strip():
+                if field in request.POST:
+                    setattr(specs, field, (request.POST.get(field) or '').strip())
+
+            if request.POST.get('screen_size'):
                 try:
-                    screen_size_value = float(request.POST.get('screen_size').replace(',', '.'))
-                    specs.screen_size = screen_size_value
-                except (ValueError, TypeError):
-                    pass  # Mantener valor anterior si hay error
-                    
-            if 'weight' in request.POST and request.POST.get('weight', '').strip():
+                    specs.screen_size = float(request.POST['screen_size'].replace(',', '.'))
+                except Exception:
+                    pass
+            if request.POST.get('weight'):
                 try:
-                    weight_value = float(request.POST.get('weight').replace(',', '.'))
-                    specs.weight = weight_value
-                except (ValueError, TypeError):
-                    pass  # Mantener valor anterior si hay error
-            
-            # Campo booleano
+                    specs.weight = float(request.POST['weight'].replace(',', '.'))
+                except Exception:
+                    pass
+
             specs.multiplayer = request.POST.get('multiplayer') == 'on'
             specs.save()
-            
+
             messages.success(request, f'Producto "{product.name}" actualizado exitosamente.')
             return redirect('authx:admin_products')
-            
+
         except Exception as e:
-            messages.error(request, f'Error al actualizar el producto: {str(e)}')
+            messages.error(request, f'Error al actualizar el producto: {e}')
             return redirect('authx:admin_product_edit', product_id=product_id)
+
 
 
 class AdminProductDeleteView(AdminRequiredMixin, TemplateView):
