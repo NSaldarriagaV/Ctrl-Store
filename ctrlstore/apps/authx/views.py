@@ -12,7 +12,7 @@ from django.views.generic import FormView, TemplateView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .mixins import AdminRequiredMixin, StaffRequiredMixin
+from .mixins import AdminRequiredMixin, StaffRequiredMixin, StaffAdminMixin
 from .forms import SignupForm, UserEditForm
 
 
@@ -40,11 +40,56 @@ class CustomLoginView(LoginView):
     """Vista de login personalizada."""
     template_name = "authx/login.html"
     success_url = reverse_lazy("catalog:product_list")
+    
+    def get_success_url(self):
+        """Redirige según el rol del usuario después del login."""
+        user = self.request.user
+        
+        # Verificar si el usuario es admin
+        is_admin = (getattr(user, 'is_superuser', False) or 
+                   getattr(user, 'is_admin', False))
+        
+        # Verificar si el usuario es staff
+        is_staff = (hasattr(user, 'role') and 
+                   user.role and 
+                   user.role.name.lower() == 'staff')
+        
+        if is_admin:
+            return reverse_lazy("authx:admin_dashboard")
+        elif is_staff:
+            return reverse_lazy("authx:staff_dashboard")
+        else:
+            return reverse_lazy("catalog:product_list")
 
 
 class CustomLogoutView(LogoutView):
     """Vista de logout personalizada."""
     next_page = reverse_lazy("catalog:product_list")
+
+
+class SmartAdminRedirectView(TemplateView):
+    """Vista que redirige automáticamente según el rol del usuario."""
+    
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_authenticated:
+            return redirect('authx:login')
+        
+        # Verificar si el usuario es admin
+        is_admin = (getattr(request.user, 'is_superuser', False) or 
+                   getattr(request.user, 'is_admin', False))
+        
+        # Verificar si el usuario es staff
+        is_staff = (hasattr(request.user, 'role') and 
+                   request.user.role and 
+                   request.user.role.name.lower() == 'staff')
+        
+        if is_admin:
+            return redirect('authx:admin_dashboard')
+        elif is_staff:
+            return redirect('authx:staff_dashboard')
+        else:
+            messages.error(request, "No tienes permisos para acceder al panel de administración.")
+            return redirect('catalog:product_list')
 
 
 # Vistas del Panel de Administración
@@ -133,6 +178,140 @@ class AdminRolesView(AdminRequiredMixin, TemplateView):
         })
         
         return context
+    
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Maneja la creación de roles."""
+        from ctrlstore.apps.authx.models import Role
+        from django.contrib import messages
+        
+        action = request.POST.get('action')
+        
+        if action == 'create_role':
+            name = request.POST.get('name', '').strip()
+            custom_name = request.POST.get('custom_name', '').strip()
+            description = request.POST.get('description', '').strip()
+            is_active = request.POST.get('is_active') == 'on'
+            
+            if not name:
+                messages.error(request, 'Debe seleccionar un tipo de rol.')
+                return redirect('authx:admin_roles')
+            
+            # Determinar el nombre final del rol
+            if name == 'custom':
+                if not custom_name:
+                    messages.error(request, 'El nombre personalizado del rol es obligatorio.')
+                    return redirect('authx:admin_roles')
+                final_name = custom_name
+            else:
+                final_name = name
+            
+            # Verificar si el rol ya existe
+            if Role.objects.filter(name__iexact=final_name).exists():
+                messages.error(request, f'Ya existe un rol con el nombre "{final_name}".')
+                return redirect('authx:admin_roles')
+            
+            try:
+                Role.objects.create(
+                    name=final_name,
+                    description=description,
+                    is_active=is_active
+                )
+                messages.success(request, f'Rol "{final_name}" creado exitosamente.')
+            except Exception as e:
+                messages.error(request, f'Error al crear el rol: {str(e)}')
+        
+        elif action == 'create_suggested_role':
+            role_name = request.POST.get('role_name', '').strip()
+            
+            # Definir roles sugeridos con sus descripciones
+            suggested_roles = {
+                'Administrador': 'Acceso completo al sistema',
+                'Staff': 'Gestión de productos y pedidos',
+                'Cliente': 'Acceso básico de compras'
+            }
+            
+            if role_name not in suggested_roles:
+                messages.error(request, 'Rol sugerido no válido.')
+                return redirect('authx:admin_roles')
+            
+            # Verificar si el rol ya existe
+            if Role.objects.filter(name__iexact=role_name).exists():
+                messages.error(request, f'Ya existe un rol con el nombre "{role_name}".')
+                return redirect('authx:admin_roles')
+            
+            try:
+                Role.objects.create(
+                    name=role_name,
+                    description=suggested_roles[role_name],
+                    is_active=True
+                )
+                messages.success(request, f'Rol sugerido "{role_name}" creado exitosamente.')
+            except Exception as e:
+                messages.error(request, f'Error al crear el rol sugerido: {str(e)}')
+        
+        elif action == 'edit_role':
+            role_id = request.POST.get('role_id')
+            name = request.POST.get('name', '').strip()
+            custom_name = request.POST.get('custom_name', '').strip()
+            description = request.POST.get('description', '').strip()
+            is_active = request.POST.get('is_active') == 'on'
+            
+            if not role_id:
+                messages.error(request, 'El ID del rol es obligatorio.')
+                return redirect('authx:admin_roles')
+            
+            # Determinar el nombre final del rol
+            if name == 'custom':
+                if not custom_name:
+                    messages.error(request, 'El nombre personalizado del rol es obligatorio.')
+                    return redirect('authx:admin_roles')
+                final_name = custom_name
+            else:
+                final_name = name
+            
+            try:
+                role = Role.objects.get(id=role_id)
+                
+                # Verificar si el nombre ya existe en otro rol
+                if Role.objects.filter(name__iexact=final_name).exclude(id=role_id).exists():
+                    messages.error(request, f'Ya existe otro rol con el nombre "{final_name}".')
+                    return redirect('authx:admin_roles')
+                
+                role.name = final_name
+                role.description = description
+                role.is_active = is_active
+                role.save()
+                
+                messages.success(request, f'Rol "{final_name}" actualizado exitosamente.')
+            except Role.DoesNotExist:
+                messages.error(request, 'El rol especificado no existe.')
+            except Exception as e:
+                messages.error(request, f'Error al actualizar el rol: {str(e)}')
+        
+        elif action == 'delete_role':
+            role_id = request.POST.get('role_id')
+            
+            if not role_id:
+                messages.error(request, 'ID del rol es obligatorio.')
+                return redirect('authx:admin_roles')
+            
+            try:
+                role = Role.objects.get(id=role_id)
+                
+                # Verificar si el rol tiene usuarios asignados
+                if role.users.exists():
+                    messages.error(request, f'No se puede eliminar el rol "{role.name}" porque tiene usuarios asignados.')
+                    return redirect('authx:admin_roles')
+                
+                role_name = role.name
+                role.delete()
+                messages.success(request, f'Rol "{role_name}" eliminado exitosamente.')
+            except Role.DoesNotExist:
+                messages.error(request, 'El rol especificado no existe.')
+            except Exception as e:
+                messages.error(request, f'Error al eliminar el rol: {str(e)}')
+        
+        return redirect('authx:admin_roles')
 
 
 # Vistas para acciones de usuarios
@@ -517,6 +696,360 @@ class AdminCategoriesView(AdminRequiredMixin, TemplateView):
     template_name = "authx/admin/categories.html"
     
     def get_context_data(self, **kwargs):
+        from ctrlstore.apps.catalog.models import Category
+        
+        context = super().get_context_data(**kwargs)
+        
+        # Obtener todas las categorías sin intentar crear nuevas
+        all_categories = Category.objects.all().prefetch_related('products')
+        main_categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories__products')
+        
+        # Estadísticas
+        total_categories = all_categories.count()
+        active_categories = all_categories.filter(is_active=True).count()
+        
+        context.update({
+            'categories': all_categories,
+            'main_categories': main_categories,
+            'total_categories': total_categories,
+            'active_categories': active_categories,
+        })
+        
+        return context
+    
+
+# Vistas específicas para Staff (sin acceso a gestión de usuarios)
+class StaffDashboardView(StaffAdminMixin, TemplateView):
+    """Dashboard para usuarios Staff (sin gestión de usuarios)."""
+    template_name = "authx/admin/staff_dashboard.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        
+        # Estadísticas básicas para el dashboard de Staff
+        from ctrlstore.apps.catalog.models import Category, Product
+        
+        context.update({
+            "total_products": Product.objects.count(),
+            "total_categories": Category.objects.count(),
+            "gaming_products": Product.objects.filter(category__category_type='gaming').count(),
+            "recent_products": Product.objects.select_related("category").order_by("-created_at")[:5],
+        })
+        
+        return context
+
+
+class StaffProductsView(StaffAdminMixin, TemplateView):
+    """Vista para gestión de productos para Staff."""
+    template_name = "authx/admin/staff_products.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        from ctrlstore.apps.catalog.models import Product, Category
+        from django.core.paginator import Paginator
+        from django.db.models import Q
+        
+        context = super().get_context_data(**kwargs)
+        
+        # Filtros
+        search = self.request.GET.get('search', '')
+        category_filter = self.request.GET.get('category', '')
+        status_filter = self.request.GET.get('status', '')
+        
+        # Consulta base
+        products = Product.objects.select_related('category').prefetch_related('specifications')
+        
+        # Aplicar filtros
+        if search:
+            products = products.filter(
+                Q(name__icontains=search) |
+                Q(specifications__brand__icontains=search) |
+                Q(specifications__model__icontains=search)
+            )
+        
+        if category_filter:
+            products = products.filter(category_id=category_filter)
+            
+        if status_filter == 'active':
+            products = products.filter(is_active=True)
+        elif status_filter == 'inactive':
+            products = products.filter(is_active=False)
+        elif status_filter == 'featured':
+            products = products.filter(is_featured=True)
+        elif status_filter == 'out_of_stock':
+            products = products.filter(stock_quantity=0)
+        
+        # Paginación
+        paginator = Paginator(products, 20)
+        page = self.request.GET.get('page')
+        products_page = paginator.get_page(page)
+        
+        context.update({
+            'products': products_page,
+            'categories': Category.objects.filter(parent__isnull=False),  # Solo subcategorías
+            'search': search,
+            'category_filter': category_filter,
+            'status_filter': status_filter,
+            'total_products': Product.objects.count(),
+            'active_products': Product.objects.filter(is_active=True).count(),
+            'featured_products': Product.objects.filter(is_featured=True).count(),
+            'out_of_stock': Product.objects.filter(stock_quantity=0).count(),
+        })
+        
+        return context
+
+
+class StaffProductCreateView(StaffAdminMixin, TemplateView):
+    """Vista para crear productos para Staff."""
+    template_name = "authx/admin/staff_product_form.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        from ctrlstore.apps.catalog.models import Category
+        
+        context = super().get_context_data(**kwargs)
+        
+        # Obtener todas las categorías disponibles
+        all_categories = Category.objects.all()
+        subcategories = Category.objects.filter(parent__isnull=False)
+        
+        # Si no hay subcategorías, mostrar todas las categorías
+        categories_to_show = subcategories if subcategories.exists() else all_categories
+        
+        context.update({
+            'categories': categories_to_show,
+            'action': 'create',
+            'title': 'Agregar Producto'
+        })
+        return context
+    
+    def post(self, request: HttpRequest) -> HttpResponse:
+        from ctrlstore.apps.catalog.models import Product, ProductSpecification, Category
+        from django.utils.text import slugify
+        from django.contrib import messages
+        
+        try:
+            # Validar datos obligatorios
+            name = request.POST.get('name', '').strip()
+            category_id = request.POST.get('category')
+            price_str = request.POST.get('price', '').strip()
+            
+            if not name or not category_id or not price_str:
+                messages.error(request, 'Nombre, categoría y precio son obligatorios.')
+                return redirect('authx:staff_product_create')
+            
+            try:
+                price = float(price_str.replace(',', '.'))  # Permitir comas como separador decimal
+                if price <= 0:
+                    raise ValueError("El precio debe ser mayor a 0")
+            except (ValueError, TypeError):
+                messages.error(request, f'El precio "{price_str}" no es válido. Use un número mayor a 0 (ej: 100.00).')
+                return redirect('authx:staff_product_create')
+            
+            try:
+                stock_quantity = int(request.POST.get('stock_quantity', 0))
+                if stock_quantity < 0:
+                    stock_quantity = 0
+            except (ValueError, TypeError):
+                stock_quantity = 0
+            
+            category = Category.objects.get(id=category_id)
+            
+            # Crear producto
+            product = Product.objects.create(
+                name=name,
+                slug=slugify(name),
+                category=category,
+                price=price,
+                description=request.POST.get('description', ''),
+                short_description=request.POST.get('short_description', ''),
+                stock_quantity=stock_quantity,
+                is_featured=request.POST.get('is_featured') == 'on'
+            )
+            
+            # Crear especificaciones
+            specs_data = {}
+            
+            # Campos de texto
+            text_fields = [
+                'brand', 'model', 'operating_system', 'screen_resolution',
+                'ram_memory', 'internal_storage', 'main_camera', 'front_camera',
+                'battery_capacity', 'connectivity', 'processor', 'graphics_card',
+                'storage_type', 'storage_capacity', 'socket_type',
+                'power_consumption', 'frequency', 'memory_type', 'display_technology',
+                'refresh_rate', 'audio_power', 'channels', 'platform_compatibility',
+                'genre', 'age_rating'
+            ]
+            
+            for field in text_fields:
+                value = request.POST.get(field, '').strip()
+                if value:
+                    specs_data[field] = value
+            
+            # Campos decimales especiales
+            screen_size_str = request.POST.get('screen_size', '').strip()
+            if screen_size_str:
+                try:
+                    specs_data['screen_size'] = float(screen_size_str.replace(',', '.'))
+                except (ValueError, TypeError):
+                    pass  # Ignorar si no es válido
+                    
+            weight_str = request.POST.get('weight', '').strip()
+            if weight_str:
+                try:
+                    specs_data['weight'] = float(weight_str.replace(',', '.'))
+                except (ValueError, TypeError):
+                    pass  # Ignorar si no es válido
+            
+            # Campo booleano
+            specs_data['multiplayer'] = request.POST.get('multiplayer') == 'on'
+            
+            ProductSpecification.objects.create(product=product, **specs_data)
+            
+            messages.success(request, f'Producto "{name}" creado exitosamente.')
+            return redirect('authx:staff_products')
+            
+        except Exception as e:
+            messages.error(request, f'Error al crear el producto: {str(e)}')
+            return redirect('authx:staff_product_create')
+
+
+class StaffProductEditView(StaffAdminMixin, TemplateView):
+    """Vista para editar productos para Staff."""
+    template_name = "authx/admin/staff_product_form.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        from ctrlstore.apps.catalog.models import Product, Category
+        
+        context = super().get_context_data(**kwargs)
+        product_id = kwargs.get('product_id')
+        product = get_object_or_404(Product, id=product_id)
+        
+        # Obtener categorías disponibles
+        all_categories = Category.objects.all()
+        subcategories = Category.objects.filter(parent__isnull=False)
+        categories_to_show = subcategories if subcategories.exists() else all_categories
+        
+        context.update({
+            'product': product,
+            'categories': categories_to_show,
+            'action': 'edit',
+            'title': f'Editar Producto: {product.name}'
+        })
+        return context
+    
+    def post(self, request: HttpRequest, product_id: int) -> HttpResponse:
+        from ctrlstore.apps.catalog.models import Product, ProductSpecification, Category
+        from django.utils.text import slugify
+        from django.contrib import messages
+        
+        product = get_object_or_404(Product, id=product_id)
+        
+        try:
+            # Validar datos obligatorios
+            name = request.POST.get('name', '').strip()
+            category_id = request.POST.get('category')
+            price_str = request.POST.get('price', '').strip()
+            
+            if not name or not category_id or not price_str:
+                messages.error(request, 'Nombre, categoría y precio son obligatorios.')
+                return redirect('authx:staff_product_edit', product_id=product_id)
+            
+            try:
+                price = float(price_str.replace(',', '.'))  # Permitir comas como separador decimal
+                if price <= 0:
+                    raise ValueError("El precio debe ser mayor a 0")
+            except (ValueError, TypeError):
+                messages.error(request, f'El precio "{price_str}" no es válido. Use un número mayor a 0 (ej: 100.00).')
+                return redirect('authx:staff_product_edit', product_id=product_id)
+            
+            try:
+                stock_quantity = int(request.POST.get('stock_quantity', 0))
+                if stock_quantity < 0:
+                    stock_quantity = 0
+            except (ValueError, TypeError):
+                stock_quantity = 0
+            
+            # Actualizar datos básicos
+            product.name = name
+            product.category_id = category_id
+            product.price = price
+            product.description = request.POST.get('description', '')
+            product.short_description = request.POST.get('short_description', '')
+            product.stock_quantity = stock_quantity
+            product.is_featured = request.POST.get('is_featured') == 'on'
+            product.is_active = request.POST.get('is_active') == 'on'
+            product.slug = slugify(product.name)
+            product.save()
+            
+            # Actualizar especificaciones
+            specs, created = ProductSpecification.objects.get_or_create(product=product)
+            
+            # Campos de texto normales - solo actualizar si existen en el POST
+            text_fields = [
+                'brand', 'model', 'operating_system', 'screen_resolution',
+                'ram_memory', 'internal_storage', 'main_camera', 'front_camera',
+                'battery_capacity', 'connectivity', 'processor', 'graphics_card',
+                'storage_type', 'storage_capacity', 'socket_type',
+                'power_consumption', 'frequency', 'memory_type', 'display_technology',
+                'refresh_rate', 'audio_power', 'channels', 'platform_compatibility',
+                'genre', 'age_rating'
+            ]
+            
+            for field in text_fields:
+                if field in request.POST:  # Solo actualizar si el campo existe en el formulario
+                    value = request.POST.get(field, '').strip()
+                    setattr(specs, field, value)
+            
+            # Campos decimales especiales - solo actualizar si tienen valor
+            if 'screen_size' in request.POST and request.POST.get('screen_size', '').strip():
+                try:
+                    screen_size_value = float(request.POST.get('screen_size').replace(',', '.'))
+                    specs.screen_size = screen_size_value
+                except (ValueError, TypeError):
+                    pass  # Mantener valor anterior si hay error
+                    
+            if 'weight' in request.POST and request.POST.get('weight', '').strip():
+                try:
+                    weight_value = float(request.POST.get('weight').replace(',', '.'))
+                    specs.weight = weight_value
+                except (ValueError, TypeError):
+                    pass  # Mantener valor anterior si hay error
+            
+            # Campo booleano
+            specs.multiplayer = request.POST.get('multiplayer') == 'on'
+            specs.save()
+            
+            messages.success(request, f'Producto "{product.name}" actualizado exitosamente.')
+            return redirect('authx:staff_products')
+            
+        except Exception as e:
+            messages.error(request, f'Error al actualizar el producto: {str(e)}')
+            return redirect('authx:staff_product_edit', product_id=product_id)
+
+
+class StaffProductDeleteView(StaffAdminMixin, TemplateView):
+    """Vista para eliminar productos para Staff."""
+    
+    def post(self, request: HttpRequest, product_id: int) -> HttpResponse:
+        from ctrlstore.apps.catalog.models import Product
+        from django.contrib import messages
+        
+        product = get_object_or_404(Product, id=product_id)
+        product_name = product.name
+        
+        try:
+            product.delete()
+            messages.success(request, f'Producto "{product_name}" eliminado exitosamente.')
+        except Exception as e:
+            messages.error(request, f'Error al eliminar el producto: {str(e)}')
+        
+        return redirect('authx:staff_products')
+
+
+class StaffCategoriesView(StaffAdminMixin, TemplateView):
+    """Vista para gestión de categorías para Staff."""
+    template_name = "authx/admin/staff_categories.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         from ctrlstore.apps.catalog.models import Category
         
         context = super().get_context_data(**kwargs)

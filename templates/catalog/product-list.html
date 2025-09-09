@@ -267,11 +267,28 @@
     font-weight: 600;
 }
 
-.form-select, .form-control {
-    background: #4a5568 !important;
-    border: 1px solid #6b7280 !important;
-    color: #f7fafc !important;
-}
+    .form-select, .form-control {
+        background: #4a5568 !important;
+        border: 1px solid #6b7280 !important;
+        color: #f7fafc !important;
+    }
+    
+    .form-select:focus, .form-control:focus {
+        background: #4a5568 !important;
+        border-color: #6f42c1 !important;
+        box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
+        color: #f7fafc !important;
+    }
+    
+    .form-check-input {
+        background-color: #4a5568 !important;
+        border-color: #6b7280 !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+    }
 
 .form-check-label {
     color: #e2e8f0 !important;
@@ -486,6 +503,85 @@
 .pagination .page-item.active .page-link {
     background: #6f42c1;
     border-color: #6f42c1;
+}
+
+/* Estilos adicionales para tema oscuro */
+.btn-primary {
+    background: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background: #5a32a3 !important;
+    border-color: #5a32a3 !important;
+    color: white !important;
+}
+
+.btn-outline-secondary {
+    background: transparent !important;
+    border-color: #6b7280 !important;
+    color: #e2e8f0 !important;
+}
+
+.btn-outline-secondary:hover {
+    background: #6b7280 !important;
+    border-color: #6b7280 !important;
+    color: white !important;
+}
+
+.btn-outline-info {
+    background: transparent !important;
+    border-color: #17a2b8 !important;
+    color: #17a2b8 !important;
+}
+
+.btn-outline-info:hover {
+    background: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+    color: white !important;
+}
+
+.btn-secondary {
+    background: #6b7280 !important;
+    border-color: #6b7280 !important;
+    color: white !important;
+}
+
+.btn-secondary:hover {
+    background: #5a6268 !important;
+    border-color: #5a6268 !important;
+    color: white !important;
+}
+
+/* Asegurar que todos los textos sean visibles */
+.text-muted {
+    color: #9ca3af !important;
+}
+
+.text-white {
+    color: #f7fafc !important;
+}
+
+/* Estilos para badges */
+.badge {
+    background: #4a5568 !important;
+    color: #e2e8f0 !important;
+}
+
+.badge.bg-warning {
+    background: #f59e0b !important;
+    color: #1f2937 !important;
+}
+
+.badge.bg-danger {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.badge.bg-secondary {
+    background: #6b7280 !important;
+    color: white !important;
 }
 
 /* Responsive */

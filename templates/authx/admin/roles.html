@@ -3,6 +3,16 @@
 {% block admin_title %}Gestión de Roles{% endblock %}
 
 {% block admin_content %}
+<!-- Mensajes -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3>Roles del Sistema</h3>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal">
@@ -110,28 +120,36 @@
                         <div class="border rounded p-3">
                             <h6 class="text-primary">Administrador</h6>
                             <p class="text-muted small">Acceso completo al sistema</p>
-                            <button class="btn btn-sm btn-outline-primary">Crear</button>
+                            <form method="post" action="{% url 'authx:admin_roles' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="create_suggested_role">
+                                <input type="hidden" name="role_name" value="Administrador">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Crear</button>
+                            </form>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="border rounded p-3">
                             <h6 class="text-success">Staff</h6>
                             <p class="text-muted small">Gestión de productos y pedidos</p>
-                            <button class="btn btn-sm btn-outline-success">Crear</button>
+                            <form method="post" action="{% url 'authx:admin_roles' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="create_suggested_role">
+                                <input type="hidden" name="role_name" value="Staff">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Crear</button>
+                            </form>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="border rounded p-3">
                             <h6 class="text-warning">Cliente</h6>
                             <p class="text-muted small">Acceso básico de compras</p>
-                            <button class="btn btn-sm btn-outline-warning">Crear</button>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="border rounded p-3">
-                            <h6 class="text-info">Vendedor</h6>
-                            <p class="text-muted small">Gestión de ventas</p>
-                            <button class="btn btn-sm btn-outline-info">Crear</button>
+                            <form method="post" action="{% url 'authx:admin_roles' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="create_suggested_role">
+                                <input type="hidden" name="role_name" value="Cliente">
+                                <button type="submit" class="btn btn-sm btn-outline-warning">Crear</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -180,10 +198,21 @@
             </div>
             <form method="post" action="{% url 'authx:admin_roles' %}">
                 {% csrf_token %}
+                <input type="hidden" name="action" value="create_role">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="role_name" class="form-label">Nombre del Rol</label>
-                        <input type="text" class="form-control" id="role_name" name="name" required>
+                        <select class="form-select" id="role_name" name="name" required>
+                            <option value="">Seleccione un rol...</option>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Cliente">Cliente</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="custom_role_input_create" style="display: none;">
+                        <label for="custom_role_name" class="form-label">Nombre Personalizado</label>
+                        <input type="text" class="form-control" id="custom_role_name" name="custom_name" placeholder="Ingrese el nombre del rol">
                     </div>
                     <div class="mb-3">
                         <label for="role_description" class="form-label">Descripción</label>
@@ -207,13 +236,197 @@
     </div>
 </div>
 
+<!-- Modales para Editar Roles -->
+{% for role in roles %}
+<div class="modal fade" id="editRoleModal{{ role.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Rol: {{ role.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'authx:admin_roles' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit_role">
+                <input type="hidden" name="role_id" value="{{ role.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_role_name_{{ role.id }}" class="form-label">Nombre del Rol</label>
+                        <select class="form-select" id="edit_role_name_{{ role.id }}" name="name" required>
+                            <option value="Administrador" {% if role.name == "Administrador" %}selected{% endif %}>Administrador</option>
+                            <option value="Staff" {% if role.name == "Staff" %}selected{% endif %}>Staff</option>
+                            <option value="Cliente" {% if role.name == "Cliente" %}selected{% endif %}>Cliente</option>
+                            <option value="custom" {% if role.name not in "Administrador,Staff,Cliente" %}selected{% endif %}>Personalizado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="custom_role_input_{{ role.id }}" style="{% if role.name in 'Administrador,Staff,Cliente' %}display: none;{% endif %}">
+                        <label for="edit_custom_role_name_{{ role.id }}" class="form-label">Nombre Personalizado</label>
+                        <input type="text" class="form-control" id="edit_custom_role_name_{{ role.id }}" name="custom_name" value="{% if role.name not in 'Administrador,Staff,Cliente' %}{{ role.name }}{% endif %}" placeholder="Ingrese el nombre del rol">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_role_description_{{ role.id }}" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="edit_role_description_{{ role.id }}" name="description" rows="3">{{ role.description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="edit_role_active_{{ role.id }}" name="is_active" {% if role.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="edit_role_active_{{ role.id }}">
+                                Rol activo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar Rol</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Detalles del Rol -->
+<div class="modal fade" id="viewRoleModal{{ role.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles del Rol: {{ role.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Nombre:</strong>
+                        <p>{{ role.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Estado:</strong>
+                        <p>
+                            {% if role.is_active %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <strong>Descripción:</strong>
+                        <p>{{ role.description|default:"Sin descripción" }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Fecha de Creación:</strong>
+                        <p>{{ role.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Última Actualización:</strong>
+                        <p>{{ role.updated_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <strong>Usuarios Asignados:</strong>
+                        <p>{{ role.users.count }} usuarios</p>
+                        {% if role.users.exists %}
+                            <ul class="list-group mt-2">
+                                {% for user in role.users.all %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ user.username }}
+                                        <span class="badge bg-info">{{ user.get_full_name|default:"Sin nombre" }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 <script>
 function deleteRole(roleId) {
     if (confirm('¿Estás seguro de que quieres eliminar este rol?')) {
-        // Aquí iría la lógica para eliminar el rol
-        console.log('Eliminando rol:', roleId);
+        // Crear un formulario temporal para enviar la solicitud de eliminación
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "authx:admin_roles" %}';
+        
+        // Agregar token CSRF
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Agregar acción
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'delete_role';
+        form.appendChild(actionInput);
+        
+        // Agregar ID del rol
+        const roleIdInput = document.createElement('input');
+        roleIdInput.type = 'hidden';
+        roleIdInput.name = 'role_id';
+        roleIdInput.value = roleId;
+        form.appendChild(roleIdInput);
+        
+        // Enviar formulario
+        document.body.appendChild(form);
+        form.submit();
     }
 }
+
+// Manejar el cambio entre selector y campo personalizado
+document.addEventListener('DOMContentLoaded', function() {
+    // Para el modal de creación
+    const roleSelectCreate = document.getElementById('role_name');
+    const customInputCreate = document.getElementById('custom_role_input_create');
+    const customNameInputCreate = document.getElementById('custom_role_name');
+    
+    if (roleSelectCreate) {
+        roleSelectCreate.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customInputCreate.style.display = 'block';
+                customNameInputCreate.required = true;
+            } else {
+                customInputCreate.style.display = 'none';
+                customNameInputCreate.required = false;
+                customNameInputCreate.value = '';
+            }
+        });
+    }
+    
+    // Para cada modal de edición
+    {% for role in roles %}
+    const roleSelect_{{ role.id }} = document.getElementById('edit_role_name_{{ role.id }}');
+    const customInput_{{ role.id }} = document.getElementById('custom_role_input_{{ role.id }}');
+    const customNameInput_{{ role.id }} = document.getElementById('edit_custom_role_name_{{ role.id }}');
+    
+    if (roleSelect_{{ role.id }}) {
+        roleSelect_{{ role.id }}.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customInput_{{ role.id }}.style.display = 'block';
+                customNameInput_{{ role.id }}.required = true;
+            } else {
+                customInput_{{ role.id }}.style.display = 'none';
+                customNameInput_{{ role.id }}.required = false;
+                customNameInput_{{ role.id }}.value = '';
+            }
+        });
+    }
+    {% endfor %}
+});
 </script>
 
 <style>
@@ -430,6 +643,16 @@ function deleteRole(roleId) {
     box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
 }
 
+/* Select options styling */
+.form-select option {
+    background: #3a3a3a !important;
+    color: #ecf0f1 !important;
+}
+
+.form-select option:hover {
+    background: #4a4a4a !important;
+}
+
 .form-label {
     color: #ecf0f1 !important;
     font-weight: 500;
@@ -457,6 +680,48 @@ h3, h5, h6 {
 /* Divider */
 hr {
     border-color: #404040 !important;
+}
+
+/* List group styling */
+.list-group-item {
+    background: #3a3a3a !important;
+    border-color: #404040 !important;
+    color: #ecf0f1 !important;
+}
+
+.list-group-item:hover {
+    background: #4a4a4a !important;
+}
+
+/* Alert styling */
+.alert {
+    background: #3a3a3a !important;
+    border-color: #404040 !important;
+    color: #ecf0f1 !important;
+}
+
+.alert-success {
+    background: #1e4d2b !important;
+    border-color: #28a745 !important;
+    color: #d4edda !important;
+}
+
+.alert-danger {
+    background: #4d1e1e !important;
+    border-color: #dc3545 !important;
+    color: #f8d7da !important;
+}
+
+.alert-warning {
+    background: #4d3e1e !important;
+    border-color: #ffc107 !important;
+    color: #fff3cd !important;
+}
+
+.alert-info {
+    background: #1e3d4d !important;
+    border-color: #17a2b8 !important;
+    color: #d1ecf1 !important;
 }
 </style>
 {% endblock %}

@@ -38,3 +38,26 @@ class StaffRequiredMixin:
             return redirect(reverse_lazy("catalog:product_list"))
         
         return super().dispatch(request, *args, **kwargs)
+
+
+class StaffAdminMixin:
+    """Mixin para usuarios Staff con acceso al panel de admin (sin gestión de usuarios)."""
+    
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_authenticated:
+            messages.error(request, "Debes iniciar sesión para acceder al panel de administración.")
+            return redirect(reverse_lazy("authx:login"))
+        
+        # Verificar si el usuario es admin o staff
+        is_admin = (getattr(request.user, 'is_superuser', False) or 
+                   getattr(request.user, 'is_admin', False))
+        
+        is_staff = (hasattr(request.user, 'role') and 
+                   request.user.role and 
+                   request.user.role.name.lower() == 'staff')
+        
+        if not (is_admin or is_staff):
+            messages.error(request, "No tienes permisos para acceder al panel de administración.")
+            return redirect(reverse_lazy("catalog:product_list"))
+        
+        return super().dispatch(request, *args, **kwargs)

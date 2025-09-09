@@ -1,0 +1,231 @@
+{% extends "authx/admin/staff_base.html" %}
+
+{% block admin_title %}Gestión de Productos{% endblock %}
+
+{% block admin_content %}
+<!-- Header -->
+<div class="admin-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">Gestión de Productos</h2>
+            <p class="text-muted mb-0">Administra el catálogo de productos del sistema</p>
+        </div>
+        <a href="{% url 'authx:staff_product_create' %}" class="btn btn-admin">
+            <i class="fas fa-plus me-2"></i>Agregar Producto
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_products }}</div>
+            <div class="stats-label">Total Productos</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ active_products }}</div>
+            <div class="stats-label">Productos Activos</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ featured_products }}</div>
+            <div class="stats-label">Productos Destacados</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ out_of_stock }}</div>
+            <div class="stats-label">Sin Stock</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" class="form-control form-control-admin" id="search" name="search" 
+                   value="{{ search }}" placeholder="Nombre, marca o modelo...">
+        </div>
+        <div class="col-md-3">
+            <label for="category" class="form-label">Categoría</label>
+            <select class="form-control form-control-admin" id="category" name="category">
+                <option value="">Todas las categorías</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category_filter == category.id|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="status" class="form-label">Estado</label>
+            <select class="form-control form-control-admin" id="status" name="status">
+                <option value="">Todos los estados</option>
+                <option value="active" {% if status_filter == "active" %}selected{% endif %}>Activos</option>
+                <option value="inactive" {% if status_filter == "inactive" %}selected{% endif %}>Inactivos</option>
+                <option value="featured" {% if status_filter == "featured" %}selected{% endif %}>Destacados</option>
+                <option value="out_of_stock" {% if status_filter == "out_of_stock" %}selected{% endif %}>Sin Stock</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">&nbsp;</label>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-admin flex-fill">
+                    <i class="fas fa-search"></i>
+                </button>
+                <a href="{% url 'authx:staff_products' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Products Table -->
+<div class="admin-card">
+    {% if products %}
+        <div class="table-responsive">
+            <table class="table table-admin">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 50px; height: 50px;">
+                                        {{ product.name|first|upper }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <strong>{{ product.name }}</strong>
+                                    {% if product.short_description %}
+                                        <br><small class="text-muted">{{ product.short_description|truncatewords:10 }}</small>
+                                    {% endif %}
+                                    {% if product.is_featured %}
+                                        <br><span class="badge badge-warning badge-admin">Destacado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                                <td>
+                                    <span class="badge badge-primary badge-admin">{{ product.category.name }}</span>
+                                </td>
+                        <td>
+                            <strong class="text-success">${{ product.price|floatformat:2 }}</strong>
+                        </td>
+                        <td>
+                            {% if product.stock_quantity > 0 %}
+                                <span class="badge badge-success badge-admin">{{ product.stock_quantity }}</span>
+                            {% else %}
+                                <span class="badge badge-danger badge-admin">Sin Stock</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.is_active %}
+                                <span class="badge badge-success badge-admin">Activo</span>
+                            {% else %}
+                                <span class="badge badge-warning badge-admin">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ product.created_at|date:"d/m/Y" }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'authx:staff_product_edit' product.id %}" 
+                                   class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                        onclick="deleteProduct({{ product.id }})" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if products.has_other_pages %}
+            <nav aria-label="Paginación de productos" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if products.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Primera</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Anterior</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Página {{ products.number }} de {{ products.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Siguiente</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Última</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-box fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No se encontraron productos</h5>
+            <p class="text-muted">
+                {% if search or category_filter or status_filter %}
+                    No hay productos que coincidan con los filtros aplicados.
+                {% else %}
+                    Aún no hay productos en el sistema.
+                {% endif %}
+            </p>
+            <a href="{% url 'authx:staff_product_create' %}" class="btn btn-admin">
+                <i class="fas fa-plus me-2"></i>Agregar Primer Producto
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Delete Form -->
+<form id="deleteForm" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<script>
+function deleteProduct(productId) {
+    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+        const form = document.getElementById('deleteForm');
+        form.action = '{% url "authx:staff_product_delete" 0 %}'.replace('0', productId);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}
