@@ -37,6 +37,15 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = "catalog/product-detail.html"
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            record_product_view(request, self.object)
+        except Exception:
+            pass
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 # Vistas del Comparador
 class CompareCategorySelectView(TemplateView):
@@ -229,15 +238,3 @@ class CompareProductsView(TemplateView):
             })
         
         return comparison
-
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-
-    # registrar vista (dedupe 1h por sesión/producto)
-    try:
-        record_product_view(request, product)
-    except Exception:
-        # no bloquear la página por errores de tracking
-        pass
-
-    return render(request, "catalog/product-detail.html", {"product": product})
