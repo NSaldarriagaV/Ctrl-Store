@@ -584,6 +584,72 @@
     color: white !important;
 }
 
+/* Mejora para imágenes de productos */
+.product-image img {
+    display: block;      /* evita espacio fantasma */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Estilos para Top Recomendados */
+.top-card {
+    background: #2d3748 !important;
+    border: 1px solid #4a5568 !important;
+    border-radius: 1rem !important;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.top-card .card-header {
+    background: #374151 !important;
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid #4a5568 !important;
+}
+
+.top-item {
+    text-decoration: none;
+    color: #e2e8f0;
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.top-item:hover {
+    transform: translateY(-3px);
+    border-color: #6f42c1;
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    color: #e2e8f0;
+}
+
+.top-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #374151;
+    flex: 0 0 56px;
+}
+
+.top-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.top-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    color: #9ca3af;
+    font-size: 1.2rem;
+}
+
+.top-name {
+    max-width: 220px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .catalog-title {
@@ -602,6 +668,10 @@
     
     .product-actions {
         justify-content: center;
+    }
+    
+    .top-name { 
+        max-width: 140px; 
     }
 }
 </style>
