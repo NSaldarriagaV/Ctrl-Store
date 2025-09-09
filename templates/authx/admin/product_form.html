@@ -145,12 +145,21 @@
                     <div class="mb-3">
                         <label for="main_image" class="form-label">Imagen Principal</label>
                         <input type="file" class="form-control" id="main_image" name="main_image" accept="image/*">
+
                         {% if product and product.main_image %}
-                            <div class="mt-2">
-                                <img src="{{ product.main_image.url }}" alt="Imagen actual" class="img-thumbnail" style="max-width: 150px;">
+                            <div class="mt-2 d-flex align-items-center gap-3">
+                            <img src="{{ product.main_image.url }}" alt="Imagen actual"
+                                class="img-thumbnail" style="max-width:150px;">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="remove_main_image" name="remove_main_image">
+                                <label class="form-check-label" for="remove_main_image">
+                                Quitar imagen actual
+                                </label>
+                            </div>
                             </div>
                         {% endif %}
                     </div>
+
                 </div>
             </div>
         </div>

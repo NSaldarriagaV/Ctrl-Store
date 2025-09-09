@@ -38,16 +38,19 @@
                             <i class="fas fa-balance-scale me-2"></i>Comparador
                         </a>
                     </li>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-outline-light mx-2" href="#">
-                                <i class="fas fa-shopping-cart me-2"></i>Carrito
-                            </a>
-                        </li>
-                    {% endif %}
-                </a>
+                </ul>
                 <!-- User Actions -->
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light mx-2 position-relative" href="{% url 'cart:detail' %}">
+                            <i class="fas fa-shopping-cart me-2"></i>Carrito
+                            {% if cart_items_count and cart_items_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ cart_items_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
                     {% if user.is_authenticated %}
                         {% if user.is_admin or user.is_superuser %}
                             <li class="nav-item">
