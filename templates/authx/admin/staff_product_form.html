@@ -1,0 +1,271 @@
+{% extends "authx/admin/staff_base.html" %}
+
+{% block admin_title %}{{ title }}{% endblock %}
+
+{% block admin_content %}
+<!-- Header -->
+<div class="admin-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">{{ title }}</h2>
+            <p class="text-muted mb-0">
+                {% if action == 'create' %}
+                    Completa la información para agregar un nuevo producto
+                {% else %}
+                    Modifica la información del producto
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'authx:staff_products' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Productos
+        </a>
+    </div>
+</div>
+
+<!-- Form -->
+<div class="admin-card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Basic Information -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>Información Básica
+                </h4>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8 mb-3">
+                <label for="name" class="form-label">Nombre del Producto *</label>
+                <input type="text" class="form-control form-control-admin" id="name" name="name" 
+                       value="{% if product %}{{ product.name }}{% endif %}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="category" class="form-label">Categoría *</label>
+                <select class="form-control form-control-admin" id="category" name="category" required>
+                    <option value="">Seleccionar categoría</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" 
+                                {% if product and product.category.id == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="price" class="form-label">Precio *</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control form-control-admin" id="price" name="price" 
+                           value="{% if product %}{{ product.price }}{% endif %}" 
+                           step="0.01" min="0" required>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="stock_quantity" class="form-label">Cantidad en Stock</label>
+                <input type="number" class="form-control form-control-admin" id="stock_quantity" name="stock_quantity" 
+                       value="{% if product %}{{ product.stock_quantity }}{% else %}0{% endif %}" min="0">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12 mb-3">
+                <label for="short_description" class="form-label">Descripción Corta</label>
+                <input type="text" class="form-control form-control-admin" id="short_description" name="short_description" 
+                       value="{% if product %}{{ product.short_description }}{% endif %}" 
+                       placeholder="Breve descripción del producto">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12 mb-3">
+                <label for="description" class="form-label">Descripción Completa</label>
+                <textarea class="form-control form-control-admin" id="description" name="description" rows="4" 
+                          placeholder="Descripción detallada del producto">{% if product %}{{ product.description }}{% endif %}</textarea>
+            </div>
+        </div>
+        
+        <!-- Status Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-cog me-2 text-primary"></i>Configuración
+                </h4>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                           {% if not product or product.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                        Producto Activo
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" 
+                           {% if product and product.is_featured %}checked{% endif %}>
+                    <label class="form-check-label" for="is_featured">
+                        Producto Destacado
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Specifications -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-list me-2 text-primary"></i>Especificaciones Técnicas
+                </h4>
+                <p class="text-muted">Completa las especificaciones relevantes para este producto</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="brand" class="form-label">Marca</label>
+                <input type="text" class="form-control form-control-admin" id="brand" name="brand" 
+                       value="{% if product and product.specifications %}{{ product.specifications.brand }}{% endif %}" 
+                       placeholder="Ej: Samsung, Apple, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="model" class="form-label">Modelo</label>
+                <input type="text" class="form-control form-control-admin" id="model" name="model" 
+                       value="{% if product and product.specifications %}{{ product.specifications.model }}{% endif %}" 
+                       placeholder="Ej: iPhone 15, Galaxy S24, etc.">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="operating_system" class="form-label">Sistema Operativo</label>
+                <input type="text" class="form-control form-control-admin" id="operating_system" name="operating_system" 
+                       value="{% if product and product.specifications %}{{ product.specifications.operating_system }}{% endif %}" 
+                       placeholder="Ej: iOS, Android, Windows, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="processor" class="form-label">Procesador</label>
+                <input type="text" class="form-control form-control-admin" id="processor" name="processor" 
+                       value="{% if product and product.specifications %}{{ product.specifications.processor }}{% endif %}" 
+                       placeholder="Ej: A17 Pro, Snapdragon 8 Gen 3, etc.">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="ram_memory" class="form-label">Memoria RAM</label>
+                <input type="text" class="form-control form-control-admin" id="ram_memory" name="ram_memory" 
+                       value="{% if product and product.specifications %}{{ product.specifications.ram_memory }}{% endif %}" 
+                       placeholder="Ej: 8GB, 16GB, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="internal_storage" class="form-label">Almacenamiento Interno</label>
+                <input type="text" class="form-control form-control-admin" id="internal_storage" name="internal_storage" 
+                       value="{% if product and product.specifications %}{{ product.specifications.internal_storage }}{% endif %}" 
+                       placeholder="Ej: 128GB, 256GB, 1TB, etc.">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="screen_size" class="form-label">Tamaño de Pantalla (pulgadas)</label>
+                <input type="number" class="form-control form-control-admin" id="screen_size" name="screen_size" 
+                       value="{% if product and product.specifications %}{{ product.specifications.screen_size }}{% endif %}" 
+                       step="0.1" min="0" placeholder="Ej: 6.1, 15.6, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="screen_resolution" class="form-label">Resolución de Pantalla</label>
+                <input type="text" class="form-control form-control-admin" id="screen_resolution" name="screen_resolution" 
+                       value="{% if product and product.specifications %}{{ product.specifications.screen_resolution }}{% endif %}" 
+                       placeholder="Ej: 1920x1080, 4K, etc.">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="main_camera" class="form-label">Cámara Principal</label>
+                <input type="text" class="form-control form-control-admin" id="main_camera" name="main_camera" 
+                       value="{% if product and product.specifications %}{{ product.specifications.main_camera }}{% endif %}" 
+                       placeholder="Ej: 48MP, 108MP, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="battery_capacity" class="form-label">Capacidad de Batería</label>
+                <input type="text" class="form-control form-control-admin" id="battery_capacity" name="battery_capacity" 
+                       value="{% if product and product.specifications %}{{ product.specifications.battery_capacity }}{% endif %}" 
+                       placeholder="Ej: 4000mAh, 5000mAh, etc.">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="connectivity" class="form-label">Conectividad</label>
+                <input type="text" class="form-control form-control-admin" id="connectivity" name="connectivity" 
+                       value="{% if product and product.specifications %}{{ product.specifications.connectivity }}{% endif %}" 
+                       placeholder="Ej: WiFi 6, Bluetooth 5.3, 5G, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="weight" class="form-label">Peso (gramos)</label>
+                <input type="number" class="form-control form-control-admin" id="weight" name="weight" 
+                       value="{% if product and product.specifications %}{{ product.specifications.weight }}{% endif %}" 
+                       step="0.1" min="0" placeholder="Ej: 174, 200, etc.">
+            </div>
+        </div>
+        
+        <!-- Gaming Specific Fields -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="genre" class="form-label">Género (para juegos)</label>
+                <input type="text" class="form-control form-control-admin" id="genre" name="genre" 
+                       value="{% if product and product.specifications %}{{ product.specifications.genre }}{% endif %}" 
+                       placeholder="Ej: Acción, RPG, Estrategia, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="platform_compatibility" class="form-label">Compatibilidad de Plataforma</label>
+                <input type="text" class="form-control form-control-admin" id="platform_compatibility" name="platform_compatibility" 
+                       value="{% if product and product.specifications %}{{ product.specifications.platform_compatibility }}{% endif %}" 
+                       placeholder="Ej: PC, PlayStation, Xbox, Nintendo Switch, etc.">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="multiplayer" name="multiplayer" 
+                           {% if product and product.specifications and product.specifications.multiplayer %}checked{% endif %}>
+                    <label class="form-check-label" for="multiplayer">
+                        Multijugador (para juegos)
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'authx:staff_products' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-admin">
+                        <i class="fas fa-save me-2"></i>
+                        {% if action == 'create' %}
+                            Crear Producto
+                        {% else %}
+                            Actualizar Producto
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
