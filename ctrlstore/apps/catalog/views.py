@@ -1,7 +1,8 @@
 from django.views.generic import ListView, DetailView, TemplateView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from .models import Product, Category
+from ctrlstore.apps.analytics.services import record_product_view
 
 class ProductListView(ListView):
     model = Product
@@ -228,3 +229,15 @@ class CompareProductsView(TemplateView):
             })
         
         return comparison
+
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+
+    # registrar vista (dedupe 1h por sesión/producto)
+    try:
+        record_product_view(request, product)
+    except Exception:
+        # no bloquear la página por errores de tracking
+        pass
+
+    return render(request, "catalog/product-detail.html", {"product": product})
