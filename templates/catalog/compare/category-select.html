@@ -20,33 +20,70 @@
 
             <!-- Categorías -->
             <div class="row g-4">
-                {% for category in categories %}
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 compare-category-card">
-                        <div class="card-body text-center p-4">
-                            <div class="category-icon mb-3">
-                                {% if category.category_type == 'celulares_tablets' %}
-                                    <i class="fas fa-mobile-alt fa-3x text-primary"></i>
-                                {% elif category.category_type == 'computadores' %}
-                                    <i class="fas fa-laptop fa-3x text-info"></i>
-                                {% elif category.category_type == 'componentes' %}
-                                    <i class="fas fa-microchip fa-3x text-warning"></i>
-                                {% elif category.category_type == 'audio_video' %}
-                                    <i class="fas fa-tv fa-3x text-success"></i>
-                                {% elif category.category_type == 'gaming' %}
-                                    <i class="fas fa-gamepad fa-3x text-danger"></i>
-                                {% else %}
-                                    <i class="fas fa-box fa-3x text-secondary"></i>
-                                {% endif %}
+                {% for main_category in main_categories %}
+                <div class="col-12">
+                    <div class="card compare-category-card">
+                        <div class="card-header bg-dark border-secondary">
+                            <div class="d-flex align-items-center">
+                                <div class="category-icon me-3">
+                                    {% if main_category.category_type == 'celulares_tablets' %}
+                                        <i class="fas fa-mobile-alt fa-2x text-primary"></i>
+                                    {% elif main_category.category_type == 'computadores' %}
+                                        <i class="fas fa-laptop fa-2x text-info"></i>
+                                    {% elif main_category.category_type == 'componentes' %}
+                                        <i class="fas fa-microchip fa-2x text-warning"></i>
+                                    {% elif main_category.category_type == 'audio_video' %}
+                                        <i class="fas fa-tv fa-2x text-success"></i>
+                                    {% elif main_category.category_type == 'gaming' %}
+                                        <i class="fas fa-gamepad fa-2x text-danger"></i>
+                                    {% else %}
+                                        <i class="fas fa-box fa-2x text-secondary"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="card-title text-light mb-0">{{ main_category.name }}</h5>
+                                    <small class="text-muted">
+                                        {% if main_category.products.count > 0 %}
+                                            {{ main_category.products.count }} producto{{ main_category.products.count|pluralize }} directo{{ main_category.products.count|pluralize }}
+                                        {% else %}
+                                            {{ main_category.get_total_products_count }} producto{{ main_category.get_total_products_count|pluralize }} en subcategorías
+                                        {% endif %}
+                                    </small>
+                                </div>
                             </div>
-                            <h5 class="card-title text-light">{{ category.name }}</h5>
-                            <p class="card-text text-muted small">
-                                {{ category.products.count }} producto{{ category.products.count|pluralize }}
-                            </p>
-                            <a href="{% url 'catalog:compare_product_select' category.id %}" 
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-arrow-right me-2"></i>Comparar
-                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if main_category.products.count > 0 %}
+                                <!-- Categoría principal con productos directos -->
+                                <div class="text-center">
+                                    <a href="{% url 'catalog:compare_product_select' main_category.id %}" 
+                                       class="btn btn-primary">
+                                        <i class="fas fa-balance-scale me-2"></i>Comparar {{ main_category.name }}
+                                    </a>
+                                </div>
+                            {% else %}
+                                <!-- Mostrar subcategorías -->
+                                <div class="row g-3">
+                                    {% for subcategory in main_category.subcategories_with_products %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="subcategory-card p-3 border rounded">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <h6 class="text-light mb-1">{{ subcategory.name }}</h6>
+                                                    <small class="text-muted">
+                                                        {{ subcategory.products.count }} producto{{ subcategory.products.count|pluralize }}
+                                                    </small>
+                                                </div>
+                                                <a href="{% url 'catalog:compare_product_select' subcategory.id %}" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -98,6 +135,7 @@
 .compare-category-card {
     transition: all 0.3s ease;
     border: 1px solid #404040;
+    background: #2d3748;
 }
 
 .compare-category-card:hover {
@@ -114,9 +152,60 @@
     transform: scale(1.1);
 }
 
+.subcategory-card {
+    background: #374151;
+    border: 1px solid #4a5568 !important;
+    transition: all 0.3s ease;
+}
+
+.subcategory-card:hover {
+    background: #4a5568;
+    border-color: #6f42c1 !important;
+    transform: translateY(-2px);
+}
+
 .step-number {
     font-weight: bold;
     font-size: 1.1rem;
+}
+
+/* Estilos para el tema oscuro */
+.card-header {
+    background: #374151 !important;
+    border-bottom: 1px solid #4a5568 !important;
+}
+
+.card-body {
+    background: #2d3748 !important;
+}
+
+.text-light {
+    color: #f7fafc !important;
+}
+
+.text-muted {
+    color: #9ca3af !important;
+}
+
+.btn-primary {
+    background: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+}
+
+.btn-primary:hover {
+    background: #5a32a3 !important;
+    border-color: #5a32a3 !important;
+}
+
+.btn-outline-primary {
+    color: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+}
+
+.btn-outline-primary:hover {
+    background: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+    color: white !important;
 }
 </style>
 {% endblock %}

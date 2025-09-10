@@ -5,7 +5,7 @@ class ProductSalesAggregate(models.Model):
     """
     Acumulado total de ventas por producto (unidades y revenue).
     """
-    # 🔁 USAR STRING LAZY EN VEZ DE apps.get_model
+    #  USAR STRING LAZY EN VEZ DE apps.get_model
     product = models.OneToOneField(
         "catalog.Product",
         on_delete=models.CASCADE,
@@ -30,7 +30,7 @@ class ProcessedOrder(models.Model):
     Marca que una Order (paid) ya fue contabilizada en analytics
     para asegurar idempotencia incluso si el signal corre varias veces.
     """
-    # 🔁 USAR STRING LAZY
+    # USAR STRING LAZY
     order = models.OneToOneField(
         "order.Order",
         on_delete=models.CASCADE,

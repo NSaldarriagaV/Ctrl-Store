@@ -11,6 +11,13 @@ from .views import (
     AdminProductEditView,
     AdminProductDeleteView,
     AdminCategoriesView,
+    StaffDashboardView,
+    StaffProductsView,
+    StaffProductCreateView,
+    StaffProductEditView,
+    StaffProductDeleteView,
+    StaffCategoriesView,
+    SmartAdminRedirectView,
     CustomLoginView,
     CustomLogoutView,
     SignupView,
@@ -30,6 +37,9 @@ urlpatterns = [
     path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("signup/", SignupView.as_view(), name="signup"),
     
+    # Redirección inteligente
+    path("admin/", SmartAdminRedirectView.as_view(), name="smart_admin_redirect"),
+    
     # Panel de administración
     path("admin/dashboard/", AdminDashboardView.as_view(), name="admin_dashboard"),
     path("admin/users/", AdminUsersView.as_view(), name="admin_users"),
@@ -41,6 +51,14 @@ urlpatterns = [
     path("admin/products/<int:product_id>/edit/", AdminProductEditView.as_view(), name="admin_product_edit"),
     path("admin/products/<int:product_id>/delete/", AdminProductDeleteView.as_view(), name="admin_product_delete"),
     path("admin/categories/", AdminCategoriesView.as_view(), name="admin_categories"),
+    
+    # Panel de Staff (sin gestión de usuarios)
+    path("staff/dashboard/", StaffDashboardView.as_view(), name="staff_dashboard"),
+    path("staff/products/", StaffProductsView.as_view(), name="staff_products"),
+    path("staff/products/create/", StaffProductCreateView.as_view(), name="staff_product_create"),
+    path("staff/products/<int:product_id>/edit/", StaffProductEditView.as_view(), name="staff_product_edit"),
+    path("staff/products/<int:product_id>/delete/", StaffProductDeleteView.as_view(), name="staff_product_delete"),
+    path("staff/categories/", StaffCategoriesView.as_view(), name="staff_categories"),
     
     # Acciones de usuarios
     path("admin/users/<int:user_id>/detail/", UserDetailView.as_view(), name="user_detail"),

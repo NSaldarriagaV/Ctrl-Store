@@ -1,0 +1,156 @@
+{% extends "authx/admin/staff_base.html" %}
+
+{% block admin_title %}Categorías{% endblock %}
+
+{% block admin_content %}
+<!-- Header -->
+<div class="admin-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">Categorías del Sistema</h2>
+            <p class="text-muted mb-0">Visualiza las categorías de productos disponibles</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_categories }}</div>
+            <div class="stats-label">Total Categorías</div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ active_categories }}</div>
+            <div class="stats-label">Categorías Activas</div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories List -->
+<div class="admin-card">
+    {% if categories %}
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 50px; height: 50px;">
+                                    {{ category.name|first|upper }}
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-1">{{ category.name }}</h5>
+                                    {% if category.parent %}
+                                        <small class="text-muted">Subcategoría de: {{ category.parent.name }}</small>
+                                    {% else %}
+                                        <small class="text-muted">Categoría Principal</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% if category.description %}
+                                <p class="card-text text-muted">{{ category.description|truncatewords:15 }}</p>
+                            {% endif %}
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge badge-primary badge-admin">
+                                        {{ category.products.count }} productos
+                                    </span>
+                                    {% if category.is_active %}
+                                        <span class="badge badge-success badge-admin">Activa</span>
+                                    {% else %}
+                                        <span class="badge badge-warning badge-admin">Inactiva</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% if category.subcategories.exists %}
+                                <div class="mt-3">
+                                    <h6 class="text-muted mb-2">Subcategorías:</h6>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        {% for subcategory in category.subcategories.all %}
+                                            <span class="badge badge-primary badge-admin">{{ subcategory.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No hay categorías disponibles</h5>
+            <p class="text-muted">Las categorías serán creadas por los administradores del sistema.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Category Tree View -->
+{% if main_categories %}
+<div class="admin-card mt-4">
+    <h4 class="mb-3">
+        <i class="fas fa-sitemap me-2 text-primary"></i>Estructura de Categorías
+    </h4>
+    
+    <div class="row">
+        {% for main_category in main_categories %}
+            <div class="col-md-6 mb-4">
+                <div class="border rounded p-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
+                             style="width: 30px; height: 30px;">
+                            {{ main_category.name|first|upper }}
+                        </div>
+                        <strong>{{ main_category.name }}</strong>
+                        <span class="badge badge-primary badge-admin ms-2">{{ main_category.get_total_products_count }}</span>
+                    </div>
+                    
+                    {% if main_category.subcategories.exists %}
+                        <div class="ms-4">
+                            <h6 class="text-muted mb-2">Subcategorías:</h6>
+                            {% for subcategory in main_category.subcategories.all %}
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-angle-right text-muted me-2"></i>
+                                    <span>{{ subcategory.name }}</span>
+                                    <span class="badge badge-primary badge-admin ms-2">{{ subcategory.products.count }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Info Card -->
+<div class="admin-card mt-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h5 class="mb-2">
+                <i class="fas fa-info-circle me-2 text-info"></i>Información sobre Categorías
+            </h5>
+            <p class="text-muted mb-0">
+                Las categorías organizan los productos del sistema. Como miembro del personal de Staff, 
+                puedes visualizar todas las categorías disponibles y ver cuántos productos pertenecen a cada una.
+            </p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="d-flex flex-column">
+                <span class="badge badge-primary badge-admin mb-2">Solo Visualización</span>
+                <span class="badge badge-primary badge-admin mb-2">Estructura Jerárquica</span>
+                <span class="badge badge-primary badge-admin">Contador de Productos</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -40,7 +40,14 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 6. Correr el servidor
+### 6. Correr el servidor cada vez que se abra el proyecto
+```bash
+# Configurar variable de entorno para usar settings de desarrollo
+$env:DJANGO_SETTINGS_MODULE = "ctrlstore.settings.dev"
+# Ejecutar servidor Django
+python manage.py runserver
+```
+### 7. Correr el servidor
 ```bash
 python manage.py runserver
 ```
@@ -55,5 +62,5 @@ El proyecto estará disponible en:
 Se incluye un fixture con categorías y productos de ejemplo:
 
 ```bash
-python manage.py loaddata demo_products.json
+python manage.py loaddata complete_catalog.json
 ```

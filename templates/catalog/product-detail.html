@@ -4,6 +4,17 @@
 {% block content %}
 <div class="product-detail-container">
     <div class="container">
+        <!-- Mensajes de notificación -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="product-breadcrumb">
             <ol class="breadcrumb">
@@ -147,6 +158,47 @@
     min-height: 100vh;
     color: #ecf0f1;
     padding: 2rem 0;
+}
+
+/* Estilos para notificaciones */
+.alert {
+    border: none !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    margin-bottom: 1rem !important;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    border-left: 4px solid #047857 !important;
+}
+
+.alert-error, .alert-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+    border-left: 4px solid #b91c1c !important;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: white !important;
+    border-left: 4px solid #b45309 !important;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    color: white !important;
+    border-left: 4px solid #1d4ed8 !important;
+}
+
+.btn-close {
+    filter: invert(1) !important;
+    opacity: 0.8 !important;
+}
+
+.btn-close:hover {
+    opacity: 1 !important;
 }
 
 .breadcrumb {

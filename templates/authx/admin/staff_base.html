@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Staff - Ctrl Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-sidebar {
+        background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        min-height: 100vh;
+        color: white;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .admin-sidebar .nav-link {
+        color: #ecf0f1;
+        padding: 1.2rem 1.8rem;
+        border-radius: 15px;
+        margin: 0.5rem 0.8rem;
+        transition: all 0.4s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+    
+    .admin-sidebar .nav-link:hover {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        transform: translateX(8px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+        border-radius: 20px;
+    }
+    
+    .admin-sidebar .nav-link.active {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.5);
+        border-radius: 20px;
+        transform: translateX(5px);
+    }
+    
+    .admin-sidebar .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 5px;
+        background: #e74c3c;
+        border-radius: 0 5px 5px 0;
+    }
+    
+    .admin-content {
+        background: #1a1a1a;
+        min-height: 100vh;
+        padding: 2rem;
+    }
+    
+    .admin-header {
+        background: #2d2d2d;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border: 1px solid #404040;
+        color: #ecf0f1;
+    }
+    
+    .admin-card {
+        background: #2d2d2d;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border: 1px solid #404040;
+        transition: all 0.3s ease;
+        color: #ecf0f1;
+    }
+    
+    .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 35px rgba(111, 66, 193, 0.4);
+    }
+    
+    .stats-number {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-label {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .btn-admin {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        border: none;
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(111, 66, 193, 0.4);
+        color: white;
+    }
+    
+    .table-admin {
+        background: #2d2d2d;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        color: #ecf0f1;
+    }
+    
+    .table-admin th {
+        background: #3a3a3a;
+        border: none;
+        padding: 1.5rem;
+        font-weight: 600;
+        color: #ecf0f1;
+    }
+    
+    .table-admin td {
+        border: none;
+        padding: 1.5rem;
+        vertical-align: middle;
+        color: #ecf0f1;
+    }
+    
+    .table-admin tbody tr {
+        transition: all 0.3s ease;
+        background: #2d2d2d;
+    }
+    
+    .table-admin tbody tr:hover {
+        background: #404040;
+        transform: scale(1.01);
+    }
+    
+    .badge-admin {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .badge-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+    
+    .badge-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: white;
+    }
+    
+    .badge-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        color: white;
+    }
+    
+    .badge-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+    }
+    
+    .form-control-admin {
+        background: #3a3a3a;
+        border: 2px solid #404040;
+        border-radius: 15px;
+        padding: 1rem 1.5rem;
+        transition: all 0.3s ease;
+        color: #ecf0f1;
+    }
+    
+    .form-control-admin:focus {
+        background: #3a3a3a;
+        border-color: #6f42c1;
+        box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+        color: #ecf0f1;
+    }
+    
+    .form-control-admin::placeholder {
+        color: #bdc3c7;
+    }
+    
+    .form-label {
+        color: #ecf0f1;
+        font-weight: 500;
+    }
+    
+    .sidebar-brand {
+        padding: 2rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .sidebar-brand h3 {
+        color: white;
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .sidebar-brand .badge {
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+    
+    .user-info {
+        padding: 1.5rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+        position: relative;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.8rem;
+        color: white;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+    
+    .user-details {
+        margin-bottom: 1rem;
+    }
+    
+    .user-name {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        font-size: 0.95rem;
+        word-break: break-word;
+    }
+    
+    .user-role {
+        color: #bdc3c7;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .logout-btn {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        font-size: 0.85rem;
+        margin-top: auto;
+    }
+    
+    .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4);
+        color: white;
+    }
+    
+    /* Dark theme additional styles */
+    .text-muted {
+        color: #bdc3c7 !important;
+    }
+    
+    .text-primary {
+        color: #6f42c1 !important;
+    }
+    
+    .text-success {
+        color: #28a745 !important;
+    }
+    
+    .text-warning {
+        color: #ffc107 !important;
+    }
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .text-info {
+        color: #17a2b8 !important;
+    }
+    
+    .border {
+        border-color: #404040 !important;
+    }
+    
+    .card {
+        background: #2d2d2d !important;
+        border-color: #404040 !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .card-body {
+        background: #2d2d2d !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .btn-outline-primary {
+        color: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+        color: white !important;
+    }
+    
+    .btn-outline-secondary {
+        color: #6c757d !important;
+        border-color: #6c757d !important;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #6c757d !important;
+        border-color: #6c757d !important;
+        color: white !important;
+    }
+    
+    .btn-outline-danger {
+        color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+    
+    .btn-outline-danger:hover {
+        background: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: white !important;
+    }
+    
+    .form-select {
+        background: #3a3a3a !important;
+        border-color: #404040 !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .form-select:focus {
+        background: #3a3a3a !important;
+        border-color: #6f42c1 !important;
+        box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25) !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .form-check-input {
+        background-color: #3a3a3a;
+        border-color: #404040;
+    }
+    
+    .form-check-input:checked {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+    }
+    
+    .form-check-label {
+        color: #ecf0f1 !important;
+    }
+    
+    .input-group-text {
+        background: #3a3a3a !important;
+        border-color: #404040 !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .pagination .page-link {
+        background: #3a3a3a !important;
+        border-color: #404040 !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .pagination .page-link:hover {
+        background: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+        color: white !important;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 px-0">
+            <div class="admin-sidebar">
+                <!-- Brand -->
+                <div class="sidebar-brand">
+                    <h3>Ctrl Store</h3>
+                    <span class="badge">Panel de Staff</span>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="nav flex-column">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'staff_dashboard' %}active{% endif %}" 
+                       href="{% url 'authx:staff_dashboard' %}">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a class="nav-link {% if 'staff_products' in request.resolver_match.url_name %}active{% endif %}" 
+                       href="{% url 'authx:staff_products' %}">
+                        <i class="fas fa-box me-2"></i>Productos
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'staff_categories' %}active{% endif %}" 
+                       href="{% url 'authx:staff_categories' %}">
+                        <i class="fas fa-tags me-2"></i>Categorías
+                    </a>
+                </nav>
+                
+                <!-- User Info -->
+                <div class="user-info">
+                    <div>
+                        <div class="user-avatar">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="user-role">{{ user.get_role_display_name }}</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'authx:logout' %}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="admin-content">
+                {% block admin_content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
