@@ -1,7 +1,8 @@
 from django.views.generic import ListView, DetailView, TemplateView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from .models import Product, Category
+from ctrlstore.apps.analytics.services import record_product_view
 
 class ProductListView(ListView):
     model = Product
@@ -35,6 +36,15 @@ class ProductListView(ListView):
 class ProductDetailView(DetailView):
     model = Product
     template_name = "catalog/product-detail.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            record_product_view(request, self.object)
+        except Exception:
+            pass
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 
 # Vistas del Comparador
