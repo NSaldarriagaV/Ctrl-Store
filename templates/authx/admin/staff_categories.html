@@ -110,7 +110,7 @@
                             {{ main_category.name|first|upper }}
                         </div>
                         <strong>{{ main_category.name }}</strong>
-                        <span class="badge badge-primary badge-admin ms-2">{{ main_category.products.count }}</span>
+                        <span class="badge badge-primary badge-admin ms-2">{{ main_category.get_total_products_count }}</span>
                     </div>
                     
                     {% if main_category.subcategories.exists %}
