@@ -15,6 +15,16 @@ from django.views.decorators.csrf import csrf_exempt
 from .mixins import AdminRequiredMixin, StaffRequiredMixin
 from .forms import SignupForm, UserEditForm
 
+from datetime import datetime, timedelta
+from decimal import Decimal
+
+from django.apps import apps
+from django.db.models import Sum, Count, F
+from django.utils import timezone
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.views.generic import TemplateView, View
+
 
 class SignupView(FormView):
     template_name = "authx/signup.html"
@@ -58,7 +68,11 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
         # Estadísticas básicas para el dashboard
         from ctrlstore.apps.catalog.models import Category, Product
         from ctrlstore.apps.authx.models import User
-        
+
+        # authx/views.py dentro de AdminDashboardView.get_context_data
+        Order = apps.get_model("order", "Order")
+        last_30 = timezone.now() - timedelta(days=30)
+
         context.update({
             "total_users": User.objects.count(),
             "total_products": Product.objects.count(),
@@ -66,9 +80,13 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
             "gaming_products": Product.objects.filter(category__category_type='gaming').count(),
             "recent_users": User.objects.select_related("role").order_by("-date_joined")[:5],
             "recent_products": Product.objects.select_related("category").order_by("-created_at")[:5],
+            "orders_paid_30": Order.objects.filter(status="paid", created_at__gte=last_30).count(),
+            "revenue_30": Order.objects.filter(status="paid", created_at__gte=last_30).aggregate(s=Sum("total_amount"))["s"] or Decimal("0.00"),
+       
         })
         
         return context
+    
 
 
 class AdminUsersView(AdminRequiredMixin, TemplateView):
@@ -530,4 +548,164 @@ class AdminCategoriesView(AdminRequiredMixin, TemplateView):
         
         return context
     
+def _parse_dates(request):
+    """
+    Lee ?start=YYYY-MM-DD&end=YYYY-MM-DD. Si no vienen, últimos 30 días.
+    Devuelve dos datetimes (timezone-aware) [start, end+1d).
+    """
+    tz = timezone.get_current_timezone()
+    today = timezone.localdate()
+    start_str = request.GET.get("start")
+    end_str = request.GET.get("end")
 
+    if start_str and end_str:
+        try:
+            start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_str, "%Y-%m-%d").date()
+        except ValueError:
+            start_date = today - timedelta(days=30)
+            end_date = today
+    else:
+        start_date = today - timedelta(days=30)
+        end_date = today
+
+    start_dt = timezone.make_aware(datetime.combine(start_date, datetime.min.time()), tz)
+    end_dt = timezone.make_aware(datetime.combine(end_date + timedelta(days=1), datetime.min.time()), tz)
+    return start_dt, end_dt, start_date, end_date
+
+
+class AdminSalesHistoryView(AdminRequiredMixin, TemplateView):
+    """
+    Tabla de órdenes pagadas con filtros por rango de fechas + export CSV.
+    """
+    template_name = "authx/admin/sales-history.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        Order = apps.get_model("order", "Order")
+
+        start_dt, end_dt, start_date, end_date = _parse_dates(self.request)
+
+        qs = (
+            Order.objects
+            .filter(status="paid", created_at__gte=start_dt, created_at__lt=end_dt)
+            .select_related("user")
+            .prefetch_related("items__product", "payments")
+            .order_by("-created_at")
+        )
+
+        # Paginación
+        paginator = Paginator(qs, 25)
+        page = self.request.GET.get("page")
+        orders_page = paginator.get_page(page)
+
+        # KPIs rápidos
+        total_orders = qs.count()
+        total_revenue = qs.aggregate(s=Sum("total_amount"))["s"] or Decimal("0.00")
+        avg_ticket = (total_revenue / total_orders) if total_orders else Decimal("0.00")
+
+        context.update({
+            "orders": orders_page,
+            "total_orders": total_orders,
+            "total_revenue": total_revenue,
+            "avg_ticket": avg_ticket,
+            "start_date": start_date,
+            "end_date": end_date,
+        })
+        return context
+
+
+class AdminSalesReportView(AdminRequiredMixin, TemplateView):
+    """
+    Reporte agregado: ingresos, #órdenes, ticket promedio, top productos/categorías y serie por día.
+    """
+    template_name = "authx/admin/sales-report.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        Order = apps.get_model("order", "Order")
+        OrderItem = apps.get_model("order", "OrderItem")
+        Category = apps.get_model("catalog", "Category")
+
+        start_dt, end_dt, start_date, end_date = _parse_dates(self.request)
+
+        paid_orders = (
+            Order.objects.filter(status="paid", created_at__gte=start_dt, created_at__lt=end_dt)
+        )
+
+        revenue = paid_orders.aggregate(s=Sum("total_amount"))["s"] or Decimal("0.00")
+        orders_count = paid_orders.count()
+        avg_ticket = (revenue / orders_count) if orders_count else Decimal("0.00")
+
+        # Top productos (por unidades)
+        top_products = (
+            OrderItem.objects
+            .filter(order__in=paid_orders)
+            .values("product", "product__name")
+            .annotate(units=Sum("quantity"), income=Sum(F("unit_price") * F("quantity")))
+            .order_by("-units")[:10]
+        )
+
+        # Top categorías (si tu OrderItem -> product -> category)
+        top_categories = (
+            OrderItem.objects
+            .filter(order__in=paid_orders)
+            .values("product__category__id", "product__category__name")
+            .annotate(units=Sum("quantity"), income=Sum(F("unit_price") * F("quantity")))
+            .order_by("-income")[:10]
+        )
+
+        # Serie diaria (ingresos por día)
+        # Nota: para SQLite usamos date() sobre created_at; en Postgres podrías usar TruncDate.
+        daily = (
+            paid_orders.extra(select={"d": "date(created_at)"})
+            .values("d")
+            .annotate(income=Sum("total_amount"), orders=Count("id"))
+            .order_by("d")
+        )
+
+        context.update({
+            "start_date": start_date,
+            "end_date": end_date,
+            "revenue": revenue,
+            "orders_count": orders_count,
+            "avg_ticket": avg_ticket,
+            "top_products": top_products,
+            "top_categories": top_categories,
+            "daily": daily,
+        })
+        return context
+
+
+class AdminSalesExportCSVView(AdminRequiredMixin, View):
+    """
+    Exportación CSV del historial filtrado.
+    """
+    def get(self, request, *args, **kwargs):
+        Order = apps.get_model("order", "Order")
+        start_dt, end_dt, *_ = _parse_dates(request)
+        qs = (
+            Order.objects
+            .filter(status="paid", created_at__gte=start_dt, created_at__lt=end_dt)
+            .select_related("user")
+            .prefetch_related("items__product")
+            .order_by("-created_at")
+        )
+
+        import csv
+        resp = HttpResponse(content_type="text/csv")
+        resp["Content-Disposition"] = 'attachment; filename="ventas.csv"'
+        writer = csv.writer(resp)
+        writer.writerow(["order_id", "fecha", "usuario", "email", "total", "items"])
+
+        for o in qs:
+            items_str = "; ".join(f"{it.product.name} x{it.quantity}" for it in o.items.all())
+            writer.writerow([
+                o.id,
+                timezone.localtime(o.created_at).strftime("%Y-%m-%d %H:%M"),
+                (o.user.get_full_name() or o.user.username) if o.user_id else "",
+                o.user.email if o.user_id else "",
+                str(o.total_amount),
+                items_str,
+            ])
+        return resp
