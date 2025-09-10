@@ -117,7 +117,7 @@
         "apple_pencil": "2nd generation compatible",
         "magic_keyboard": "compatible",
         "face_id": true,
-        "liquid_retina_xdr": true,
+        "liquid_retina_xdr": true
       }
     }
   },
