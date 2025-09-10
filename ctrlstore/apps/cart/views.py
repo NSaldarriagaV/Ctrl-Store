@@ -6,7 +6,11 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from ctrlstore.apps.common.exceptions import CartError, StockError
+from ctrlstore.apps.common.logging_config import cart_logger
+
 from .models import CartItem
+from .services import CartService, CartValidationService
 from .utils import get_or_create_cart
 
 # 👇 obtenemos el modelo dinámicamente
@@ -21,7 +25,7 @@ def cart_detail(request):
 
 @require_POST
 def add_to_cart(request, product_id):
-    cart = get_or_create_cart(request)
+    """Agrega un producto al carrito usando el servicio."""
     product = get_object_or_404(Product, pk=product_id)
 
     try:
@@ -31,22 +35,36 @@ def add_to_cart(request, product_id):
 
     qty = max(1, qty)
 
-    # Validar stock opcional
-    if hasattr(product, "stock") and product.stock is not None:
-        if qty > product.stock:
-            messages.error(request, "No hay stock suficiente.")
-            return redirect(request.POST.get("next") or "cart:detail")
+    try:
+        item = CartService.add_to_cart(request, product, qty)
+        messages.success(request, f"{product.name} agregado al carrito.")
 
-    item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=product,
-        defaults={"quantity": qty, "unit_price": Decimal(product.price)},
-    )
-    if not created:
-        item.quantity += qty
-        item.save()
+        cart_logger.log_cart_operation(
+            "add_product",
+            cart_id=item.cart.id,
+            user_id=request.user.id if request.user.is_authenticated else None,
+            product_id=product.id,
+            product_name=product.name,
+            quantity=qty,
+        )
 
-    messages.success(request, f"{product.name} agregado al carrito.")
+    except (StockError, CartError) as e:
+        messages.error(request, str(e))
+        cart_logger.log_error(
+            e,
+            {
+                "action": "add_to_cart",
+                "product_id": product.id,
+                "quantity": qty,
+                "user_id": request.user.id if request.user.is_authenticated else None,
+            },
+        )
+    except Exception as e:
+        messages.error(request, "Error al agregar producto al carrito.")
+        cart_logger.log_error(
+            e, {"action": "add_to_cart", "product_id": product.id, "quantity": qty}
+        )
+
     return redirect(request.POST.get("next") or "cart:detail")
 
 
@@ -64,7 +82,11 @@ def update_cart_item(request, item_id):
         item.delete()
         messages.info(request, f"{item.product.name} eliminado del carrito.")
     else:
-        if hasattr(item.product, "stock") and item.product.stock is not None and qty > item.product.stock:
+        if (
+            hasattr(item.product, "stock")
+            and item.product.stock is not None
+            and qty > item.product.stock
+        ):
             messages.error(request, "No hay stock suficiente.")
         else:
             item.quantity = qty
