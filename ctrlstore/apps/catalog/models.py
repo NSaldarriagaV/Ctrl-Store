@@ -29,6 +29,18 @@ class Category(models.Model):
     @property
     def is_parent(self):
         return self.subcategories.exists()
+    
+    def get_total_products_count(self):
+        """Obtiene el total de productos incluyendo subcategorías"""
+        if self.is_parent:
+            # Si es categoría padre, sumar productos de todas las subcategorías
+            total = 0
+            for subcategory in self.subcategories.all():
+                total += subcategory.products.count()
+            return total
+        else:
+            # Si es subcategoría, solo contar sus propios productos
+            return self.products.count()
 
 class ProductSpecification(models.Model):
     """Especificaciones técnicas de productos"""
