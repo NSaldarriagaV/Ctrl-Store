@@ -24,6 +24,9 @@ from .views import (
     UserDetailView,
     UserEditView,
     UserToggleStatusView,
+    AdminSalesHistoryView,
+    AdminSalesReportView,
+    AdminSalesExportCSVView
 )
 
 app_name = "authx"
@@ -61,4 +64,9 @@ urlpatterns = [
     path("admin/users/<int:user_id>/detail/", UserDetailView.as_view(), name="user_detail"),
     path("admin/users/<int:user_id>/edit/", UserEditView.as_view(), name="user_edit"),
     path("admin/users/<int:user_id>/toggle-status/", UserToggleStatusView.as_view(), name="user_toggle_status"),
+
+    # Reportes de ventas
+    path("admin/sales/", AdminSalesHistoryView.as_view(), name="admin_sales"),
+    path("admin/sales/report/", AdminSalesReportView.as_view(), name="admin_sales_report"),
+    path("admin/sales/export.csv", AdminSalesExportCSVView.as_view(), name="admin_sales_export"),
 ]

@@ -540,6 +540,12 @@
                        href="{% url 'authx:admin_categories' %}">
                         <i class="fas fa-tags"></i>Categorías
                     </a>
+                     <a class="nav-link {% if request.resolver_match.url_name == 'admin_sales' %}active{% endif %}" href="{% url 'authx:admin_sales' %}">
+                        <i class="fas fa-receipt"></i>Historial de Ventas
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin_sales_report' %}active{% endif %}" href="{% url 'authx:admin_sales_report' %}">
+                        <i class="fas fa-chart-line"></i>Reporte de Ventas
+                    </a>
                     
                     <hr class="nav-divider">
                     

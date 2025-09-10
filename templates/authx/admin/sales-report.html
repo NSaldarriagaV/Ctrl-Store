@@ -1,0 +1,139 @@
+{% extends "authx/admin/base.html" %}
+{% block admin_title %}Reporte de Ventas – Ctrl+Store{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-12 col-md-3 col-lg-2 mb-3">
+      <div class="bg-dark text-light rounded-3 p-3">
+        <nav class="nav flex-column">
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" href="{% url 'authx:admin_dashboard' %}">
+            <i class="fas fa-tachometer-alt"></i>Dashboard
+          </a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}" href="{% url 'authx:admin_users' %}">
+            <i class="fas fa-users"></i>Usuarios
+          </a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_roles' %}active{% endif %}" href="{% url 'authx:admin_roles' %}">
+            <i class="fas fa-user-tag"></i>Roles
+          </a>
+
+          <hr class="nav-divider">
+
+          <a class="nav-link {% if 'admin_product' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'authx:admin_products' %}">
+            <i class="fas fa-box"></i>Productos
+          </a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_categories' %}active{% endif %}" href="{% url 'authx:admin_categories' %}">
+            <i class="fas fa-tags"></i>Categorías
+          </a>
+
+          <!-- Ventas -->
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_sales' %}active{% endif %}" href="{% url 'authx:admin_sales' %}">
+            <i class="fas fa-receipt"></i>Historial de Ventas
+          </a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'admin_sales_report' %}active{% endif %}" href="{% url 'authx:admin_sales_report' %}">
+            <i class="fas fa-chart-line"></i>Reporte de Ventas
+          </a>
+
+          <hr class="nav-divider">
+
+          <a class="nav-link" href="{% url 'catalog:product_list' %}">
+            <i class="fas fa-home"></i>Volver al Sitio
+          </a>
+          <a class="nav-link text-danger" href="{% url 'authx:logout' %}">
+            <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="col-12 col-md-9 col-lg-10">
+      <h1 class="mb-3"><i class="fas fa-chart-line me-2"></i>Reporte de Ventas</h1>
+
+      <form class="row g-2 mb-3" method="get">
+        <div class="col-auto">
+          <label class="form-label">Desde</label>
+          <input type="date" name="start" value="{{ start_date }}" class="form-control">
+        </div>
+        <div class="col-auto">
+          <label class="form-label">Hasta</label>
+          <input type="date" name="end" value="{{ end_date }}" class="form-control">
+        </div>
+        <div class="col-auto align-self-end">
+          <button class="btn btn-primary"><i class="fas fa-filter me-2"></i>Filtrar</button>
+          <a class="btn btn-outline-secondary" href="{% url 'authx:admin_sales_report' %}">Limpiar</a>
+        </div>
+      </form>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="card bg-dark text-light">
+            <div class="card-body">
+              <div class="d-flex justify-content-between"><span>Ingresos</span><strong class="text-success">${{ revenue }}</strong></div>
+              <div class="d-flex justify-content-between mt-2"><span>Órdenes</span><strong>{{ orders_count }}</strong></div>
+              <div class="d-flex justify-content-between mt-2"><span>Ticket promedio</span><strong>${{ avg_ticket }}</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card bg-dark text-light">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Ingresos por día</h5>
+              <div class="table-responsive">
+                <table class="table table-dark table-sm align-middle mb-0">
+                  <thead><tr><th>Fecha</th><th>Órdenes</th><th>Ingresos</th></tr></thead>
+                  <tbody>
+                    {% for row in daily %}
+                      <tr>
+                        <td>{{ row.d }}</td>
+                        <td>{{ row.orders }}</td>
+                        <td class="text-success">${{ row.income }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr><td colspan="3" class="text-muted">Sin datos en el rango.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-6">
+          <div class="card bg-dark text-light">
+            <div class="card-body">
+              <h5 class="card-title">Top productos (unidades)</h5>
+              <ol class="mb-0">
+                {% for p in top_products %}
+                  <li>{{ p.product__name }} — {{ p.units }} uds <span class="text-success">(${{ p.income }})</span></li>
+                {% empty %}
+                  <li class="text-muted">Sin datos.</li>
+                {% endfor %}
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-dark text-light">
+            <div class="card-body">
+              <h5 class="card-title">Top categorías (ingresos)</h5>
+              <ol class="mb-0">
+                {% for c in top_categories %}
+                  <li>{{ c.product__category__name }} — <span class="text-success">${{ c.income }}</span> ({{ c.units }} uds)</li>
+                {% empty %}
+                  <li class="text-muted">Sin datos.</li>
+                {% endfor %}
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
