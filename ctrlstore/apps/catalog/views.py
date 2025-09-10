@@ -44,13 +44,30 @@ class CompareCategorySelectView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtener categorías que tienen productos
-        categories = Category.objects.filter(
-            is_active=True,
-            products__is_active=True
-        ).distinct().order_by('name')
+        # Obtener categorías principales con sus subcategorías
+        main_categories = Category.objects.filter(
+            parent__isnull=True,
+            is_active=True
+        ).prefetch_related('subcategories').order_by('name')
         
-        context['categories'] = categories
+        # Filtrar solo las categorías que tienen productos (principales o subcategorías)
+        categories_with_products = []
+        for main_cat in main_categories:
+            # Verificar si la categoría principal tiene productos
+            if main_cat.products.filter(is_active=True).exists():
+                categories_with_products.append(main_cat)
+            else:
+                # Si no tiene productos directos, verificar subcategorías
+                subcategories_with_products = main_cat.subcategories.filter(
+                    is_active=True,
+                    products__is_active=True
+                ).distinct()
+                if subcategories_with_products.exists():
+                    # Crear una versión modificada de la categoría principal
+                    main_cat.subcategories_with_products = subcategories_with_products
+                    categories_with_products.append(main_cat)
+        
+        context['main_categories'] = categories_with_products
         return context
 
 

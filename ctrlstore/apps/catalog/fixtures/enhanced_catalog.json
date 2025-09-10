@@ -1,0 +1,211 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+      "name": "Audio y Video",
+      "slug": "audio-y-video",
+      "category_type": "audio_video",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+      "name": "Celulares y Tablets",
+      "slug": "celulares-y-tablets",
+      "category_type": "celulares_tablets",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+      "name": "Componentes y Hardware",
+      "slug": "componentes-y-hardware",
+      "category_type": "componentes",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 4,
+    "fields": {
+      "name": "Computadores y Periféricos",
+      "slug": "computadores-y-perifericos",
+      "category_type": "computadores",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 5,
+    "fields": {
+      "name": "Gaming",
+      "slug": "gaming",
+      "category_type": "gaming",
+      "parent": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 10,
+    "fields": {
+      "name": "Audífonos",
+      "slug": "audifonos",
+      "category_type": "audio_video",
+      "parent": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 11,
+    "fields": {
+      "name": "Televisores",
+      "slug": "televisores",
+      "category_type": "audio_video",
+      "parent": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 20,
+    "fields": {
+      "name": "Smartphones",
+      "slug": "smartphones",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 21,
+    "fields": {
+      "name": "Tablets",
+      "slug": "tablets",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 22,
+    "fields": {
+      "name": "Smartwatches",
+      "slug": "smartwatches",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 23,
+    "fields": {
+      "name": "Accesorios Móviles",
+      "slug": "accesorios-moviles",
+      "category_type": "celulares_tablets",
+      "parent": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 30,
+    "fields": {
+      "name": "Componentes",
+      "slug": "componentes",
+      "category_type": "componentes",
+      "parent": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 40,
+    "fields": {
+      "name": "Laptops",
+      "slug": "laptops",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 41,
+    "fields": {
+      "name": "PC de Escritorio",
+      "slug": "pc-de-escritorio",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 42,
+    "fields": {
+      "name": "Monitores",
+      "slug": "monitores",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 43,
+    "fields": {
+      "name": "Portátiles",
+      "slug": "portatiles",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 44,
+    "fields": {
+      "name": "Accesorios",
+      "slug": "accesorios",
+      "category_type": "computadores",
+      "parent": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 50,
+    "fields": {
+      "name": "Consolas",
+      "slug": "consolas",
+      "category_type": "gaming",
+      "parent": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 51,
+    "fields": {
+      "name": "Videojuegos",
+      "slug": "videojuegos",
+      "category_type": "gaming",
+      "parent": 5,
+      "is_active": true
+    }
+  }
+]
