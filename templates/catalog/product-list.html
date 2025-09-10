@@ -141,58 +141,7 @@
         {% endif %}
     </div>
     </div>
-    <!-- /Top Recomendados -->
-
-
     {% top_viewed_products 1 as top1 %}
-    <!-- Top Recomendados (más vendidos) -->
-    <div class="top-recommended-section">
-    <div class="container">
-        {% top_sellers 3 as top3 %}
-        {% if top3 %}
-        <div class="card top-card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">
-                <i class="fas fa-trophy me-2"></i>Top de Ventas
-                <small class="text-muted ms-2">(más vendidos)</small>
-            </h4>
-            <a href="{% url 'analytics:top_sellers' %}" class="btn btn-outline-light btn-sm">
-                Ver todos
-            </a>
-            </div>
-            <div class="card-body">
-            <div class="row">
-                {% for agg in top3 %}
-                <div class="col-md-4 mb-3">
-                    <a class="top-item d-flex align-items-center"
-                    href="{% url 'catalog:product_detail' agg.product.pk %}">
-                    <div class="top-thumb me-3">
-                        {% if agg.product.main_image %}
-                        <img src="{{ agg.product.main_image.url }}" alt="{{ agg.product.name }}">
-                        {% else %}
-                        <div class="top-thumb-placeholder d-flex align-items-center justify-content-center">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between">
-                        <strong class="top-name text-truncate me-2">{{ agg.product.name }}</strong>
-                        <span class="badge bg-success">#{{ forloop.counter }}</span>
-                        </div>
-                        <div class="small text-muted">
-                        {{ agg.units_sold }} vendidos · ${{ agg.revenue }}
-                        </div>
-                    </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    </div>
     <!-- /Top Recomendados -->
     {% if top1 %}
     {% with item=top1.0 %}
