@@ -62,5 +62,5 @@ El proyecto estará disponible en:
 Se incluye un fixture con categorías y productos de ejemplo:
 
 ```bash
-python manage.py loaddata demo_products.json
+python manage.py loaddata complete_catalog.json
 ```
