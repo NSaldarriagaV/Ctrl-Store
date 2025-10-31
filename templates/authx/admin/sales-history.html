@@ -51,7 +51,16 @@
 
     <!-- Main content -->
     <div class="col-12 col-md-9 col-lg-10">
-      <h1 class="mb-3"><i class="fas fa-receipt me-2"></i>Historial de Ventas</h1>
+      <!-- Toolbar / Breadcrumb -->
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3 gap-2">
+        <h1 class="mb-0"><i class="fas fa-receipt me-2"></i>Historial de Ventas</h1>
+        <div class="d-flex gap-2">
+          <a class="btn btn-outline-light" href="{% url 'authx:admin_sales_report' %}"><i class="fas fa-chart-line me-2"></i>Ver reporte</a>
+          <a class="btn btn-success" href="{% url 'authx:admin_sales_export' %}?start={{ start_date }}&end={{ end_date }}">
+            <i class="fas fa-file-csv me-2"></i>Exportar CSV
+          </a>
+        </div>
+      </div>
 
       <form class="row g-2 mb-3" method="get">
         <div class="col-auto">
@@ -65,19 +74,26 @@
         <div class="col-auto align-self-end">
           <button class="btn btn-primary"><i class="fas fa-filter me-2"></i>Filtrar</button>
           <a class="btn btn-outline-secondary" href="{% url 'authx:admin_sales' %}">Limpiar</a>
-          <a class="btn btn-success" href="{% url 'authx:admin_sales_export' %}?start={{ start_date }}&end={{ end_date }}">
-            <i class="fas fa-file-csv me-2"></i>Exportar CSV
-          </a>
         </div>
+        <div class="col-12"><small class="text-muted">Rango por defecto: últimos 30 días.</small></div>
       </form>
 
       <div class="row g-3 mb-3">
         <div class="col-md-4">
           <div class="card bg-dark text-light">
             <div class="card-body">
-              <div class="d-flex justify-content-between"><span>Total Ingresos</span><strong class="text-success">${{ total_revenue }}</strong></div>
-              <div class="d-flex justify-content-between mt-2"><span>Órdenes</span><strong>{{ total_orders }}</strong></div>
-              <div class="d-flex justify-content-between mt-2"><span>Ticket promedio</span><strong>${{ avg_ticket }}</strong></div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span>Total Ingresos</span>
+                <strong class="text-success">${{ total_revenue }}</strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Órdenes</span>
+                <span class="badge bg-secondary">{{ total_orders }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span>Ticket promedio</span>
+                <strong class="text-info">${{ avg_ticket }}</strong>
+              </div>
             </div>
           </div>
         </div>
@@ -85,8 +101,8 @@
 
       {% if orders %}
       <div class="table-responsive bg-dark rounded">
-        <table class="table table-dark table-hover align-middle mb-0">
-          <thead>
+        <table class="table table-dark table-hover table-sm align-middle mb-0">
+          <thead style="position: sticky; top: 0; z-index: 1; background-color: #212529;">
             <tr>
               <th>ID</th>
               <th>Fecha</th>
@@ -104,7 +120,10 @@
               <td class="text-success">${{ o.total_amount }}</td>
               <td>
                 {% for it in o.items.all %}
-                  <div>{{ it.product.name }} <span class="text-muted">x{{ it.quantity }}</span></div>
+                  <div class="d-flex justify-content-between gap-3">
+                    <span class="text-truncate" style="max-width: 360px;" title="{{ it.product.name }}">{{ it.product.name }}</span>
+                    <span class="text-muted">x{{ it.quantity }}</span>
+                  </div>
                 {% endfor %}
               </td>
             </tr>

@@ -53,6 +53,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "ctrlstore.apps.cart.context_processors.cart_info",
+                "ctrlstore.apps.common.context_processors.weather_info",
             ],
         },
     },

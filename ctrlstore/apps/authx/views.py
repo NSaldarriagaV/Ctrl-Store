@@ -122,26 +122,11 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
 
         # Estadísticas básicas para el dashboard
         from ctrlstore.apps.authx.models import User
-
+        from ctrlstore.apps.catalog.models import Category, Product
 
         # authx/views.py dentro de AdminDashboardView.get_context_data
         Order = apps.get_model("order", "Order")
         last_30 = timezone.now() - timedelta(days=30)
-
-        context.update({
-            "total_users": User.objects.count(),
-            "total_products": Product.objects.count(),
-            "total_categories": Category.objects.count(),
-            "gaming_products": Product.objects.filter(category__category_type='gaming').count(),
-            "recent_users": User.objects.select_related("role").order_by("-date_joined")[:5],
-            "recent_products": Product.objects.select_related("category").order_by("-created_at")[:5],
-            "orders_paid_30": Order.objects.filter(status="paid", created_at__gte=last_30).count(),
-            "revenue_30": Order.objects.filter(status="paid", created_at__gte=last_30).aggregate(s=Sum("total_amount"))["s"] or Decimal("0.00"),
-       
-        })
-        
-
-        from ctrlstore.apps.catalog.models import Category, Product
 
         context.update(
             {
@@ -150,12 +135,12 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
                 "total_categories": Category.objects.count(),
                 "gaming_products": Product.objects.filter(category__category_type="gaming").count(),
                 "recent_users": User.objects.select_related("role").order_by("-date_joined")[:5],
-                "recent_products": Product.objects.select_related("category").order_by(
-                    "-created_at"
-                )[:5],
+                "recent_products": Product.objects.select_related("category").order_by("-created_at")[:5],
+                "orders_paid_30": Order.objects.filter(status="paid", created_at__gte=last_30).count(),
+                "revenue_30": Order.objects.filter(status="paid", created_at__gte=last_30).aggregate(s=Sum("total_amount"))["s"]
+                or Decimal("0.00"),
             }
         )
-
 
         return context
     

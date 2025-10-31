@@ -3,6 +3,9 @@ from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from .models import Product, Category
 from ctrlstore.apps.analytics.services import record_product_view
+from django.urls import reverse
+from django.views.decorators.http import require_GET
+from django.utils.decorators import method_decorator
 
 class ProductListView(ListView):
     model = Product
@@ -46,6 +49,32 @@ class ProductDetailView(DetailView):
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
+
+# API pública: productos en stock
+@require_GET
+def products_in_stock_api(request):
+    qs = (
+        Product.objects
+        .select_related("category")
+        .filter(is_active=True, stock_quantity__gt=0)
+        .order_by("-is_featured", "-created_at")
+    )
+
+    # Filtro opcional: ?featured=true
+    featured = request.GET.get("featured")
+    if featured in {"true", "1", "yes"}:
+        qs = qs.filter(is_featured=True)
+
+    def item(p: Product):
+        return {
+            "id": p.id,
+            "name": p.name,
+            "price": float(p.price),
+            "detail_url": reverse("catalog:product_detail", args=[p.id]),
+        }
+
+    data = {"results": [item(p) for p in qs[:100]]}
+    return JsonResponse(data)
 
 # Vistas del Comparador
 class CompareCategorySelectView(TemplateView):

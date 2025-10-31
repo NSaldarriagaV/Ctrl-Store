@@ -1,3 +1,4 @@
+{% load weather_tags %}
 <!doctype html>
 <html lang="es">
 
@@ -115,6 +116,21 @@
             <a class="navbar-brand fw-bold fs-3" href="{% url 'catalog:product_list' %}">
                 <i class="fas fa-gamepad me-2 text-purple"></i>Ctrl+Store
             </a>
+            {% get_weather as weather %}
+            <div class="d-flex align-items-center ms-2">
+                <i class="fas fa-cloud-sun me-2 text-warning"></i>
+                <small class="fw-semibold">
+                    Medellín:
+                    {% if weather.temp_c %}
+                        <span class="text-info">{{ weather.temp_c|floatformat:1 }}°C</span>
+                    {% endif %}
+                    {% if weather.summary %}
+                        <span class="text-muted">- {{ weather.summary }}</span>
+                    {% else %}
+                        <span class="text-muted">- Clima no disponible</span>
+                    {% endif %}
+                </small>
+            </div>
             
             <!-- Toggle Button -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

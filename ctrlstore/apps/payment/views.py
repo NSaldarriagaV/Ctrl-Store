@@ -8,7 +8,8 @@ from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from django.template.loader import get_template
 from django.utils import timezone
 import io
-from xhtml2pdf import pisa
+# Nota: importamos xhtml2pdf de forma diferida dentro de la función para evitar
+# romper el arranque si reportlab/xhtml2pdf no son compatibles en el entorno.
 
 from ctrlstore.apps.order.models import Order
 from .forms import CardPaymentForm
@@ -159,6 +160,10 @@ def confirm(request, payment_id: int):
 
 # Helper: render un template HTML a PDF
 def render_to_pdf(template_src: str, context: dict) -> HttpResponse | None:
+    try:
+        from xhtml2pdf import pisa  # type: ignore
+    except Exception:
+        return None
     template = get_template(template_src)
     html = template.render(context)
     result = io.BytesIO()
