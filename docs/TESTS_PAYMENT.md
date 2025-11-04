@@ -1,4 +1,4 @@
-# 🧪 Verificación técnica del flujo de pagos e idempotencia — Ctrl-Store
+#  Verificación técnica del flujo de pagos e idempotencia — Ctrl-Store
 
 ## 1️⃣ Contexto de la Issue
 
