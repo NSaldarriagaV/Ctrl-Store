@@ -20,7 +20,7 @@
 - Render: listado con nombre, precio y enlace externo o detalle local
 
 ### Consumir – Tercero (clima de Medellín)
-- Servicio sugerido: Open-Meteo (sin llave) o OpenWeather (con API key)
+- Servicio usado: Open-Meteo 
 - Render: banner en cabecera con temperatura y estado actual
  - Caché: 5 minutos en memoria, fallback "Clima no disponible" si falla
 

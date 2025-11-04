@@ -6,6 +6,7 @@ from ctrlstore.apps.analytics.services import record_product_view
 from django.urls import reverse
 from django.views.decorators.http import require_GET
 from django.utils.decorators import method_decorator
+from .services import get_bloomberry_products
 
 class ProductListView(ListView):
     model = Product
@@ -284,3 +285,18 @@ class CompareProductsView(TemplateView):
             })
         
         return comparison
+
+
+class ProductosAliadosView(TemplateView):
+    """Vista para mostrar productos de nuestro socio comercial Bloomberry."""
+    template_name = "catalog/productos-aliados.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products = get_bloomberry_products()
+        context.update({
+            "products": products,
+            "api_source": "Bloomberry",
+            "api_url": "https://bloomberry-app-1067375337365.us-central1.run.app/products/api/",
+        })
+        return context
