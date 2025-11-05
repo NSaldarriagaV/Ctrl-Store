@@ -1,0 +1,36 @@
+# docker-compose.yml
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: ctrlstore_db
+    environment:
+      POSTGRES_DB: ctrlstore
+      POSTGRES_USER: ctrlstore
+      POSTGRES_PASSWORD: ctrlstore
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    environment:
+      - DJANGO_SETTINGS_MODULE=ctrlstore.settings.base
+
+    build: .
+    container_name: ctrlstore_web
+    env_file: .env.docker
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    # Para desarrollo: monta el código para autoreload
+    volumes:
+      - .:/app
+      # Mapear las carpetas de salida/medios del contenedor a tu host:
+      - ./staticfiles:/app/staticfiles   # output de collectstatic
+      - ./media:/app/media               # subidas de usuarios
+
+volumes:
+  pg_data:

@@ -1,18 +1,31 @@
 from pathlib import Path
+import os
 import environ
 from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")
 
+# ✅ Carga .env solo si existe (no pisa variables ya presentes en el entorno Docker)
+env = environ.Env()
+env_file_docker = BASE_DIR / ".env.docker"
+env_file_local = BASE_DIR / ".env"
+if env_file_docker.exists():
+    environ.Env.read_env(str(env_file_docker))
+elif env_file_local.exists():
+    environ.Env.read_env(str(env_file_local))
+
+# ────────────────────────────────────────────────────────────────────────────────
+# Core
+# ────────────────────────────────────────────────────────────────────────────────
 SECRET_KEY = env("SECRET_KEY", default="dev-only-secret")
 DEBUG = env.bool("DEBUG", default=True)
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
-LANGUAGE_CODE = "es"          # la app arranca en español
-USE_I18N = True               # habilitar i18n
-USE_L10N = True
+# i18n / tz
+LANGUAGE_CODE = "es-co"
+TIME_ZONE = "America/Bogota"
+USE_I18N = True
+USE_TZ = True
 
 LANGUAGES = (
     ("es", _("Español")),
@@ -28,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Nuestras apps
+    # Apps del proyecto
     "ctrlstore.apps.authx",
     "ctrlstore.apps.catalog",
     "ctrlstore.apps.cart",
@@ -55,7 +68,7 @@ ROOT_URLCONF = "ctrlstore.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # base.html aquí
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -72,18 +85,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ctrlstore.wsgi.application"
 
-# DB: por defecto sqlite; en prod usar envs para Postgres
+# ────────────────────────────────────────────────────────────────────────────────
+# Base de datos (prioriza SIEMPRE variables de entorno; fallback a SQLite)
+# Coerción explícita a str y 'or' para evitar valores vacíos.
+# ────────────────────────────────────────────────────────────────────────────────
+ENGINE = str(os.environ.get("DB_ENGINE") or "django.db.backends.sqlite3")
+NAME = str(os.environ.get("DB_NAME") or (BASE_DIR / "db.sqlite3"))
+USER = str(os.environ.get("DB_USER") or "")
+PASSWORD = str(os.environ.get("DB_PASSWORD") or "")
+HOST = str(os.environ.get("DB_HOST") or "")
+PORT = str(os.environ.get("DB_PORT") or "")
+
+# Debug opcional de conexión (solo si exportas DEBUG_DB=1)
+if os.environ.get("DEBUG_DB") == "1":
+    print("==> [DEBUG_DB] ENGINE:", ENGINE)
+    print("==> [DEBUG_DB] NAME:", NAME)
+    print("==> [DEBUG_DB] HOST:", HOST, "PORT:", PORT, "USER:", USER)
+
 DATABASES = {
     "default": {
-        "ENGINE": env("DB_ENGINE", default="django.db.backends.sqlite3"),
-        "NAME": env("DB_NAME", default=BASE_DIR / "db.sqlite3"),
-        "USER": env("DB_USER", default=""),
-        "PASSWORD": env("DB_PASSWORD", default=""),
-        "HOST": env("DB_HOST", default=""),
-        "PORT": env("DB_PORT", default=""),
+        "ENGINE": ENGINE,
+        "NAME": NAME,
+        "USER": USER,
+        "PASSWORD": PASSWORD,
+        "HOST": HOST,
+        "PORT": PORT,
     }
 }
 
+# ────────────────────────────────────────────────────────────────────────────────
+# Password validators
+# ────────────────────────────────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -91,25 +123,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LANGUAGE_CODE = "es-co"
-TIME_ZONE = "America/Bogota"
-USE_I18N = True
-USE_TZ = True
-
-STATIC_URL = "static/"
+# ────────────────────────────────────────────────────────────────────────────────
+# Static & media
+# ────────────────────────────────────────────────────────────────────────────────
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Configuración del modelo de usuario personalizado
-AUTH_USER_MODEL = "authx.User"
-
-LOGIN_URL = "authx:login"
-LOGIN_REDIRECT_URL = "catalog:product_list"
-LOGOUT_REDIRECT_URL = "catalog:product_list"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Usuario personalizado y auth redirects
+AUTH_USER_MODEL = "authx.User"
+LOGIN_URL = "authx:login"
+LOGIN_REDIRECT_URL = "catalog:product_list"
+LOGOUT_REDIRECT_URL = "catalog:product_list"
+
+# Locales
 LOCALE_PATHS = [BASE_DIR / "locale"]
