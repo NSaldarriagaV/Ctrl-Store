@@ -1,5 +1,8 @@
+from __future__ import annotations
 from django.db import models
 from django.utils import timezone
+from typing import Any
+from django.db import models
 
 class Payment(models.Model):
     STATUS_CHOICES = [
@@ -35,5 +38,8 @@ class Payment(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __str__(self):
-        return f"Payment #{self.id} – Order {self.order_id} – {self.status}"
+    def __str__(self) -> str:
+        return f"Payment #{self.pk} - {self.status}"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        super().save(*args, **kwargs)

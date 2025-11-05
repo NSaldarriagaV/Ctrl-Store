@@ -26,7 +26,7 @@ from .views import (
     UserToggleStatusView,
     AdminSalesHistoryView,
     AdminSalesReportView,
-    AdminSalesExportCSVView
+    AdminSalesExportView
 )
 
 app_name = "authx"
@@ -68,5 +68,5 @@ urlpatterns = [
     # Reportes de ventas
     path("admin/sales/", AdminSalesHistoryView.as_view(), name="admin_sales"),
     path("admin/sales/report/", AdminSalesReportView.as_view(), name="admin_sales_report"),
-    path("admin/sales/export.csv", AdminSalesExportCSVView.as_view(), name="admin_sales_export"),
+    path("admin/sales/export/", AdminSalesExportView.as_view(), name="admin_sales_export"),
 ]

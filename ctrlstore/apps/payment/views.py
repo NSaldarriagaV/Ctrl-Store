@@ -1,15 +1,27 @@
+from __future__ import annotations
+
+from typing import Any
+
+import io
+
+from django.apps import apps
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages import get_messages
+from django.db import transaction
+from django.db.models import F
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+)
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_GET, require_POST
-
-from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from django.template.loader import get_template
 from django.utils import timezone
-import io
-# Nota: importamos xhtml2pdf de forma diferida dentro de la función para evitar
-# romper el arranque si reportlab/xhtml2pdf no son compatibles en el entorno.
+from django.views.decorators.http import require_GET, require_POST
 
 from ctrlstore.apps.order.models import Order
 from .forms import CardPaymentForm
@@ -21,12 +33,13 @@ from django.db.models import F
 from django.apps import apps
 
 
+
 @login_required
 @require_GET
-def pay(request, order_id: int):
+def pay(request: HttpRequest, order_id: int) -> HttpResponse:
     order = get_object_or_404(Order, pk=order_id, user=request.user)
 
-    # 🔹 Limpia mensajes antiguos (del carrito/checkout) para esta vista
+    # Limpia mensajes antiguos (del carrito/checkout) para esta vista
     storage = get_messages(request)
     for _ in storage:
         pass  # consumirlos para que no se muestren aquí
@@ -43,10 +56,10 @@ def pay(request, order_id: int):
 
 @login_required
 @require_POST
-def process(request, order_id: int):
+def process(request: HttpRequest, order_id: int) -> HttpResponse | HttpResponseRedirect:
     order = get_object_or_404(Order, pk=order_id, user=request.user)
 
-    # Idempotencia básica: si ya está paga, no reprocesar
+    # Idempotencia: si ya está paga, no reprocesar
     if order.status == "paid":
         last_payment = order.payments.first()
         if last_payment:
@@ -59,10 +72,10 @@ def process(request, order_id: int):
         return render(request, "payment/pay.html", {"order": order, "form": form})
 
     cd = form.cleaned_data
-    number = cd["card_number"]
-    brand = cd.get("brand", "card")
+    number: str = cd["card_number"]
+    brand: str = cd.get("brand", "card")
 
-    # Crear Payment en estado initiated (no guardar PAN/CVV)
+    # Crear Payment en estado initiated (sin almacenar PAN/CVV)
     payment = Payment.objects.create(
         order=order,
         amount=order.total_amount,
@@ -92,7 +105,7 @@ def process(request, order_id: int):
                 }
 
                 # 1) Validar stock suficiente
-                faltantes = []
+                faltantes: list[str] = []
                 for it in item_qs:
                     p = products.get(it.product_id)
                     if p is None:
@@ -118,7 +131,13 @@ def process(request, order_id: int):
                 payment.error_code = ""
                 payment.error_message = ""
                 payment.save(
-                    update_fields=["status", "auth_code", "error_code", "error_message", "updated_at"]
+                    update_fields=[
+                        "status",
+                        "auth_code",
+                        "error_code",
+                        "error_message",
+                        "updated_at",
+                    ]
                 )
 
                 order.status = "paid"
@@ -139,10 +158,10 @@ def process(request, order_id: int):
         messages.success(request, "Pago realizado con éxito.")
         return redirect("payment:confirm", payment_id=payment.id)
 
-    # Fallo
+    # Fallo en la autorización
     payment.status = "failed"
-    payment.error_code = result.error_code or "error"
-    payment.error_message = result.msg or "No fue posible procesar el pago."
+    payment.error_code = getattr(result, "error_code", None) or "error"
+    payment.error_message = getattr(result, "msg", None) or "No fue posible procesar el pago."
     payment.save(update_fields=["status", "error_code", "error_message", "updated_at"])
 
     messages.error(request, payment.error_message)
@@ -151,15 +170,15 @@ def process(request, order_id: int):
 
 @login_required
 @require_GET
-def confirm(request, payment_id: int):
+def confirm(request: HttpRequest, payment_id: int) -> HttpResponse:
     payment = get_object_or_404(Payment, pk=payment_id, order__user=request.user)
     order = payment.order
-    # Mostramos resumen del pedido, costo, datos de checkout y método de pago (enmascarado)
     items = order.items.select_related("product")
     return render(request, "payment/confirm.html", {"payment": payment, "order": order, "items": items})
 
-# Helper: render un template HTML a PDF
-def render_to_pdf(template_src: str, context: dict) -> HttpResponse | None:
+
+def render_to_pdf(template_src: str, context: dict[str, Any]) -> HttpResponse | None:
+    """Helper: render un template HTML a PDF (None si no hay dependencia disponible)."""
     try:
         from xhtml2pdf import pisa  # type: ignore
     except Exception:
@@ -172,9 +191,10 @@ def render_to_pdf(template_src: str, context: dict) -> HttpResponse | None:
         return HttpResponse(result.getvalue(), content_type="application/pdf")
     return None
 
+
 @login_required
 @require_GET
-def invoice_pdf(request, payment_id: int):
+def invoice_pdf(request: HttpRequest, payment_id: int) -> HttpResponse:
     payment = get_object_or_404(Payment, pk=payment_id, order__user=request.user)
     if payment.status != "captured":
         return HttpResponseBadRequest("La factura solo está disponible para pagos aprobados.")
@@ -183,7 +203,7 @@ def invoice_pdf(request, payment_id: int):
 
     created_local = timezone.localtime(payment.created_at)
     invoice_number = f"INV-{payment.id}-{created_local.strftime('%Y%m%d')}"
-    context = {
+    context: dict[str, Any] = {
         "invoice_number": invoice_number,
         "created_at": created_local,
         "payment": payment,
