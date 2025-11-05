@@ -1,37 +1,41 @@
 {% extends "base.html" %}
-{% block title %}Checkout – Ctrl+Store{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Checkout – Ctrl+Store" %}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-  <h1 class="mb-4"><i class="fas fa-credit-card me-2"></i>Checkout</h1>
+  <h1 class="mb-4"><i class="fas fa-credit-card me-2"></i>{% trans "Checkout" %}</h1>
 
   <div class="row g-4">
     <!-- Resumen del carrito -->
     <div class="col-lg-6">
       <div class="bg-dark text-light p-3 rounded-3">
-        <h4 class="mb-3">Tu pedido</h4>
+        <h4 class="mb-3">{% trans "Tu pedido" %}</h4>
 
         {% for it in items %}
         <div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2">
           <div class="me-3">
             <div class="fw-semibold">{{ it.product.name }}</div>
-            <small class="text-muted">x{{ it.quantity }}</small>
+            <small class="text-muted">
+              {% blocktrans with qty=it.quantity %}x{{ qty }}{% endblocktrans %}
+            </small>
           </div>
           <div class="text-end">
             <div>${{ it.subtotal }}</div>
-            <small class="text-muted">${{ it.unit_price }} c/u</small>
+            <small class="text-muted">${{ it.unit_price }} {% trans "c/u" %}</small>
           </div>
         </div>
         {% endfor %}
 
         <div class="d-flex justify-content-between mt-3">
-          <span>Subtotal</span><strong>${{ subtotal }}</strong>
+          <span>{% trans "Subtotal" %}</span><strong>${{ subtotal }}</strong>
         </div>
         <div class="d-flex justify-content-between">
-          <span>Envío</span><strong>${{ shipping }}</strong>
+          <span>{% trans "Envío" %}</span><strong>${{ shipping }}</strong>
         </div>
         <div class="d-flex justify-content-between fs-5 mt-2">
-          <span>Total</span><strong class="text-success">${{ grand_total }}</strong>
+          <span>{% trans "Total" %}</span><strong class="text-success">${{ grand_total }}</strong>
         </div>
       </div>
     </div>
@@ -39,14 +43,14 @@
     <!-- Datos del comprador / envío -->
     <div class="col-lg-6">
       <div class="bg-dark text-light p-3 rounded-3">
-        <h4 class="mb-3">Datos del comprador y entrega</h4>
+        <h4 class="mb-3">{% trans "Datos del comprador y entrega" %}</h4>
 
         <form method="post" novalidate>
           {% csrf_token %}
 
           <!-- Nombre completo -->
           <div class="mb-3">
-            <label for="id_full_name" class="form-label">Nombre completo</label>
+            <label for="id_full_name" class="form-label">{% trans "Nombre completo" %}</label>
             <input
               type="text"
               name="full_name"
@@ -63,7 +67,7 @@
           <div class="row">
             <!-- Correo -->
             <div class="col-md-6 mb-3">
-              <label for="id_email" class="form-label">Correo</label>
+              <label for="id_email" class="form-label">{% trans "Correo" %}</label>
               {% if request.user.is_authenticated and request.user.email %}
                 <input
                   type="email"
@@ -73,7 +77,7 @@
                   value="{{ request.user.email }}"
                   readonly
                 >
-                <div class="form-text text-muted">Usando el correo de tu cuenta.</div>
+                <div class="form-text text-muted">{% trans "Usando el correo de tu cuenta." %}</div>
               {% else %}
                 <input
                   type="email"
@@ -91,7 +95,7 @@
 
             <!-- Teléfono -->
             <div class="col-md-6 mb-3">
-              <label for="id_phone" class="form-label">Teléfono</label>
+              <label for="id_phone" class="form-label">{% trans "Teléfono" %}</label>
               <input
                 type="text"
                 name="phone"
@@ -107,7 +111,7 @@
 
           <!-- Dirección -->
           <div class="mb-3">
-            <label for="id_address_line1" class="form-label">Dirección</label>
+            <label for="id_address_line1" class="form-label">{% trans "Dirección" %}</label>
             <input
               type="text"
               name="address_line1"
@@ -123,7 +127,7 @@
 
           <!-- Complemento -->
           <div class="mb-3">
-            <label for="id_address_line2" class="form-label">Complemento</label>
+            <label for="id_address_line2" class="form-label">{% trans "Complemento" %}</label>
             <input
               type="text"
               name="address_line2"
@@ -139,7 +143,7 @@
           <div class="row">
             <!-- Ciudad -->
             <div class="col-md-6 mb-3">
-              <label for="id_city" class="form-label">Ciudad</label>
+              <label for="id_city" class="form-label">{% trans "Ciudad" %}</label>
               <input
                 type="text"
                 name="city"
@@ -155,7 +159,7 @@
 
             <!-- Departamento/Estado -->
             <div class="col-md-6 mb-3">
-              <label for="id_state" class="form-label">Departamento/Estado</label>
+              <label for="id_state" class="form-label">{% trans "Departamento/Estado" %}</label>
               <input
                 type="text"
                 name="state"
@@ -172,7 +176,7 @@
           <div class="row">
             <!-- Código Postal -->
             <div class="col-md-6 mb-3">
-              <label for="id_postal_code" class="form-label">Código Postal</label>
+              <label for="id_postal_code" class="form-label">{% trans "Código Postal" %}</label>
               <input
                 type="text"
                 name="postal_code"
@@ -187,7 +191,7 @@
 
             <!-- País -->
             <div class="col-md-6 mb-3">
-              <label for="id_country" class="form-label">País</label>
+              <label for="id_country" class="form-label">{% trans "País" %}</label>
               <input
                 type="text"
                 name="country"
@@ -204,7 +208,7 @@
 
           <div class="d-grid">
             <button class="btn btn-primary btn-lg" type="submit">
-              <i class="fas fa-lock me-2"></i>Ir a pagar
+              <i class="fas fa-lock me-2"></i>{% trans "Ir a pagar" %}
             </button>
           </div>
         </form>

@@ -1,12 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Pago – Ctrl+Store{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Pago – Ctrl+Store" %}{% endblock %}
+
 {% block content %}
 <div class="container my-5">
   <div class="bg-dark text-light p-4 rounded-3 text-center">
-    <h1 class="mb-3"><i class="fas fa-unlock-alt me-2"></i>Pagar Orden #{{ order.id }}</h1>
-    <p class="lead">Total a pagar: <strong class="text-success">${{ order.total_amount }}</strong></p>
-    <p class="text-muted">Aquí integrarás tu pasarela (Wompi, PayU, Stripe, etc.).</p>
-    <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-light mt-3">Seguir comprando</a>
+    <h1 class="mb-3">
+      <i class="fas fa-unlock-alt me-2"></i>
+      {% blocktrans with id=order.id %}Pagar Orden #{{ id }}{% endblocktrans %}
+    </h1>
+    <p class="lead">
+      {% trans "Total a pagar:" %} <strong class="text-success">${{ order.total_amount }}</strong>
+    </p>
+    <p class="text-muted">
+      {% trans "Aquí integrarás tu pasarela (Wompi, PayU, Stripe, etc.)." %}
+    </p>
+    <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-light mt-3">
+      {% trans "Seguir comprando" %}
+    </a>
   </div>
 </div>
 {% endblock %}

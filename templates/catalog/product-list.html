@@ -1,6 +1,8 @@
 {% extends "base.html" %}
-{% load analytics_tags %}
-{% block title %}Catálogo – Ctrl+Store{% endblock %}
+{% load i18n l10n analytics_tags %}
+
+{% block title %}{% trans "Catálogo – Ctrl+Store" %}{% endblock %}
+
 {% block content %}
 <div class="catalog-container">
     <!-- Mensajes de notificación -->
@@ -10,7 +12,7 @@
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Cerrar' %}"></button>
                 </div>
             {% endfor %}
         </div>
@@ -22,13 +24,14 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="catalog-title">
-                        <i class="fas fa-store me-3"></i>Catálogo de Productos
+                        <i class="fas fa-store me-3"></i>{% trans "Catálogo de Productos" %}
                     </h1>
-                    <p class="catalog-subtitle">Descubre nuestra selección de productos electrónicos</p>
+                    <p class="catalog-subtitle">{% trans "Descubre nuestra selección de productos electrónicos" %}</p>
                 </div>
                 <div class="col-md-4 text-end">
                     <div class="products-count">
-                        <i class="fas fa-box me-2"></i>{{ object_list|length }} productos
+                        <i class="fas fa-box me-2"></i>
+                        {% blocktrans with n=object_list|length %}{{ n }} productos{% endblocktrans %}
                     </div>
                 </div>
             </div>
@@ -43,17 +46,19 @@
                     <form method="get" class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <label for="category-filter" class="form-label">
-                                <i class="fas fa-tags me-2"></i>Categoría
+                                <i class="fas fa-tags me-2"></i>{% trans "Categoría" %}
                             </label>
                             <select name="cat" id="category-filter" class="form-select">
-                                <option value="">🏪 Todas las categorías</option>
+                                <option value="">🏪 {% trans "Todas las categorías" %}</option>
                                 {% for main_category in main_categories %}
-                                    <optgroup label="📂 {{ main_category.name }}">
+                                    {% translate main_category.name as mc_name %}
+                                    <optgroup label="📂 {{ mc_name }}">
                                         {% for subcategory in main_category.subcategories.all %}
                                             {% if subcategory.is_active %}
+                                                {% translate subcategory.name as sub_name %}
                                                 <option value="{{ subcategory.slug }}" 
                                                         {% if selected_cat == subcategory.slug %}selected{% endif %}>
-                                                    {% if main_category.category_type == 'celulares_tablets' %}📱{% elif main_category.category_type == 'computadores' %}💻{% elif main_category.category_type == 'componentes' %}🔧{% elif main_category.category_type == 'audio_video' %}📺{% elif main_category.category_type == 'gaming' %}🎮{% else %}📦{% endif %} {{ subcategory.name }}
+                                                    {% if main_category.category_type == 'celulares_tablets' %}📱{% elif main_category.category_type == 'computadores' %}💻{% elif main_category.category_type == 'componentes' %}🔧{% elif main_category.category_type == 'audio_video' %}📺{% elif main_category.category_type == 'gaming' %}🎮{% else %}📦{% endif %} {{ sub_name }}
                                                 </option>
                                             {% endif %}
                                         {% endfor %}
@@ -61,8 +66,9 @@
                                 {% empty %}
                                     <!-- Fallback si no hay categorías principales -->
                                     {% for c in categories %}
+                                        {% translate c.name as cname %}
                                         <option value="{{ c.slug }}" {% if selected_cat == c.slug %}selected{% endif %}>
-                                            {{ c.name }}
+                                            {{ cname }}
                                         </option>
                                     {% endfor %}
                                 {% endfor %}
@@ -73,18 +79,18 @@
                                 <input class="form-check-input" type="checkbox" name="gaming" value="1" 
                                        id="gaming-filter" {% if request.GET.gaming %}checked{% endif %}>
                                 <label class="form-check-label" for="gaming-filter">
-                                    <i class="fas fa-gamepad me-2"></i>Solo Gaming
+                                    <i class="fas fa-gamepad me-2"></i>{% trans "Solo Gaming" %}
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-search me-2"></i>Filtrar
+                                <i class="fas fa-search me-2"></i>{% trans "Filtrar" %}
                             </button>
                         </div>
                         <div class="col-md-2">
                             <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-times me-2"></i>Limpiar
+                                <i class="fas fa-times me-2"></i>{% trans "Limpiar" %}
                             </a>
                         </div>
                     </form>
@@ -95,56 +101,60 @@
 
     <!-- Top Recomendados (más vendidos) -->
     <div class="top-recommended-section">
-    <div class="container">
+      <div class="container">
         {% top_sellers 3 as top3 %}
         {% if top3 %}
         <div class="card top-card">
             <div class="card-header d-flex align-items-center justify-content-between">
-            <h4 class="mb-0">
-                <i class="fas fa-trophy me-2"></i>Top recomendados
-                <small class="text-muted ms-2">(más vendidos)</small>
-            </h4>
-            <a href="{% url 'analytics:top_sellers' %}" class="btn btn-outline-light btn-sm">
-                Ver todos
-            </a>
+              <h4 class="mb-0">
+                  <i class="fas fa-trophy me-2"></i>{% trans "Top recomendados" %}
+                  <small class="text-muted ms-2">({% trans "más vendidos" %})</small>
+              </h4>
+              <a href="{% url 'analytics:top_sellers' %}" class="btn btn-outline-light btn-sm">
+                  {% trans "Ver todos" %}
+              </a>
             </div>
             <div class="card-body">
-            <div class="row">
+              <div class="row">
                 {% for agg in top3 %}
+                {% translate agg.product.name as agg_name %}
                 <div class="col-md-4 mb-3">
                     <a class="top-item d-flex align-items-center"
-                    href="{% url 'catalog:product_detail' agg.product.pk %}">
-                    <div class="top-thumb me-3">
-                        {% if agg.product.main_image %}
-                        <img src="{{ agg.product.main_image.url }}" alt="{{ agg.product.name }}">
-                        {% else %}
-                        <div class="top-thumb-placeholder d-flex align-items-center justify-content-center">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between">
-                        <strong class="top-name text-truncate me-2">{{ agg.product.name }}</strong>
-                        <span class="badge bg-success">#{{ forloop.counter }}</span>
-                        </div>
-                        <div class="small text-muted">
-                        {{ agg.units_sold }} vendidos · ${{ agg.revenue }}
-                        </div>
-                    </div>
+                       href="{% url 'catalog:product_detail' agg.product.pk %}">
+                      <div class="top-thumb me-3">
+                          {% if agg.product.main_image %}
+                            <img src="{{ agg.product.main_image.url }}" alt="{{ agg_name }}">
+                          {% else %}
+                            <div class="top-thumb-placeholder d-flex align-items-center justify-content-center">
+                                <i class="fas fa-box" aria-hidden="true"></i>
+                                <span class="visually-hidden">{% trans "Imagen no disponible" %}</span>
+                            </div>
+                          {% endif %}
+                      </div>
+                      <div class="flex-grow-1">
+                          <div class="d-flex justify-content-between">
+                            <strong class="top-name text-truncate me-2">{{ agg_name }}</strong>
+                            <span class="badge bg-success">#{{ forloop.counter }}</span>
+                          </div>
+                          <div class="small text-muted">
+                            {% blocktrans with u=agg.units_sold|localize r=agg.revenue|localize %}{{ u }} vendidos · ${{ r }}{% endblocktrans %}
+                          </div>
+                      </div>
                     </a>
                 </div>
                 {% endfor %}
-            </div>
+              </div>
             </div>
         </div>
         {% endif %}
-    </div>
+      </div>
     </div>
     {% top_viewed_products 1 as top1 %}
     <!-- /Top Recomendados -->
+
     {% if top1 %}
     {% with item=top1.0 %}
+    {% translate item.product.name as top_name %}
     <div class="container mb-4">
         <div class="alert alert-dark border-secondary" role="alert" style="background:#1f2937;">
             <i class="fas fa-fire me-2" style="
@@ -156,16 +166,16 @@
                 background: linear-gradient(45deg, #ffdd00, #ff8c00, #ff4500, #ff0000);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;">
-                Más visto:
+                {% trans "Más visto:" %}
             </strong>
             <a class="link-light text-decoration-underline" href="{% url 'catalog:product_detail' item.product.pk %}">
-                {{ item.product.name }}
+                {{ top_name }}
             </a>
-            <span class="badge bg-success ms-2">{{ item.views }} vistas</span>
+            <span class="badge bg-success ms-2">
+                {% blocktrans with v=item.views|localize %}{{ v }} vistas{% endblocktrans %}
+            </span>
         </div>
     </div>
-
-
     {% endwith %}
     {% endif %}
 
@@ -175,14 +185,18 @@
             {% if object_list %}
                 <div class="row">
                     {% for product in object_list %}
+                    {% translate product.category.name as cat_name %}
+                    {% translate product.name as prod_name %}
+                    {% if product.short_description %}{% translate product.short_description as short_desc %}{% endif %}
                     <div class="col-lg-6 col-xl-4 mb-4">
                         <div class="product-card" onclick="window.location.href='{% url 'catalog:product_detail' product.pk %}'">
                             <div class="product-image">
                                 {% if product.main_image %}
-                                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="img-fluid">
+                                    <img src="{{ product.main_image.url }}" alt="{{ prod_name }}" class="img-fluid">
                                 {% else %}
                                     <div class="placeholder-image">
-                                        <i class="fas fa-{% if product.category.category_type == 'celulares_tablets' %}mobile-alt{% elif product.category.category_type == 'computadores' %}laptop{% elif product.category.category_type == 'componentes' %}microchip{% elif product.category.category_type == 'audio_video' %}tv{% elif product.category.category_type == 'gaming' %}gamepad{% else %}box{% endif %} fa-3x"></i>
+                                        <i class="fas fa-{% if product.category.category_type == 'celulares_tablets' %}mobile-alt{% elif product.category.category_type == 'computadores' %}laptop{% elif product.category.category_type == 'componentes' %}microchip{% elif product.category.category_type == 'audio_video' %}tv{% elif product.category.category_type == 'gaming' %}gamepad{% else %}box{% endif %} fa-3x" aria-hidden="true"></i>
+                                        <span class="visually-hidden">{% trans "Imagen no disponible" %}</span>
                                     </div>
                                 {% endif %}
                                 
@@ -190,30 +204,30 @@
                                 <div class="product-badges">
                                     {% if product.is_featured %}
                                         <span class="badge bg-warning">
-                                            <i class="fas fa-star me-1"></i>Destacado
+                                            <i class="fas fa-star me-1" aria-hidden="true"></i>{% trans "Destacado" %}
                                         </span>
                                     {% endif %}
                                     {% if product.category.category_type == 'gaming' %}
                                         <span class="badge bg-danger">
-                                            <i class="fas fa-gamepad me-1"></i>Gaming
+                                            <i class="fas fa-gamepad me-1" aria-hidden="true"></i>{% trans "Gaming" %}
                                         </span>
                                     {% endif %}
                                     {% if not product.is_in_stock %}
-                                        <span class="badge bg-secondary">Sin stock</span>
+                                        <span class="badge bg-secondary">{% trans "Sin stock" %}</span>
                                     {% endif %}
                                 </div>
                             </div>
                             
                             <div class="product-info">
                                 <div class="product-category">
-                                    <i class="fas fa-tag me-2"></i>{{ product.category.name }}
+                                    <i class="fas fa-tag me-2" aria-hidden="true"></i>{{ cat_name }}
                                 </div>
-                                <h3 class="product-title">{{ product.name }}</h3>
+                                <h3 class="product-title">{{ prod_name }}</h3>
                                 <div class="product-brand">
-                                    <i class="fas fa-industry me-2"></i>{{ product.brand }}
+                                    <i class="fas fa-industry me-2" aria-hidden="true"></i>{{ product.brand }}
                                 </div>
-                                {% if product.short_description %}
-                                    <p class="product-description">{{ product.short_description }}</p>
+                                {% if short_desc %}
+                                    <p class="product-description">{{ short_desc }}</p>
                                 {% endif %}
                                 
                                 <!-- Especificaciones principales -->
@@ -221,7 +235,7 @@
                                     <div class="product-specs">
                                         {% for spec_name, spec_value in product.get_main_specs.items %}
                                             <span class="spec-item">
-                                                <strong>{{ spec_name }}:</strong> {{ spec_value }}
+                                                <strong>{% translate spec_name %}:</strong> {% if spec_value %}{% translate spec_value %}{% endif %}
                                             </span>
                                         {% endfor %}
                                     </div>
@@ -229,8 +243,8 @@
                                 
                                 <div class="product-footer">
                                     <div class="product-price">
-                                        <span class="price-label">Precio</span>
-                                        <span class="price-value">${{ product.price }}</span>
+                                        <span class="price-label">{% trans "Precio" %}</span>
+                                        <span class="price-value">${{ product.price|floatformat:0|localize }}</span>
                                     </div>
                                     <div class="product-actions">
                                         {% if product.is_in_stock %}
@@ -239,12 +253,12 @@
                                                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                                 <input type="hidden" name="quantity" value="1">
                                                 <button type="submit" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-cart-plus me-1"></i>Agregar
+                                                    <i class="fas fa-cart-plus me-1" aria-hidden="true"></i>{% trans "Agregar" %}
                                                 </button>
                                             </form>
                                         {% else %}
                                             <button class="btn btn-secondary btn-sm" disabled>
-                                                <i class="fas fa-times me-1"></i>Sin stock
+                                                <i class="fas fa-times me-1" aria-hidden="true"></i>{% trans "Sin stock" %}
                                             </button>
                                         {% endif %}
                                     </div>
@@ -258,26 +272,26 @@
                 <!-- Paginación -->
                 {% if is_paginated %}
                 <div class="pagination-section">
-                    <nav aria-label="Navegación de productos">
+                    <nav aria-label="{% trans 'Navegación de productos' %}">
                         <ul class="pagination justify-content-center">
                             {% if page_obj.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.cat %}&cat={{ request.GET.cat }}{% endif %}{% if request.GET.gaming %}&gaming={{ request.GET.gaming }}{% endif %}">
-                                        <i class="fas fa-chevron-left me-1"></i>Anterior
+                                        <i class="fas fa-chevron-left me-1" aria-hidden="true"></i>{% trans "Anterior" %}
                                     </a>
                                 </li>
                             {% endif %}
                             
                             <li class="page-item active">
                                 <span class="page-link">
-                                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                    {% blocktrans with n=page_obj.number t=page_obj.paginator.num_pages %}Página {{ n }} de {{ t }}{% endblocktrans %}
                                 </span>
                             </li>
                             
                             {% if page_obj.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.cat %}&cat={{ request.GET.cat }}{% endif %}{% if request.GET.gaming %}&gaming={{ request.GET.gaming }}{% endif %}">
-                                        Siguiente<i class="fas fa-chevron-right ms-1"></i>
+                                        {% trans "Siguiente" %}<i class="fas fa-chevron-right ms-1" aria-hidden="true"></i>
                                     </a>
                                 </li>
                             {% endif %}
@@ -289,12 +303,13 @@
                 <!-- Estado vacío -->
                 <div class="empty-state">
                     <div class="empty-icon">
-                        <i class="fas fa-search fa-5x"></i>
+                        <i class="fas fa-search fa-5x" aria-hidden="true"></i>
+                        <span class="visually-hidden">{% trans "No se encontraron productos" %}</span>
                     </div>
-                    <h3>No se encontraron productos</h3>
-                    <p>Intenta ajustar los filtros o explora otras categorías</p>
+                    <h3>{% trans "No se encontraron productos" %}</h3>
+                    <p>{% trans "Intenta ajustar los filtros o explora otras categorías" %}</p>
                     <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">
-                        <i class="fas fa-arrow-left me-2"></i>Ver todos los productos
+                        <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>{% trans "Ver todos los productos" %}
                     </a>
                 </div>
             {% endif %}
@@ -303,6 +318,12 @@
 </div>
 
 <style>
+/* Tema oscuro para el catálogo */
+.catalog-container {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    min-height: 100vh;
+    color: #ecf0f1;
+}
 /* Tema oscuro para el catálogo */
 .catalog-container {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);

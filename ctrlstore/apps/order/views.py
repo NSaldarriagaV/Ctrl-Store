@@ -8,6 +8,10 @@ from ctrlstore.apps.cart.utils import get_or_create_cart
 from .forms import CheckoutForm
 from .models import Order, OrderItem
 
+# i18n
+from django.utils.translation import gettext as _
+# from django.utils.translation import ngettext, pgettext  # Importar si se usan
+
 
 def _login_with_next_url() -> str:
     """
@@ -30,7 +34,7 @@ def _require_logged_in(request):
 
 def _cart_must_have_items(cart, request):
     if cart.items.count() == 0:
-        messages.info(request, "Tu carrito está vacío.")
+        messages.info(request, _("Tu carrito está vacío."))
         return redirect("cart:detail")
     return None
 
@@ -95,7 +99,7 @@ def checkout(request):
             # (Opcional) Vaciar carrito
             cart.items.all().delete()
 
-            messages.success(request, "Orden creada correctamente. Continúa con el pago.")
+            messages.success(request, _("Orden creada correctamente. Continúa con el pago."))
             return redirect("order:pay", order_id=order.id)
     else:
         form = CheckoutForm(initial=initial)
@@ -116,4 +120,3 @@ def pay(request, order_id):
     # Placeholder para integrar tu pasarela (Wompi/PayU/Stripe)
     order = get_object_or_404(Order, pk=order_id, user=request.user)
     return redirect("payment:pay", order_id=order.id)
-

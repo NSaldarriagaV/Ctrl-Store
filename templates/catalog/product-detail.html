@@ -1,7 +1,17 @@
 {% extends "base.html" %}
-{% block title %}{{ object.name }} – Ctrl+Store{% endblock %}
+{% load i18n l10n %}
+
+{% block title %}
+  {% translate object.name as prod_name %}{{ prod_name }} – Ctrl+Store
+{% endblock %}
 
 {% block content %}
+{% translate object.name as prod_name %}
+{% translate object.category.name as cat_name %}
+{% if object.short_description %}
+  {% translate object.short_description as short_desc %}
+{% endif %}
+
 <div class="product-detail-container">
     <div class="container">
         <!-- Mensajes de notificación -->
@@ -10,25 +20,26 @@
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    {% translate "Close" as close_label %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ close_label }}"></button>
                 </div>
             {% endfor %}
         {% endif %}
         
         <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb" class="product-breadcrumb">
+        <nav aria-label="{% trans 'breadcrumb' %}" class="product-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                     <a href="{% url 'catalog:product_list' %}">
-                        <i class="fas fa-home me-1"></i>Catálogo
+                        <i class="fas fa-home me-1"></i>{% trans "Catálogo" %}
                     </a>
                 </li>
                 <li class="breadcrumb-item">
                     <a href="{% url 'catalog:product_list' %}?cat={{ object.category.slug }}">
-                        {{ object.category.name }}
+                        {{ cat_name }}
                     </a>
                 </li>
-                <li class="breadcrumb-item active">{{ object.name }}</li>
+                <li class="breadcrumb-item active">{{ prod_name }}</li>
             </ol>
         </nav>
 
@@ -38,11 +49,11 @@
                 <div class="product-image-section">
                     <div class="main-image">
                         {% if object.main_image %}
-                            <img src="{{ object.main_image.url }}" alt="{{ object.name }}" class="img-fluid">
+                            <img src="{{ object.main_image.url }}" alt="{{ prod_name }}" class="img-fluid">
                         {% else %}
                             <div class="placeholder-image">
                                 <i class="fas fa-{% if object.category.category_type == 'celulares_tablets' %}mobile-alt{% elif object.category.category_type == 'computadores' %}laptop{% elif object.category.category_type == 'componentes' %}microchip{% elif object.category.category_type == 'audio_video' %}tv{% elif object.category.category_type == 'gaming' %}gamepad{% else %}box{% endif %} fa-5x"></i>
-                                <p>Imagen no disponible</p>
+                                <p>{% trans "Imagen no disponible" %}</p>
                             </div>
                         {% endif %}
                     </div>
@@ -51,19 +62,20 @@
                     <div class="product-badges">
                         {% if object.is_featured %}
                             <span class="badge bg-warning">
-                                <i class="fas fa-star me-1"></i>Destacado
+                                <i class="fas fa-star me-1"></i>{% trans "Destacado" %}
                             </span>
                         {% endif %}
                         {% if object.category.category_type == 'gaming' %}
                             <span class="badge bg-danger">
-                                <i class="fas fa-gamepad me-1"></i>Gaming
+                                <i class="fas fa-gamepad me-1"></i>{% trans "Gaming" %}
                             </span>
                         {% endif %}
                         {% if not object.is_in_stock %}
-                            <span class="badge bg-secondary">Sin stock</span>
+                            <span class="badge bg-secondary">{% trans "Sin stock" %}</span>
                         {% else %}
                             <span class="badge bg-success">
-                                <i class="fas fa-check me-1"></i>En stock ({{ object.stock_quantity }})
+                                <i class="fas fa-check me-1"></i>
+                                {% blocktrans with stock=object.stock_quantity %}En stock ({{ stock }}){% endblocktrans %}
                             </span>
                         {% endif %}
                     </div>
@@ -76,9 +88,9 @@
                     <!-- Header -->
                     <div class="product-header">
                         <div class="product-category">
-                            <i class="fas fa-tag me-2"></i>{{ object.category.name }}
+                            <i class="fas fa-tag me-2"></i>{{ cat_name }}
                         </div>
-                        <h1 class="product-title">{{ object.name }}</h1>
+                        <h1 class="product-title">{{ prod_name }}</h1>
                         <div class="product-brand">
                             <i class="fas fa-industry me-2"></i>{{ object.brand }}
                         </div>
@@ -86,27 +98,28 @@
 
                     <!-- Precio -->
                     <div class="product-pricing">
-                        <span class="price-label">Precio</span>
-                        <span class="price-value">${{ object.price }}</span>
+                        <span class="price-label">{% trans "Precio" %}</span>
+                        <span class="price-value">${{ object.price|floatformat:0|localize }}</span>
+                        <small class="text-muted">COP</small>
                     </div>
 
                     <!-- Descripción corta -->
-                    {% if object.short_description %}
+                    {% if short_desc %}
                         <div class="product-summary">
-                            <h3><i class="fas fa-info-circle me-2"></i>Resumen</h3>
-                            <p>{{ object.short_description }}</p>
+                            <h3><i class="fas fa-info-circle me-2"></i>{% trans "Resumen" %}</h3>
+                            <p>{{ short_desc }}</p>
                         </div>
                     {% endif %}
 
                     <!-- Especificaciones principales -->
                     {% if object.get_main_specs %}
                         <div class="product-highlights">
-                            <h3><i class="fas fa-star me-2"></i>Características Principales</h3>
+                            <h3><i class="fas fa-star me-2"></i>{% trans "Características Principales" %}</h3>
                             <div class="specs-grid">
                                 {% for spec_name, spec_value in object.get_main_specs.items %}
                                     <div class="spec-highlight">
-                                        <strong>{{ spec_name }}</strong>
-                                        <span>{{ spec_value }}</span>
+                                        <strong>{% translate spec_name %}</strong>
+                                        <span>{% if spec_value %}{% translate spec_value %}{% endif %}</span>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -121,16 +134,16 @@
                                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                 <input type="number" name="quantity" value="1" min="1" class="form-control me-2" style="width: 100px;">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                                    <i class="fas fa-cart-plus me-2"></i>{% trans "Agregar al Carrito" %}
                                 </button>
                             </form>
                         {% else %}
                             <button class="btn btn-secondary btn-lg" disabled>
-                                <i class="fas fa-times me-2"></i>Agotado
+                                <i class="fas fa-times me-2"></i>{% trans "Agotado" %}
                             </button>
                         {% endif %}
                         <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary btn-lg">
-                            <i class="fas fa-arrow-left me-2"></i>Volver
+                            <i class="fas fa-arrow-left me-2"></i>{% trans "Volver" %}
                         </a>
                     </div>
                 </div>
@@ -139,11 +152,12 @@
 
         <!-- Descripción completa -->
         {% if object.description %}
+        {% translate object.description as full_desc %}
         <div class="row mt-5">
             <div class="col-12">
                 <div class="description-section">
-                    <h3><i class="fas fa-align-left me-2"></i>Descripción Completa</h3>
-                    <p>{{ object.description|linebreaks }}</p>
+                    <h3><i class="fas fa-align-left me-2"></i>{% trans "Descripción Completa" %}</h3>
+                    <p>{{ full_desc|linebreaks }}</p>
                 </div>
             </div>
         </div>

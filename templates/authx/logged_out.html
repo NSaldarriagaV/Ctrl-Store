@@ -1,8 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Sesión cerrada – Ctrl+Store{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Sesión cerrada – Ctrl+Store" %}{% endblock %}
 
 {% block content %}
-<h1>Has cerrado sesión</h1>
-<p class="muted">Tu sesión se cerró correctamente.</p>
-<p><a class="button button-secondary" href="{% url 'catalog:product_list' %}">Volver al catálogo</a></p>
+<h1>{% trans "Has cerrado sesión" %}</h1>
+<p class="muted">{% trans "Tu sesión se cerró correctamente." %}</p>
+<p>
+  <a class="button button-secondary" href="{% url 'catalog:product_list' %}">
+    {% trans "Volver al catálogo" %}
+  </a>
+</p>
 {% endblock %}

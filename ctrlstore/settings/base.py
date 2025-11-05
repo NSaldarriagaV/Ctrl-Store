@@ -1,5 +1,6 @@
 from pathlib import Path
 import environ
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
@@ -8,6 +9,15 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY", default="dev-only-secret")
 DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+
+LANGUAGE_CODE = "es"          # la app arranca en español
+USE_I18N = True               # habilitar i18n
+USE_L10N = True
+
+LANGUAGES = (
+    ("es", _("Español")),
+    ("en", _("English")),
+)
 
 INSTALLED_APPS = [
     # Django core
@@ -32,6 +42,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -100,3 +111,5 @@ LOGOUT_REDIRECT_URL = "catalog:product_list"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+LOCALE_PATHS = [BASE_DIR / "locale"]

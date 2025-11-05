@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
+{% load l10n %}
 
-{% block title %}Seleccionar Productos - {{ category.name }} - Ctrl+Store{% endblock %}
+{% block title %}
+{% translate category.name as cat_name %}
+{% blocktrans with name=cat_name %}Seleccionar Productos - {{ name }} - Ctrl+Store{% endblocktrans %}
+{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -10,79 +15,87 @@
             <!-- Header -->
             <div class="d-flex align-items-center mb-4">
                 <a href="{% url 'catalog:compare_category_select' %}" class="btn btn-outline-secondary me-3">
-                    <i class="fas fa-arrow-left me-2"></i>Volver
+                    <i class="fas fa-arrow-left me-2"></i>{% trans "Volver" %}
                 </a>
                 <div>
                     <h1 class="h3 text-light mb-1">
                         <i class="fas fa-balance-scale text-purple me-2"></i>
-                        Comparar: {{ category.name }}
+                        {% translate category.name as cat_name %}
+                        {% blocktrans with name=cat_name %}Comparar: {{ name }}{% endblocktrans %}
                     </h1>
-                    <p class="text-muted mb-0">Selecciona 2 productos para comparar</p>
+                    <p class="text-muted mb-0">{% trans "Selecciona 2 productos para comparar" %}</p>
                 </div>
             </div>
 
             <!-- Instrucciones -->
             <div class="alert alert-info mb-4">
                 <i class="fas fa-info-circle me-2"></i>
-                <strong>Instrucciones:</strong> Haz clic en los productos que deseas comparar. 
-                Debes seleccionar exactamente 2 productos para continuar.
+                <strong>{% trans "Instrucciones:" %}</strong>
+                {% trans "Haz clic en los productos que deseas comparar. Debes seleccionar exactamente 2 productos para continuar." %}
             </div>
 
             <!-- Productos -->
             <div class="row g-4" id="products-container">
                 {% for product in products %}
+                {% translate product.name as p_name %}
+                {% translate product.short_description as p_short %}
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 product-card" 
-                         data-product-id="{{ product.id }}" 
-                         data-product-name="{{ product.name }}"
-                         data-product-price="{{ product.price }}">
+                    <div class="card h-100 product-card"
+                         data-product-id="{{ product.id }}"
+                         data-product-name="{{ p_name }}"
+                         data-product-price="{{ product.price|floatformat:0|localize }}">
                         <div class="position-relative">
                             {% if product.main_image %}
-                                <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                <img src="{{ product.main_image.url }}"
+                                     class="card-img-top"
+                                     alt="{{ p_name }}"
+                                     style="height: 200px; object-fit: cover;">
                             {% else %}
                                 <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                    <i class="fas fa-image fa-3x text-muted" aria-label="{{ p_name }}"></i>
                                 </div>
                             {% endif %}
-                            
+
                             <!-- Checkbox de selección -->
                             <div class="position-absolute top-0 end-0 m-2">
                                 <div class="form-check">
-                                    <input class="form-check-input product-checkbox" 
-                                           type="checkbox" 
-                                           value="{{ product.id }}" 
+                                    <input class="form-check-input product-checkbox"
+                                           type="checkbox"
+                                           value="{{ product.id }}"
                                            id="product-{{ product.id }}">
                                     <label class="form-check-label" for="product-{{ product.id }}">
-                                        <span class="badge bg-primary">Seleccionar</span>
+                                        <span class="badge bg-primary">{% trans "Seleccionar" %}</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="card-body">
-                            <h5 class="card-title text-light">{{ product.name }}</h5>
-                            <p class="card-text text-muted small">{{ product.short_description|truncatewords:15 }}</p>
-                            
+                            <h5 class="card-title text-light">{{ p_name }}</h5>
+                            <p class="card-text text-muted small">{{ p_short|truncatewords:15 }}</p>
+
                             <!-- Especificaciones principales -->
                             <div class="specs-preview">
                                 {% for key, value in product.get_main_specs.items %}
-                                <div class="d-flex justify-content-between small text-muted">
-                                    <span>{{ key }}:</span>
-                                    <span class="text-light">{{ value }}</span>
-                                </div>
+                                    {% translate key as key_t %}
+                                    {% translate value as value_t %}
+                                    <div class="d-flex justify-content-between small text-muted">
+                                        <span>{{ key_t }}:</span>
+                                        <span class="text-light">{{ value_t }}</span>
+                                    </div>
                                 {% endfor %}
                             </div>
-                            
+
                             <div class="mt-3">
-                                <h4 class="text-success mb-0">${{ product.price|floatformat:0 }}</h4>
+                                <h4 class="text-success mb-0">${{ product.price|floatformat:0|localize }}</h4>
                                 <small class="text-muted">COP</small>
                             </div>
                         </div>
-                        
+
                         <div class="card-footer bg-transparent border-0">
-                            <a href="{% url 'catalog:product_detail' product.pk %}" 
+                            <a href="{% url 'catalog:product_detail' product.pk %}"
                                class="btn btn-outline-primary btn-sm w-100">
-                                <i class="fas fa-eye me-2"></i>Ver Detalles
+                                <i class="fas fa-eye me-2"></i>{% trans "Ver Detalles" %}
                             </a>
                         </div>
                     </div>
@@ -91,7 +104,7 @@
                 <div class="col-12">
                     <div class="alert alert-warning text-center">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        No hay productos disponibles en esta categoría.
+                        {% trans "No hay productos disponibles en esta categoría." %}
                     </div>
                 </div>
                 {% endfor %}
@@ -100,11 +113,13 @@
             <!-- Botón de comparar -->
             <div class="row mt-5">
                 <div class="col-12 text-center">
-                    <button id="compare-btn" class="btn btn-primary btn-lg" disabled>
+                    <button id="compare-btn" class="btn btn-primary btn-lg" disabled
+                            data-msg-need-two="{% trans 'Debes seleccionar exactamente 2 productos.' %}">
                         <i class="fas fa-balance-scale me-2"></i>
-                        Comparar Productos Seleccionados
+                        {% trans "Comparar Productos Seleccionados" %}
                     </button>
-                    <div id="selection-info" class="mt-2 text-muted"></div>
+                    <div id="selection-info" class="mt-2 text-muted"
+                         data-msg-selected="{% trans 'Has seleccionado {n} de 2.' %}"></div>
                 </div>
             </div>
         </div>

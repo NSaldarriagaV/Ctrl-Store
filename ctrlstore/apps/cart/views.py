@@ -13,6 +13,10 @@ from .models import CartItem
 from .services import CartService, CartValidationService
 from .utils import get_or_create_cart
 
+# i18n
+from django.utils.translation import gettext as _
+# from django.utils.translation import ngettext, pgettext  # Importar si se usan
+
 # 👇 obtenemos el modelo dinámicamente
 Product = apps.get_model("catalog", "Product")
 
@@ -31,13 +35,16 @@ def add_to_cart(request, product_id):
     try:
         qty = int(request.POST.get("quantity", 1))
     except (TypeError, ValueError):
-        return HttpResponseBadRequest("Cantidad inválida")
+        return HttpResponseBadRequest(_("Cantidad inválida"))
 
     qty = max(1, qty)
 
     try:
         item = CartService.add_to_cart(request, product, qty)
-        messages.success(request, f"{product.name} agregado al carrito.")
+        messages.success(
+            request,
+            _("%(name)s agregado al carrito.") % {"name": product.name},
+        )
 
         cart_logger.log_cart_operation(
             "add_product",
@@ -49,6 +56,7 @@ def add_to_cart(request, product_id):
         )
 
     except (StockError, CartError) as e:
+        # Se asume que el mensaje de la excepción es adecuado; si se requiere i18n, hacerlo en donde se lanza la excepción
         messages.error(request, str(e))
         cart_logger.log_error(
             e,
@@ -60,7 +68,7 @@ def add_to_cart(request, product_id):
             },
         )
     except Exception as e:
-        messages.error(request, "Error al agregar producto al carrito.")
+        messages.error(request, _("Error al agregar producto al carrito."))
         cart_logger.log_error(
             e, {"action": "add_to_cart", "product_id": product.id, "quantity": qty}
         )
@@ -76,22 +84,29 @@ def update_cart_item(request, item_id):
     try:
         qty = int(request.POST.get("quantity", 1))
     except (TypeError, ValueError):
-        return HttpResponseBadRequest("Cantidad inválida")
+        return HttpResponseBadRequest(_("Cantidad inválida"))
 
     if qty <= 0:
         item.delete()
-        messages.info(request, f"{item.product.name} eliminado del carrito.")
+        messages.info(
+            request,
+            _("%(name)s eliminado del carrito.") % {"name": item.product.name},
+        )
     else:
         if (
             hasattr(item.product, "stock")
             and item.product.stock is not None
             and qty > item.product.stock
         ):
-            messages.error(request, "No hay stock suficiente.")
+            messages.error(request, _("No hay stock suficiente."))
         else:
             item.quantity = qty
             item.save()
-            messages.success(request, f"Cantidad actualizada: {item.product.name} x{qty}")
+            messages.success(
+                request,
+                _("Cantidad actualizada: %(name)s x%(qty)s")
+                % {"name": item.product.name, "qty": qty},
+            )
     return redirect("cart:detail")
 
 
@@ -100,5 +115,5 @@ def remove_from_cart(request, item_id):
     cart = get_or_create_cart(request)
     item = get_object_or_404(CartItem, pk=item_id, cart=cart)
     item.delete()
-    messages.info(request, "Producto eliminado del carrito.")
+    messages.info(request, _("Producto eliminado del carrito."))
     return redirect("cart:detail")

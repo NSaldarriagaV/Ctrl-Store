@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Comparar: {{ product1.name }} vs {{ product2.name }} - Ctrl+Store{% endblock %}
+{% block title %}
+{% translate product1.name as p1_name %}
+{% translate product2.name as p2_name %}
+{% blocktrans with p1=p1_name p2=p2_name %}Comparar: {{ p1 }} vs {{ p2 }} - Ctrl+Store{% endblocktrans %}
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -11,19 +16,24 @@
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div class="d-flex align-items-center">
                     <a href="{% url 'catalog:compare_product_select' category.id %}" class="btn btn-outline-secondary me-3">
-                        <i class="fas fa-arrow-left me-2"></i>Volver
+                        <i class="fas fa-arrow-left me-2"></i>{% trans "Volver" %}
                     </a>
                     <div>
+                        {% translate category.name as cat_name %}
                         <h1 class="h3 text-light mb-1">
                             <i class="fas fa-balance-scale text-purple me-2"></i>
-                            Comparación: {{ category.name }}
+                            {% blocktrans with cat=cat_name %}Comparación: {{ cat }}{% endblocktrans %}
                         </h1>
-                        <p class="text-muted mb-0">{{ product1.name }} vs {{ product2.name }}</p>
+                        <p class="text-muted mb-0">
+                            {% translate product1.name as p1_name %}
+                            {% translate product2.name as p2_name %}
+                            {% blocktrans with p1=p1_name p2=p2_name %}{{ p1 }} vs {{ p2 }}{% endblocktrans %}
+                        </p>
                     </div>
                 </div>
                 <div>
                     <button class="btn btn-outline-primary" onclick="window.print()">
-                        <i class="fas fa-print me-2"></i>Imprimir
+                        <i class="fas fa-print me-2"></i>{% trans "Imprimir" %}
                     </button>
                 </div>
             </div>
@@ -34,41 +44,42 @@
                 <div class="col-lg-6">
                     <div class="card h-100 product-comparison-card">
                         <div class="card-header bg-primary text-white text-center">
-                            <h4 class="mb-0">{{ product1.name }}</h4>
+                            {% translate product1.name as p1_name %}
+                            <h4 class="mb-0">{{ p1_name }}</h4>
                         </div>
                         <div class="card-body">
                             <!-- Imagen del producto -->
                             <div class="text-center mb-4">
                                 {% if product1.main_image %}
-                                    <img src="{{ product1.main_image.url }}" 
-                                         class="img-fluid rounded" 
-                                         alt="{{ product1.name }}" 
+                                    <img src="{{ product1.main_image.url }}"
+                                         class="img-fluid rounded"
+                                         alt="{{ p1_name }}"
                                          style="max-height: 300px; object-fit: contain;">
                                 {% else %}
-                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center" 
+                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
                                          style="height: 200px;">
                                         <i class="fas fa-image fa-3x text-muted"></i>
                                     </div>
                                 {% endif %}
                             </div>
-                            
+
                             <!-- Precio destacado -->
                             <div class="text-center mb-4">
                                 <h2 class="text-success mb-0">${{ product1.price|floatformat:0 }}</h2>
-                                <small class="text-muted">COP</small>
+                                <small class="text-muted">{% trans "COP" %}</small>
                             </div>
-                            
+
                             <!-- Descripción -->
                             <div class="mb-4">
-                                <h6 class="text-light">Descripción:</h6>
+                                <h6 class="text-light">{% trans "Descripción:" %}</h6>
                                 <p class="text-muted">{{ product1.description|truncatewords:30 }}</p>
                             </div>
-                            
+
                             <!-- Botón de acción -->
                             <div class="text-center">
-                                <a href="{% url 'catalog:product_detail' product1.pk %}" 
+                                <a href="{% url 'catalog:product_detail' product1.pk %}"
                                    class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-eye me-2"></i>Ver Producto
+                                    <i class="fas fa-eye me-2"></i>{% trans "Ver Producto" %}
                                 </a>
                             </div>
                         </div>
@@ -79,41 +90,42 @@
                 <div class="col-lg-6">
                     <div class="card h-100 product-comparison-card">
                         <div class="card-header bg-info text-white text-center">
-                            <h4 class="mb-0">{{ product2.name }}</h4>
+                            {% translate product2.name as p2_name %}
+                            <h4 class="mb-0">{{ p2_name }}</h4>
                         </div>
                         <div class="card-body">
                             <!-- Imagen del producto -->
                             <div class="text-center mb-4">
                                 {% if product2.main_image %}
-                                    <img src="{{ product2.main_image.url }}" 
-                                         class="img-fluid rounded" 
-                                         alt="{{ product2.name }}" 
+                                    <img src="{{ product2.main_image.url }}"
+                                         class="img-fluid rounded"
+                                         alt="{{ p2_name }}"
                                          style="max-height: 300px; object-fit: contain;">
                                 {% else %}
-                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center" 
+                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
                                          style="height: 200px;">
                                         <i class="fas fa-image fa-3x text-muted"></i>
                                     </div>
                                 {% endif %}
                             </div>
-                            
+
                             <!-- Precio destacado -->
                             <div class="text-center mb-4">
                                 <h2 class="text-success mb-0">${{ product2.price|floatformat:0 }}</h2>
-                                <small class="text-muted">COP</small>
+                                <small class="text-muted">{% trans "COP" %}</small>
                             </div>
-                            
+
                             <!-- Descripción -->
                             <div class="mb-4">
-                                <h6 class="text-light">Descripción:</h6>
+                                <h6 class="text-light">{% trans "Descripción:" %}</h6>
                                 <p class="text-muted">{{ product2.description|truncatewords:30 }}</p>
                             </div>
-                            
+
                             <!-- Botón de acción -->
                             <div class="text-center">
-                                <a href="{% url 'catalog:product_detail' product2.pk %}" 
+                                <a href="{% url 'catalog:product_detail' product2.pk %}"
                                    class="btn btn-info btn-lg w-100">
-                                    <i class="fas fa-eye me-2"></i>Ver Producto
+                                    <i class="fas fa-eye me-2"></i>{% trans "Ver Producto" %}
                                 </a>
                             </div>
                         </div>
@@ -128,7 +140,7 @@
                         <div class="card-header bg-dark text-light">
                             <h4 class="mb-0">
                                 <i class="fas fa-list-alt me-2"></i>
-                                Comparación Detallada de Especificaciones
+                                {% trans "Comparación Detallada de Especificaciones" %}
                             </h4>
                         </div>
                         <div class="card-body p-0">
@@ -136,21 +148,25 @@
                                 <table class="table table-dark table-hover mb-0">
                                     <thead class="table-secondary">
                                         <tr>
-                                            <th style="width: 30%;" class="text-light">Especificación</th>
-                                            <th style="width: 35%;" class="text-center text-light">{{ product1.name }}</th>
-                                            <th style="width: 35%;" class="text-center text-light">{{ product2.name }}</th>
+                                            <th style="width: 30%;" class="text-light">{% trans "Especificación" %}</th>
+                                            {% translate product1.name as p1_name %}
+                                            {% translate product2.name as p2_name %}
+                                            <th style="width: 35%;" class="text-center text-light">{{ p1_name }}</th>
+                                            <th style="width: 35%;" class="text-center text-light">{{ p2_name }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for section in comparison_data %}
+                                            {% translate section.section as section_title %}
                                             <tr class="table-active">
                                                 <td colspan="3" class="fw-bold text-center py-3">
-                                                    <i class="fas fa-layer-group me-2"></i>{{ section.section }}
+                                                    <i class="fas fa-layer-group me-2"></i>{{ section_title }}
                                                 </td>
                                             </tr>
                                             {% for field in section.fields %}
+                                                {% translate field.name as field_name %}
                                             <tr>
-                                                <td class="fw-semibold text-white">{{ field.name }}</td>
+                                                <td class="fw-semibold text-white">{{ field_name }}</td>
                                                 <td class="text-center text-white">
                                                     <span class="badge bg-primary text-white">{{ field.value1 }}</span>
                                                 </td>
@@ -173,17 +189,18 @@
                 <div class="col-12">
                     <h4 class="text-light mb-4">
                         <i class="fas fa-chart-bar text-warning me-2"></i>
-                        Resumen de Diferencias
+                        {% trans "Resumen de Diferencias" %}
                     </h4>
                 </div>
-                
+
                 <!-- Card Producto 1 -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100 summary-card bg-primary text-white">
                         <div class="card-header bg-primary border-0">
+                            {% translate product1.name as p1_name %}
                             <h5 class="mb-0">
                                 <i class="fas fa-star me-2"></i>
-                                {{ product1.name }}
+                                {{ p1_name }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -193,11 +210,11 @@
                                     <i class="fas fa-dollar-sign fa-2x me-3"></i>
                                     <div>
                                         <h2 class="mb-0">{{ product1.price|floatformat:0 }}</h2>
-                                        <small>COP</small>
+                                        <small>{% trans "COP" %}</small>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Especificaciones clave -->
                             <div class="specs-summary">
                                 {% if specs1.brand %}
@@ -206,32 +223,33 @@
                                         <i class="fas fa-tag"></i>
                                     </div>
                                     <div>
-                                        <strong>Marca:</strong>
+                                        <strong>{% trans "Marca:" %}</strong>
                                         <span class="d-block">{{ specs1.brand }}</span>
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if specs1.model %}
                                 <div class="spec-item d-flex align-items-center mb-3">
                                     <div class="spec-icon me-3">
                                         <i class="fas fa-cog"></i>
                                     </div>
                                     <div>
-                                        <strong>Modelo:</strong>
+                                        <strong>{% trans "Modelo:" %}</strong>
                                         <span class="d-block">{{ specs1.model }}</span>
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 <!-- Especificaciones principales dinámicas -->
                                 {% for key, value in product1.get_main_specs.items %}
+                                {% translate key as key_t %}
                                 <div class="spec-item d-flex align-items-center mb-3">
                                     <div class="spec-icon me-3">
                                         <i class="fas fa-microchip"></i>
                                     </div>
                                     <div>
-                                        <strong>{{ key }}:</strong>
+                                        <strong>{{ key_t }}:</strong>
                                         <span class="d-block">{{ value }}</span>
                                     </div>
                                 </div>
@@ -239,9 +257,9 @@
                             </div>
                         </div>
                         <div class="card-footer bg-primary border-0">
-                            <a href="{% url 'catalog:product_detail' product1.pk %}" 
+                            <a href="{% url 'catalog:product_detail' product1.pk %}"
                                class="btn btn-light btn-sm w-100">
-                                <i class="fas fa-eye me-2"></i>Ver Detalles Completos
+                                <i class="fas fa-eye me-2"></i>{% trans "Ver Detalles Completos" %}
                             </a>
                         </div>
                     </div>
@@ -251,9 +269,10 @@
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100 summary-card bg-info text-white">
                         <div class="card-header bg-info border-0">
+                            {% translate product2.name as p2_name %}
                             <h5 class="mb-0">
                                 <i class="fas fa-medal me-2"></i>
-                                {{ product2.name }}
+                                {{ p2_name }}
                             </h5>
                         </div>
                         <div class="card-body">
@@ -263,11 +282,11 @@
                                     <i class="fas fa-dollar-sign fa-2x me-3"></i>
                                     <div>
                                         <h2 class="mb-0">{{ product2.price|floatformat:0 }}</h2>
-                                        <small>COP</small>
+                                        <small>{% trans "COP" %}</small>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Especificaciones clave -->
                             <div class="specs-summary">
                                 {% if specs2.brand %}
@@ -276,32 +295,33 @@
                                         <i class="fas fa-tag"></i>
                                     </div>
                                     <div>
-                                        <strong>Marca:</strong>
+                                        <strong>{% trans "Marca:" %}</strong>
                                         <span class="d-block">{{ specs2.brand }}</span>
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if specs2.model %}
                                 <div class="spec-item d-flex align-items-center mb-3">
                                     <div class="spec-icon me-3">
                                         <i class="fas fa-cog"></i>
                                     </div>
                                     <div>
-                                        <strong>Modelo:</strong>
+                                        <strong>{% trans "Modelo:" %}</strong>
                                         <span class="d-block">{{ specs2.model }}</span>
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 <!-- Especificaciones principales dinámicas -->
                                 {% for key, value in product2.get_main_specs.items %}
+                                {% translate key as key_t %}
                                 <div class="spec-item d-flex align-items-center mb-3">
                                     <div class="spec-icon me-3">
                                         <i class="fas fa-microchip"></i>
                                     </div>
                                     <div>
-                                        <strong>{{ key }}:</strong>
+                                        <strong>{{ key_t }}:</strong>
                                         <span class="d-block">{{ value }}</span>
                                     </div>
                                 </div>
@@ -309,9 +329,9 @@
                             </div>
                         </div>
                         <div class="card-footer bg-info border-0">
-                            <a href="{% url 'catalog:product_detail' product2.pk %}" 
+                            <a href="{% url 'catalog:product_detail' product2.pk %}"
                                class="btn btn-light btn-sm w-100">
-                                <i class="fas fa-eye me-2"></i>Ver Detalles Completos
+                                <i class="fas fa-eye me-2"></i>{% trans "Ver Detalles Completos" %}
                             </a>
                         </div>
                     </div>
@@ -322,17 +342,16 @@
             <div class="row mt-4">
                 <div class="col-12 text-center">
                     <a href="{% url 'catalog:compare_product_select' category.id %}" class="btn btn-outline-primary me-3">
-                        <i class="fas fa-redo me-2"></i>Comparar Otros Productos
+                        <i class="fas fa-redo me-2"></i>{% trans "Comparar Otros Productos" %}
                     </a>
                     <a href="{% url 'catalog:compare_category_select' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list me-2"></i>Cambiar Categoría
+                        <i class="fas fa-list me-2"></i>{% trans "Cambiar Categoría" %}
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <style>
 .product-comparison-card {
     border: 2px solid #404040;
