@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Comparador de Productos - Ctrl+Store{% endblock %}
+{% block title %}{% trans "Comparador de Productos - Ctrl+Store" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -11,16 +12,17 @@
             <div class="text-center mb-5">
                 <h1 class="display-4 fw-bold text-light mb-3">
                     <i class="fas fa-balance-scale text-purple me-3"></i>
-                    Comparador de Productos
+                    {% trans "Comparador de Productos" %}
                 </h1>
                 <p class="lead text-muted">
-                    Selecciona una categoría para comparar productos lado a lado
+                    {% trans "Selecciona una categoría para comparar productos lado a lado" %}
                 </p>
             </div>
 
             <!-- Categorías -->
             <div class="row g-4">
                 {% for main_category in main_categories %}
+                {% translate main_category.name as main_cat_name %}
                 <div class="col-12">
                     <div class="card compare-category-card">
                         <div class="card-header bg-dark border-secondary">
@@ -41,12 +43,20 @@
                                     {% endif %}
                                 </div>
                                 <div>
-                                    <h5 class="card-title text-light mb-0">{{ main_category.name }}</h5>
+                                    <h5 class="card-title text-light mb-0">{{ main_cat_name }}</h5>
                                     <small class="text-muted">
                                         {% if main_category.products.count > 0 %}
-                                            {{ main_category.products.count }} producto{{ main_category.products.count|pluralize }} directo{{ main_category.products.count|pluralize }}
+                                            {% blocktrans count count=main_category.products.count %}
+                                            {{ count }} producto directo
+                                            {% plural %}
+                                            {{ count }} productos directos
+                                            {% endblocktrans %}
                                         {% else %}
-                                            {{ main_category.get_total_products_count }} producto{{ main_category.get_total_products_count|pluralize }} en subcategorías
+                                            {% blocktrans count count=main_category.get_total_products_count %}
+                                            {{ count }} producto en subcategorías
+                                            {% plural %}
+                                            {{ count }} productos en subcategorías
+                                            {% endblocktrans %}
                                         {% endif %}
                                     </small>
                                 </div>
@@ -56,26 +66,33 @@
                             {% if main_category.products.count > 0 %}
                                 <!-- Categoría principal con productos directos -->
                                 <div class="text-center">
-                                    <a href="{% url 'catalog:compare_product_select' main_category.id %}" 
+                                    <a href="{% url 'catalog:compare_product_select' main_category.id %}"
                                        class="btn btn-primary">
-                                        <i class="fas fa-balance-scale me-2"></i>Comparar {{ main_category.name }}
+                                        <i class="fas fa-balance-scale me-2"></i>
+                                        {% blocktrans with name=main_cat_name %}Comparar {{ name }}{% endblocktrans %}
                                     </a>
                                 </div>
                             {% else %}
                                 <!-- Mostrar subcategorías -->
                                 <div class="row g-3">
                                     {% for subcategory in main_category.subcategories_with_products %}
+                                    {% translate subcategory.name as subcat_name %}
                                     <div class="col-md-6 col-lg-4">
                                         <div class="subcategory-card p-3 border rounded">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div>
-                                                    <h6 class="text-light mb-1">{{ subcategory.name }}</h6>
+                                                    <h6 class="text-light mb-1">{{ subcat_name }}</h6>
                                                     <small class="text-muted">
-                                                        {{ subcategory.products.count }} producto{{ subcategory.products.count|pluralize }}
+                                                        {% blocktrans count count=subcategory.products.count %}
+                                                        {{ count }} producto
+                                                        {% plural %}
+                                                        {{ count }} productos
+                                                        {% endblocktrans %}
                                                     </small>
                                                 </div>
-                                                <a href="{% url 'catalog:compare_product_select' subcategory.id %}" 
-                                                   class="btn btn-outline-primary btn-sm">
+                                                <a href="{% url 'catalog:compare_product_select' subcategory.id %}"
+                                                   class="btn btn-outline-primary btn-sm"
+                                                   aria-label="{% trans 'Seleccionar subcategoría para comparar' %}">
                                                     <i class="fas fa-arrow-right"></i>
                                                 </a>
                                             </div>
@@ -91,7 +108,7 @@
                 <div class="col-12">
                     <div class="alert alert-info text-center">
                         <i class="fas fa-info-circle me-2"></i>
-                        No hay categorías disponibles para comparar.
+                        {% trans "No hay categorías disponibles para comparar." %}
                     </div>
                 </div>
                 {% endfor %}
@@ -104,23 +121,23 @@
                         <div class="card-body">
                             <h5 class="card-title text-light">
                                 <i class="fas fa-lightbulb text-warning me-2"></i>
-                                ¿Cómo funciona el comparador?
+                                {% trans "¿Cómo funciona el comparador?" %}
                             </h5>
                             <div class="row">
                                 <div class="col-md-4 text-center mb-3">
-                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
                                          style="width: 40px; height: 40px;">1</div>
-                                    <p class="text-muted small">Selecciona una categoría</p>
+                                    <p class="text-muted small">{% trans "Selecciona una categoría" %}</p>
                                 </div>
                                 <div class="col-md-4 text-center mb-3">
-                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
                                          style="width: 40px; height: 40px;">2</div>
-                                    <p class="text-muted small">Elige 2 productos</p>
+                                    <p class="text-muted small">{% trans "Elige 2 productos" %}</p>
                                 </div>
                                 <div class="col-md-4 text-center mb-3">
-                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
                                          style="width: 40px; height: 40px;">3</div>
-                                    <p class="text-muted small">Compara características</p>
+                                    <p class="text-muted small">{% trans "Compara características" %}</p>
                                 </div>
                             </div>
                         </div>

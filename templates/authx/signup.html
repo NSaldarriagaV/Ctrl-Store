@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load form_extras %}
-{% block title %}Crear cuenta – Ctrl+Store{% endblock %}
+
+{% block title %}{% trans "Crear cuenta – Ctrl+Store" %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
@@ -13,12 +15,12 @@
                             <i class="fas fa-gamepad fa-3x"></i>
                         </div>
                         <h2 class="mb-0 fw-bold">Ctrl+Store</h2>
-                        <p class="mb-0 opacity-75">Únete a la comunidad gaming</p>
+                        <p class="mb-0 opacity-75">{% trans "Únete a la comunidad gaming" %}</p>
                     </div>
                     
                     <div class="card-body p-4">
                         <h4 class="text-center mb-4 fw-bold text-dark">
-                            <i class="fas fa-user-plus me-4"></i>Crear Cuenta
+                            <i class="fas fa-user-plus me-4"></i>{% trans "Crear Cuenta" %}
                         </h4>
 
                         <form method="post" novalidate>
@@ -34,7 +36,7 @@
 
                             <div class="form-group mb-3">
                                 <label for="id_username" class="form-label fw-semibold">
-                                    <i class="fas fa-user me-4"></i>Usuario
+                                    <i class="fas fa-user me-4"></i>{% trans "Usuario" %}
                                 </label>
                                 {{ form.username|add_class:"form-control" }}
                                 {% if form.username.errors %}
@@ -47,7 +49,7 @@
 
                             <div class="form-group mb-3">
                                 <label for="id_email" class="form-label fw-semibold">
-                                    <i class="fas fa-envelope me-4"></i>Email
+                                    <i class="fas fa-envelope me-4"></i>{% trans "Email" %}
                                 </label>
                                 {{ form.email|add_class:"form-control" }}
                                 {% if form.email.errors %}
@@ -60,7 +62,7 @@
 
                             <div class="form-group mb-3">
                                 <label for="id_password1" class="form-label fw-semibold">
-                                    <i class="fas fa-lock me-4"></i>Contraseña
+                                    <i class="fas fa-lock me-4"></i>{% trans "Contraseña" %}
                                 </label>
                                 {{ form.password1|add_class:"form-control" }}
                                 {% if form.password1.errors %}
@@ -73,7 +75,7 @@
 
                             <div class="form-group mb-4">
                                 <label for="id_password2" class="form-label fw-semibold">
-                                    <i class="fas fa-lock me-4"></i>Confirmar Contraseña
+                                    <i class="fas fa-lock me-4"></i>{% trans "Confirmar Contraseña" %}
                                 </label>
                                 {{ form.password2|add_class:"form-control" }}
                                 {% if form.password2.errors %}
@@ -86,7 +88,7 @@
 
                             <div class="d-grid">
                                 <button class="btn btn-primary btn-lg fw-bold" type="submit">
-                                    <i class="fas fa-user-plus me-4"></i>Crear Cuenta
+                                    <i class="fas fa-user-plus me-4"></i>{% trans "Crear Cuenta" %}
                                 </button>
                             </div>
                         </form>
@@ -95,10 +97,10 @@
 
                         <div class="text-center">
                             <p class="text-muted mb-2">
-                                ¿Ya tienes cuenta?
+                                {% trans "¿Ya tienes cuenta?" %}
                             </p>
                             <a href="{% url 'authx:login' %}" class="btn btn-outline-primary">
-                                <i class="fas fa-sign-in-alt me-4"></i>Iniciar Sesión
+                                <i class="fas fa-sign-in-alt me-4"></i>{% trans "Iniciar Sesión" %}
                             </a>
                         </div>
                     </div>
@@ -106,7 +108,7 @@
 
                 <div class="text-center mt-4">
                     <a href="{% url 'catalog:product_list' %}" class="text-white text-decoration-none">
-                        <i class="fas fa-arrow-left me-4"></i>Volver al catálogo
+                        <i class="fas fa-arrow-left me-4"></i>{% trans "Volver al catálogo" %}
                     </a>
                 </div>
             </div>

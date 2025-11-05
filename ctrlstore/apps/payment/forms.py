@@ -12,6 +12,9 @@ from .services import (
     validate_cvv,
 )
 
+# i18n
+from django.utils.translation import gettext_lazy as _
+
 DARK_INPUT = {
     "class": "form-control bg-dark text-light border-secondary",
     "style": "width:100%;",
@@ -71,14 +74,14 @@ class CardPaymentForm(forms.Form):
         ),
     )
     zip_code = forms.CharField(
-        label="Código Postal (opcional)",
+        label=_("Código Postal (opcional)"),
         max_length=10,
         required=False,
         widget=forms.TextInput(
             attrs={
                 **DARK_INPUT,
                 "id": "id_zip",
-                "placeholder": "Código Postal",
+                "placeholder": _("Código Postal"),
                 "autocomplete": "off",
             }
         ),
@@ -101,9 +104,9 @@ class CardPaymentForm(forms.Form):
         elif len(raw) == 4 and "/" not in raw:
             mm, yy = raw[:2], raw[2:]
         else:
-            raise forms.ValidationError("Usa el formato MM/YY.")
+            raise forms.ValidationError(_("Usa el formato MM/YY."))
         if not (mm.isdigit() and yy.isdigit()):
-            raise forms.ValidationError("Usa dígitos en MM/YY.")
+            raise forms.ValidationError(_("Usa dígitos en MM/YY."))
         month = int(mm)
         year2 = int(yy)
         year = year2 + (2000 if year2 < 100 else 0)

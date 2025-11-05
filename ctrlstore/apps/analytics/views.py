@@ -6,6 +6,12 @@ from django.http import JsonResponse
 from django.views import View
 from .services import top_viewed
 
+# i18n
+from django.utils.translation import gettext as _
+# (Importa ngettext/pgettext si se llegan a usar en el futuro)
+# from django.utils.translation import ngettext, pgettext
+
+
 class TopSellersView(ListView):
     """
     /analytics/top-sellers/?limit=3
@@ -21,6 +27,7 @@ class TopSellersView(ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["limit"] = self.request.GET.get("limit", 3)
         return ctx
+
 
 class TopViewedAPI(View):
     """

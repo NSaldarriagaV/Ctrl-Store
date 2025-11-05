@@ -1,6 +1,7 @@
-{% load weather_tags %}
+{% load i18n weather_tags %}
 <!doctype html>
-<html lang="es">
+{% get_current_language as CURRENT_CODE %}
+<html lang="{{ CURRENT_CODE|default:'es' }}">
 
 <head>
     <meta charset="utf-8" />
@@ -22,8 +23,15 @@
         body {
             background-color: #1a1a1a !important;
             color: #ecf0f1 !important;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        
+
+        /* ====== NO-GAP debajo de navbar ====== */
+        .main-no-gap { margin-top: -0.75rem; } /* sutil pull-up */
+        .main-no-gap > *:first-child { margin-top: 0 !important; }
+
         .card {
             background-color: #2d2d2d !important;
             border-color: #404040 !important;
@@ -48,62 +56,48 @@
             color: #ecf0f1 !important;
         }
         
-        .form-label {
-            color: #ecf0f1 !important;
-        }
+        .form-label, .form-check-label { color: #ecf0f1 !important; }
+        .form-check-input { background-color: #3a3a3a !important; border-color: #404040 !important; }
+        .form-check-input:checked { background-color: #6f42c1 !important; border-color: #6f42c1 !important; }
         
-        .form-check-label {
-            color: #ecf0f1 !important;
-        }
-        
-        .form-check-input {
-            background-color: #3a3a3a !important;
-            border-color: #404040 !important;
-        }
-        
-        .form-check-input:checked {
-            background-color: #6f42c1 !important;
-            border-color: #6f42c1 !important;
-        }
-        
-        .btn-outline-light {
-            color: #ecf0f1 !important;
-            border-color: #404040 !important;
-        }
-        
+        .btn-outline-light { color: #ecf0f1 !important; border-color: #ecf0f1 !important; }
         .btn-outline-light:hover {
-            background-color: #404040 !important;
-            border-color: #404040 !important;
-            color: #ecf0f1 !important;
+            background-color: #6c757d !important; color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         }
-        
-        .text-muted {
-            color: #bdc3c7 !important;
+
+        .text-muted { color: #bdc3c7 !important; }
+        .table { color: #ecf0f1 !important; }
+        .table th { background-color: #3a3a3a !important; border-color: #404040 !important; color: #ecf0f1 !important; }
+        .table td { background-color: #2d2d2d !important; border-color: #404040 !important; color: #ecf0f1 !important; }
+        .table-striped > tbody > tr:nth-of-type(odd) > td { background-color: #3a3a3a !important; }
+        .table-hover > tbody > tr:hover > td { background-color: #404040 !important; }
+
+        /* Navbar look & feel */
+        .bg-gradient-dark { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .navbar { padding: 1rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .navbar-brand { color: white !important; transition: all 0.3s ease; }
+        .navbar-brand:hover { transform: scale(1.05); color: #6f42c1 !important; }
+        .navbar .btn { border-radius: 25px; padding: 0.75rem 1.5rem; font-weight: 600; letter-spacing: 0.5px; border: 2px solid transparent; text-decoration: none; transition: all .3s ease; }
+        .navbar .btn-primary { background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%); border: none; color: #fff; }
+        .navbar .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4); }
+        .navbar .btn-success { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); border: none; color: #fff; }
+        .navbar .btn-danger { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border: none; color: #fff; }
+        .navbar .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); }
+        .text-purple { color: #6f42c1 !important; }
+
+        main { flex: 1; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); }
+        .footer {
+            margin-top: auto;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
-        
-        .table {
-            color: #ecf0f1 !important;
-        }
-        
-        .table th {
-            background-color: #3a3a3a !important;
-            border-color: #404040 !important;
-            color: #ecf0f1 !important;
-        }
-        
-        .table td {
-            background-color: #2d2d2d !important;
-            border-color: #404040 !important;
-            color: #ecf0f1 !important;
-        }
-        
-        .table-striped > tbody > tr:nth-of-type(odd) > td {
-            background-color: #3a3a3a !important;
-        }
-        
-        .table-hover > tbody > tr:hover > td {
-            background-color: #404040 !important;
-        }
+        .bg-white { background: #2d2d2d !important; color: #ecf0f1; }
+        .bg-light { background: #3a3a3a !important; color: #ecf0f1; }
+        .card-header { background: #3a3a3a !important; border-bottom: 1px solid #404040 !important; color: #ecf0f1; }
+        .table-light { background: #3a3a3a !important; color: #ecf0f1; }
+        .table-light th { background: #3a3a3a !important; color: #ecf0f1 !important; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -116,6 +110,7 @@
             <a class="navbar-brand fw-bold fs-3" href="{% url 'catalog:product_list' %}">
                 <i class="fas fa-gamepad me-2 text-purple"></i>Ctrl+Store
             </a>
+
             {% get_weather as weather %}
             <div class="d-flex align-items-center ms-2">
                 <i class="fas fa-cloud-sun me-2 text-warning"></i>
@@ -127,7 +122,7 @@
                     {% if weather.summary %}
                         <span class="text-muted">- {{ weather.summary }}</span>
                     {% else %}
-                        <span class="text-muted">- Clima no disponible</span>
+                        <span class="text-muted">- {% trans "Clima no disponible" %}</span>
                     {% endif %}
                 </small>
             </div>
@@ -142,12 +137,12 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-light mx-2" href="{% url 'catalog:product_list' %}">
-                            <i class="fas fa-catalog me-2"></i>Catálogo
+                            <i class="fas fa-catalog me-2"></i>{% trans "Catálogo" %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-light mx-2" href="{% url 'catalog:compare_category_select' %}">
-                            <i class="fas fa-balance-scale me-2"></i>Comparador
+                            <i class="fas fa-balance-scale me-2"></i>{% trans "Comparador" %}
                         </a>
                     </li>
                     <li class="nav-item">
@@ -156,11 +151,35 @@
                         </a>
                     </li>
                 </ul>
+
                 <!-- User Actions -->
                 <ul class="navbar-nav ms-auto">
+
+                    <!-- Selector de idioma (dropdown con POST a set_language) -->
+                    <li class="nav-item dropdown mx-2">
+                        <button class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if CURRENT_CODE == 'en' %}English{% else %}Español{% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            {% get_available_languages as LANGS %}
+                            {% for code, name in LANGS %}
+                                <li>
+                                    <form action="{% url 'set_language' %}" method="post" class="px-0 m-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <input type="hidden" name="language" value="{{ code }}">
+                                        <button type="submit" class="dropdown-item {% if code == CURRENT_CODE %}active{% endif %}">
+                                            {{ name }}
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-light mx-2 position-relative" href="{% url 'cart:detail' %}">
-                            <i class="fas fa-shopping-cart me-2"></i>Carrito
+                            <i class="fas fa-shopping-cart me-2"></i>{% trans "Carrito" %}
                             {% if cart_items_count and cart_items_count > 0 %}
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ cart_items_count }}
@@ -168,17 +187,18 @@
                             {% endif %}
                         </a>
                     </li>
+
                     {% if user.is_authenticated %}
                         {% if user.is_admin or user.is_superuser %}
                             <li class="nav-item">
                                 <a class="nav-link btn btn-primary mx-2" href="{% url 'authx:admin_dashboard' %}">
-                                    <i class="fas fa-cog me-2"></i>Panel Admin
+                                    <i class="fas fa-cog me-2"></i>{% trans "Panel Admin" %}
                                 </a>
                             </li>
                         {% elif user.role and user.role.name.lower == 'staff' %}
                             <li class="nav-item">
                                 <a class="nav-link btn btn-success mx-2" href="{% url 'authx:staff_dashboard' %}">
-                                    <i class="fas fa-user-tie me-2"></i>Panel Staff
+                                    <i class="fas fa-user-tie me-2"></i>{% trans "Panel Staff" %}
                                 </a>
                             </li>
                         {% endif %}
@@ -186,14 +206,14 @@
                             <form method="post" action="{% url 'authx:logout' %}" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="nav-link btn btn-danger mx-2">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Salir
+                                    <i class="fas fa-sign-out-alt me-2"></i>{% trans "Salir" %}
                                 </button>
                             </form>
                         </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link btn btn-outline-light mx-2" href="{% url 'authx:login' %}">
-                                <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                                <i class="fas fa-sign-in-alt me-2"></i>{% trans "Ingresar" %}
                             </a>
                         </li>
                     {% endif %}
@@ -203,178 +223,31 @@
         </div>
     </nav>
 
+    <!-- Flash messages -->
+    <div class="container mt-3">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+    </div>
+
     <!-- Main Content -->
-    <main class="container-fluid p-0">
+    <main class="container-fluid p-0 main-no-gap">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
     <footer class="footer bg-dark text-light text-center py-4 mt-auto">
         <div class="container">
-            <p class="mb-0">© 2025 Ctrl+Store. Todos los derechos reservados.</p>
+            <p class="mb-0">{% trans "© 2025 Ctrl+Store. Todos los derechos reservados." %}</p>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <style>
-        .bg-gradient-dark {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .navbar {
-            padding: 1rem 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .navbar-brand {
-            color: white !important;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-brand:hover {
-            transform: scale(1.05);
-            color: #6f42c1 !important;
-        }
-        
-        .navbar .btn {
-            border-radius: 25px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            text-decoration: none;
-        }
-        
-        .navbar .btn-outline-light {
-            color: #ecf0f1;
-            border-color: #ecf0f1;
-            background: transparent;
-        }
-        
-        .navbar .btn-outline-light:hover {
-            background: #6c757d;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
-        }
-        
-        .navbar .btn-primary {
-            background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
-            border: none;
-            color: white;
-        }
-        
-        .navbar .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
-        }
-        
-        .navbar .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            border: none;
-            color: white;
-        }
-        
-        .navbar .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
-        }
-        
-        .text-purple {
-            color: #6f42c1 !important;
-        }
-        
-        
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
-            color: #ecf0f1;
-        }
-        
-        main {
-            flex: 1;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-        }
-        
-        .footer {
-            margin-top: auto;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        /* Dark theme overrides */
-        .bg-white {
-            background: #2d2d2d !important;
-            color: #ecf0f1;
-        }
-        
-        .bg-light {
-            background: #3a3a3a !important;
-            color: #ecf0f1;
-        }
-        
-        .text-muted {
-            color: #bdc3c7 !important;
-        }
-        
-        .card {
-            background: #2d2d2d !important;
-            border: 1px solid #404040 !important;
-            color: #ecf0f1;
-        }
-        
-        .card-header {
-            background: #3a3a3a !important;
-            border-bottom: 1px solid #404040 !important;
-            color: #ecf0f1;
-        }
-        
-        .table {
-            background: #2d2d2d !important;
-            color: #ecf0f1;
-        }
-        
-        .table th {
-            background: #3a3a3a !important;
-            color: #ecf0f1 !important;
-            border-color: #404040 !important;
-        }
-        
-        .table td {
-            border-color: #404040 !important;
-            color: #ecf0f1;
-        }
-        
-        .table tbody tr:hover {
-            background: #6c757d !important;
-            color: white !important;
-        }
-        
-        .table tbody tr:hover .text-muted {
-            color: #dee2e6 !important;
-        }
-        
-        .table tbody tr:hover .badge {
-            background-color: #495057 !important;
-            color: white !important;
-        }
-        
-        .table-light {
-            background: #3a3a3a !important;
-            color: #ecf0f1;
-        }
-        
-        .table-light th {
-            background: #3a3a3a !important;
-            color: #ecf0f1 !important;
-        }
-    </style>
 </body>
-
 </html>

@@ -31,6 +31,9 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 
+# i18n (solo se usa en signup/login/logout)
+from django.utils.translation import gettext as _
+
 from ctrlstore.apps.order.reporting import (
     CsvReportGenerator,
     PdfReportGenerator,
@@ -58,7 +61,7 @@ class SignupView(FormView):
             return self.form_invalid(form)
         except Exception as e:
             authx_logger.log_error(e, {"action": "user_registration"})
-            messages.error(self.request, "Error al registrar usuario. Intente nuevamente.")
+            messages.error(self.request, _("Error al registrar usuario. Intente nuevamente."))
             return self.form_invalid(form)
 
 
@@ -1395,4 +1398,3 @@ class StaffCategoriesView(StaffAdminMixin, TemplateView):
         )
 
         return context
-

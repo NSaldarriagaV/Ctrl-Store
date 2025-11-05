@@ -1,25 +1,46 @@
 {% extends "base.html" %}
-{% block title %}Top vendidos – Ctrl+Store{% endblock %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "Top vendidos – Ctrl+Store" %}{% endblock %}
+
 {% block content %}
 <div class="container my-5">
-  <h1 class="mb-4"><i class="fas fa-trophy me-2"></i>Top {{ limit }} productos más vendidos</h1>
+  <h1 class="mb-4">
+    <i class="fas fa-trophy me-2"></i>
+    {% blocktrans count n=limit %}
+      Top {{ n }} producto más vendido
+    {% plural %}
+      Top {{ n }} productos más vendidos
+    {% endblocktrans %}
+  </h1>
 
   <div class="list-group">
     {% for agg in top_products %}
       <a href="{{ agg.product.get_absolute_url|default:'#' }}" class="list-group-item list-group-item-action bg-dark text-light border-secondary rounded-3 mb-3">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <div class="fw-bold">{{ agg.product.name }}</div>
-            <small class="text-muted">Unidades vendidas: {{ agg.units_sold }}</small>
+            {% translate agg.product.name as pname %}
+            <div class="fw-bold">{{ pname }}</div>
+            <small class="text-muted">
+              {% blocktrans with u=agg.units_sold|localize %}Unidades vendidas: {{ u }}{% endblocktrans %}
+            </small>
           </div>
           <div class="text-end">
-            <div class="fw-semibold">Ingresos: ${{ agg.revenue }}</div>
-            {% if agg.last_paid_at %}<small class="text-muted">Última venta: {{ agg.last_paid_at|date:"Y-m-d H:i" }}</small>{% endif %}
+            <div class="fw-semibold">
+              {% blocktrans with r=agg.revenue|localize %}Ingresos: ${{ r }}{% endblocktrans %}
+            </div>
+            {% if agg.last_paid_at %}
+              {% with dt=agg.last_paid_at|date:"SHORT_DATETIME_FORMAT" %}
+                <small class="text-muted">
+                  {% blocktrans with d=dt %}Última venta: {{ d }}{% endblocktrans %}
+                </small>
+              {% endwith %}
+            {% endif %}
           </div>
         </div>
       </a>
     {% empty %}
-      <div class="alert alert-secondary">Aún no hay ventas registradas.</div>
+      <div class="alert alert-secondary">{% trans "Aún no hay ventas registradas." %}</div>
     {% endfor %}
   </div>
 </div>

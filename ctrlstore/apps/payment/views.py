@@ -32,6 +32,10 @@ from django.db import transaction
 from django.db.models import F
 from django.apps import apps
 
+# i18n
+from django.utils.translation import gettext as _
+# from django.utils.translation import ngettext, pgettext  # Importar si hace falta
+
 
 
 @login_required
@@ -64,7 +68,7 @@ def process(request: HttpRequest, order_id: int) -> HttpResponse | HttpResponseR
         last_payment = order.payments.first()
         if last_payment:
             return redirect("payment:confirm", payment_id=last_payment.id)
-        messages.info(request, "La orden ya estaba pagada.")
+        messages.info(request, _("La orden ya estaba pagada."))
         return redirect("order:checkout")
 
     form = CardPaymentForm(request.POST)
@@ -109,15 +113,25 @@ def process(request: HttpRequest, order_id: int) -> HttpResponse | HttpResponseR
                 for it in item_qs:
                     p = products.get(it.product_id)
                     if p is None:
-                        faltantes.append(f"Producto {it.product_id} no existe")
+                        faltantes.append(
+                            _("Producto %(pid)s no existe") % {"pid": it.product_id}
+                        )
                         continue
                     if getattr(p, "stock_quantity") < it.quantity:
                         faltantes.append(
-                            f"{p} (stock: {getattr(p,'stock_quantity')}, requerido: {it.quantity})"
+                            _("%(product)s (stock: %(stock)s, requerido: %(req)s)")
+                            % {
+                                "product": str(p),
+                                "stock": getattr(p, "stock_quantity"),
+                                "req": it.quantity,
+                            }
                         )
 
                 if faltantes:
-                    raise ValueError("Stock insuficiente para: " + ", ".join(faltantes))
+                    raise ValueError(
+                        _("Stock insuficiente para: %(items)s")
+                        % {"items": ", ".join(faltantes)}
+                    )
 
                 # 2) Descontar stock (operación atómica)
                 for it in item_qs:
@@ -147,7 +161,7 @@ def process(request: HttpRequest, order_id: int) -> HttpResponse | HttpResponseR
             # Revertir y mostrar error
             payment.status = "failed"
             payment.error_code = "out_of_stock"
-            payment.error_message = str(e) or "No hay stock suficiente."
+            payment.error_message = str(e) or _("No hay stock suficiente.")
             payment.save(
                 update_fields=["status", "error_code", "error_message", "updated_at"]
             )
@@ -155,7 +169,7 @@ def process(request: HttpRequest, order_id: int) -> HttpResponse | HttpResponseR
             messages.error(request, payment.error_message)
             return render(request, "payment/pay.html", {"order": order, "form": form})
 
-        messages.success(request, "Pago realizado con éxito.")
+        messages.success(request, _("Pago realizado con éxito."))
         return redirect("payment:confirm", payment_id=payment.id)
 
     # Fallo en la autorización
@@ -197,7 +211,7 @@ def render_to_pdf(template_src: str, context: dict[str, Any]) -> HttpResponse | 
 def invoice_pdf(request: HttpRequest, payment_id: int) -> HttpResponse:
     payment = get_object_or_404(Payment, pk=payment_id, order__user=request.user)
     if payment.status != "captured":
-        return HttpResponseBadRequest("La factura solo está disponible para pagos aprobados.")
+        return HttpResponseBadRequest(_("La factura solo está disponible para pagos aprobados."))
     order = payment.order
     items = order.items.select_related("product")
 
@@ -209,7 +223,7 @@ def invoice_pdf(request: HttpRequest, payment_id: int) -> HttpResponse:
         "payment": payment,
         "order": order,
         "items": items,
-        # Datos del emisor (ajusta a tu negocio)
+        # Datos del emisor (ajusta a tu negocio; valores de dato, no traducibles)
         "company": {
             "name": "Ctrl+Store S.A.S.",
             "tax_id": "NIT 900.000.000-1",
@@ -221,8 +235,8 @@ def invoice_pdf(request: HttpRequest, payment_id: int) -> HttpResponse:
 
     pdf_resp = render_to_pdf("payment/invoice.html", context)
     if pdf_resp is None:
-        raise Http404("No se pudo generar el PDF.")
+        raise Http404(_("No se pudo generar el PDF."))
 
-    filename = f"Factura-{invoice_number}.pdf"
+    filename = (_("Factura") + f"-{invoice_number}.pdf")
     pdf_resp["Content-Disposition"] = f'attachment; filename="{filename}"'
     return pdf_resp

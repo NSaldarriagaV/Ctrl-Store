@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("i18n/", include("django.conf.urls.i18n")),
     path("", include(("ctrlstore.apps.catalog.urls", "catalog"), namespace="catalog")),
     path("auth/", include(("ctrlstore.apps.authx.urls", "authx"), namespace="authx")),
     path("cart/", include("ctrlstore.apps.cart.urls", namespace="cart")),

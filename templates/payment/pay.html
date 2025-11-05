@@ -1,33 +1,37 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Pagar orden – Ctrl+Store{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Pagar orden – Ctrl+Store" %}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-  <h1 class="mb-4">Pagar orden</h1>
+  <h1 class="mb-4">{% trans "Pagar orden" %}</h1>
 
   <div class="row g-4">
     <!-- Resumen -->
     <div class="col-lg-6">
       <div class="card shadow-sm rounded-4">
         <div class="card-body">
-          <h5 class="card-title mb-3">Resumen del pedido</h5>
+          <h5 class="card-title mb-3">{% trans "Resumen del pedido" %}</h5>
           <ul class="list-group list-group-flush">
             {% for it in order.items.all %}
               <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light border-secondary">
                 <div>
                   <div class="fw-semibold">{{ it.product.name }}</div>
-                  <small class="text-muted">x{{ it.quantity }} · ${{ it.unit_price }}</small>
+                  <small class="text-muted">
+                    {% blocktrans with qty=it.quantity price=it.unit_price %}x{{ qty }} · ${{ price }}{% endblocktrans %}
+                  </small>
                 </div>
                 <div><strong>${{ it.line_total }}</strong></div>
               </li>
             {% endfor %}
           </ul>
           <div class="mt-3">
-            <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ order.subtotal_amount }}</span></div>
-            <div class="d-flex justify-content-between"><span>Envío</span><span>${{ order.shipping_amount }}</span></div>
+            <div class="d-flex justify-content-between"><span>{% trans "Subtotal" %}</span><span>${{ order.subtotal_amount }}</span></div>
+            <div class="d-flex justify-content-between"><span>{% trans "Envío" %}</span><span>${{ order.shipping_amount }}</span></div>
             <div class="d-flex justify-content-between fs-4 fw-bold border-top pt-2">
-              <span>Total</span><span>${{ order.total_amount }} COP</span>
+              <span>{% trans "Total" %}</span><span>${{ order.total_amount }} COP</span>
             </div>
           </div>
         </div>
@@ -35,13 +39,22 @@
 
       <div class="card mt-3 shadow-sm rounded-4">
         <div class="card-body">
-          <h5 class="card-title mb-2">Datos de envío</h5>
-          <p class="mb-1"><strong>Nombre:</strong> {{ order.full_name }}</p>
-          <p class="mb-1"><strong>Dirección:</strong> {{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}</p>
-          <p class="mb-1"><strong>Ciudad/Estado:</strong> {{ order.city }}{% if order.state %}, {{ order.state }}{% endif %}</p>
-          <p class="mb-1"><strong>Código Postal:</strong> {{ order.postal_code|default:"—" }}</p>
-          <p class="mb-1"><strong>País:</strong> {{ order.country }}</p>
-          <p class="mb-0"><strong>Contacto:</strong> {{ order.email }}{% if order.phone %} · {{ order.phone }}{% endif %}</p>
+          <h5 class="card-title mb-2">{% trans "Datos de envío" %}</h5>
+          <p class="mb-1"><strong>{% trans "Nombre:" %}</strong> {{ order.full_name }}</p>
+          <p class="mb-1">
+            <strong>{% trans "Dirección:" %}</strong>
+            {{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}
+          </p>
+          <p class="mb-1">
+            <strong>{% trans "Ciudad/Estado:" %}</strong>
+            {{ order.city }}{% if order.state %}, {{ order.state }}{% endif %}
+          </p>
+          <p class="mb-1"><strong>{% trans "Código Postal:" %}</strong> {{ order.postal_code|default:"—" }}</p>
+          <p class="mb-1"><strong>{% trans "País:" %}</strong> {{ order.country }}</p>
+          <p class="mb-0">
+            <strong>{% trans "Contacto:" %}</strong>
+            {{ order.email }}{% if order.phone %} · {{ order.phone }}{% endif %}
+          </p>
         </div>
       </div>
     </div>
@@ -50,7 +63,7 @@
     <div class="col-lg-6">
       <div class="card shadow-sm rounded-4 overflow-hidden">
         <div class="card-body">
-          <h5 class="card-title mb-3">Pagar con tarjeta</h5>
+          <h5 class="card-title mb-3">{% trans "Pagar con tarjeta" %}</h5>
 
           <form method="post" action="{% url 'payment:process' order.id %}" novalidate autocomplete="off">
             {% csrf_token %}
@@ -61,13 +74,13 @@
 
             <div class="row g-3">
               <div class="col-12">
-                <label class="form-label">Titular</label>
+                <label class="form-label">{% trans "Titular" %}</label>
                 {{ form.cardholder_name }}
                 {{ form.cardholder_name.errors }}
               </div>
 
               <div class="col-12">
-                <label class="form-label">Número de tarjeta</label>
+                <label class="form-label">{% trans "Número de tarjeta" %}</label>
                 <div class="input-group">
                   {{ form.card_number }}
                   <span class="input-group-text bg-dark text-light border-secondary" id="brandSlot" style="display:none;">
@@ -81,34 +94,36 @@
               </div>
 
               <div class="col-6">
-                <label class="form-label">Vencimiento (MM/YY)</label>
+                <label class="form-label">{% trans "Vencimiento (MM/YY)" %}</label>
                 {{ form.expiry }}
                 {{ form.expiry.errors }}
               </div>
 
               <div class="col-6">
-                <label class="form-label">CVV</label>
+                <label class="form-label">{% trans "CVV" %}</label>
                 {{ form.cvv }}
                 {{ form.cvv.errors }}
               </div>
 
               <div class="col-6">
-                <label class="form-label">Código Postal (opcional)</label>
+                <label class="form-label">{% trans "Código Postal (opcional)" %}</label>
                 {{ form.zip_code }}
                 {{ form.zip_code.errors }}
               </div>
             </div>
 
             <div class="mt-4 d-flex gap-2">
-              <button class="btn btn-primary" type="submit">Pagar ahora</button>
-              <a href="{% url 'order:checkout' %}" class="btn btn-outline-secondary">Volver</a>
+              <button class="btn btn-primary" type="submit">{% trans "Pagar ahora" %}</button>
+              <a href="{% url 'order:checkout' %}" class="btn btn-outline-secondary">{% trans "Volver" %}</a>
             </div>
 
             <p class="text-muted small mt-3 mb-0">
+              {% blocktrans %}
               Usa números de prueba. Terminar en <code>0005</code>, <code>3333</code> o <code>6666</code> fuerza fallos simulados.
+              {% endblocktrans %}
             </p>
             <p class="text-muted small mb-0">
-              No almacenamos CVV ni el número completo de la tarjeta. Solo se registran marca y últimos 4 dígitos.
+              {% trans "No almacenamos CVV ni el número completo de la tarjeta. Solo se registran marca y últimos 4 dígitos." %}
             </p>
 
             <!-- ========= JS INLINE: autoformato + detección de marca ========= -->

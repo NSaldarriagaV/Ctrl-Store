@@ -6,6 +6,11 @@ from ctrlstore.apps.analytics.services import record_product_view
 from django.urls import reverse
 from django.views.decorators.http import require_GET
 from django.utils.decorators import method_decorator
+
+# i18n
+from django.utils.translation import gettext as _
+# from django.utils.translation import ngettext, pgettext  # Importar si se usa más adelante
+
 from .services import get_bloomberry_products
 
 class ProductListView(ListView):
@@ -36,6 +41,7 @@ class ProductListView(ListView):
         ctx["categories"] = Category.objects.filter(is_active=True)  # Para compatibilidad
         ctx["selected_cat"] = self.request.GET.get("cat", "")
         return ctx
+
 
 class ProductDetailView(DetailView):
     model = Product
@@ -77,6 +83,7 @@ def products_in_stock_api(request):
     data = {"results": [item(p) for p in qs[:100]]}
     return JsonResponse(data)
 
+
 # Vistas del Comparador
 class CompareCategorySelectView(TemplateView):
     """Vista para seleccionar categoría antes de comparar productos"""
@@ -93,17 +100,14 @@ class CompareCategorySelectView(TemplateView):
         # Filtrar solo las categorías que tienen productos (principales o subcategorías)
         categories_with_products = []
         for main_cat in main_categories:
-            # Verificar si la categoría principal tiene productos
             if main_cat.products.filter(is_active=True).exists():
                 categories_with_products.append(main_cat)
             else:
-                # Si no tiene productos directos, verificar subcategorías
                 subcategories_with_products = main_cat.subcategories.filter(
                     is_active=True,
                     products__is_active=True
                 ).distinct()
                 if subcategories_with_products.exists():
-                    # Crear una versión modificada de la categoría principal
                     main_cat.subcategories_with_products = subcategories_with_products
                     categories_with_products.append(main_cat)
         
@@ -144,13 +148,11 @@ class CompareProductsView(TemplateView):
         
         # Verificar que ambos productos sean de la misma categoría
         if product1.category != product2.category:
-            raise ValueError("Los productos deben ser de la misma categoría")
+            raise ValueError(_("Los productos deben ser de la misma categoría"))
         
-        # Obtener especificaciones completas
         specs1 = getattr(product1, 'specifications', None)
         specs2 = getattr(product2, 'specifications', None)
         
-        # Generar comparación de especificaciones
         comparison_data = self._generate_comparison_data(product1, product2, specs1, specs2)
         
         context.update({
@@ -169,118 +171,119 @@ class CompareProductsView(TemplateView):
         
         # Información básica
         comparison.append({
-            'section': 'Información General',
+            'section': _("Información General"),
             'fields': [
-                {'name': 'Nombre', 'value1': product1.name, 'value2': product2.name},
-                {'name': 'Precio', 'value1': f"${product1.price:,.0f}", 'value2': f"${product2.price:,.0f}"},
-                {'name': 'Marca', 'value1': specs1.brand if specs1 else 'N/A', 'value2': specs2.brand if specs2 else 'N/A'},
-                {'name': 'Modelo', 'value1': specs1.model if specs1 else 'N/A', 'value2': specs2.model if specs2 else 'N/A'},
+                {'name': _("Nombre"), 'value1': product1.name, 'value2': product2.name},
+                {'name': _("Precio"), 'value1': f"${product1.price:,.0f}", 'value2': f"${product2.price:,.0f}"},
+                {'name': _("Marca"), 'value1': specs1.brand if specs1 else _("N/A"), 'value2': specs2.brand if specs2 else _("N/A")},
+                {'name': _("Modelo"), 'value1': specs1.model if specs1 else _("N/A"), 'value2': specs2.model if specs2 else _("N/A")},
             ]
         })
         
         if not specs1 or not specs2:
             return comparison
         
-        # Especificaciones según el tipo de categoría
         category_type = product1.category.category_type
         
         if category_type == 'celulares_tablets':
             comparison.append({
-                'section': 'Pantalla',
+                'section': _("Pantalla"),
                 'fields': [
-                    {'name': 'Tamaño', 'value1': f"{specs1.screen_size}\"" if specs1.screen_size else 'N/A', 
-                     'value2': f"{specs2.screen_size}\"" if specs2.screen_size else 'N/A'},
-                    {'name': 'Resolución', 'value1': specs1.screen_resolution or 'N/A', 'value2': specs2.screen_resolution or 'N/A'},
+                    {'name': _("Tamaño"), 'value1': f"{specs1.screen_size}\"" if specs1.screen_size else _("N/A"), 
+                     'value2': f"{specs2.screen_size}\"" if specs2.screen_size else _("N/A")},
+                    {'name': _("Resolución"), 'value1': specs1.screen_resolution or _("N/A"), 'value2': specs2.screen_resolution or _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Rendimiento',
+                'section': _("Rendimiento"),
                 'fields': [
-                    {'name': 'Sistema Operativo', 'value1': specs1.operating_system or 'N/A', 'value2': specs2.operating_system or 'N/A'},
-                    {'name': 'RAM', 'value1': specs1.ram_memory or 'N/A', 'value2': specs2.ram_memory or 'N/A'},
-                    {'name': 'Almacenamiento', 'value1': specs1.internal_storage or 'N/A', 'value2': specs2.internal_storage or 'N/A'},
+                    {'name': _("Sistema Operativo"), 'value1': specs1.operating_system or _("N/A"), 'value2': specs2.operating_system or _("N/A")},
+                    {'name': _("RAM"), 'value1': specs1.ram_memory or _("N/A"), 'value2': specs2.ram_memory or _("N/A")},
+                    {'name': _("Almacenamiento"), 'value1': specs1.internal_storage or _("N/A"), 'value2': specs2.internal_storage or _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Cámaras',
+                'section': _("Cámaras"),
                 'fields': [
-                    {'name': 'Cámara Principal', 'value1': specs1.main_camera or 'N/A', 'value2': specs2.main_camera or 'N/A'},
-                    {'name': 'Cámara Frontal', 'value1': specs1.front_camera or 'N/A', 'value2': specs2.front_camera or 'N/A'},
+                    {'name': _("Cámara Principal"), 'value1': specs1.main_camera or _("N/A"), 'value2': specs2.main_camera or _("N/A")},
+                    {'name': _("Cámara Frontal"), 'value1': specs1.front_camera or _("N/A"), 'value2': specs2.front_camera or _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Batería y Conectividad',
+                'section': _("Batería y Conectividad"),
                 'fields': [
-                    {'name': 'Batería', 'value1': specs1.battery_capacity or 'N/A', 'value2': specs2.battery_capacity or 'N/A'},
-                    {'name': 'Conectividad', 'value1': specs1.connectivity or 'N/A', 'value2': specs2.connectivity or 'N/A'},
+                    {'name': _("Batería"), 'value1': specs1.battery_capacity or _("N/A"), 'value2': specs2.battery_capacity or _("N/A")},
+                    {'name': _("Conectividad"), 'value1': specs1.connectivity or _("N/A"), 'value2': specs2.connectivity or _("N/A")},
                 ]
             })
             
         elif category_type == 'computadores':
             comparison.append({
-                'section': 'Procesador',
+                'section': _("Procesador"),
                 'fields': [
-                    {'name': 'CPU', 'value1': specs1.processor or 'N/A', 'value2': specs2.processor or 'N/A'},
+                    {'name': _("CPU"), 'value1': specs1.processor or _("N/A"), 'value2': specs2.processor or _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Memoria y Almacenamiento',
+                'section': _("Memoria y Almacenamiento"),
                 'fields': [
-                    {'name': 'RAM', 'value1': specs1.ram_memory or 'N/A', 'value2': specs2.ram_memory or 'N/A'},
-                    {'name': 'Almacenamiento', 'value1': f"{specs1.storage_type} {specs1.storage_capacity}" if specs1.storage_type and specs1.storage_capacity else 'N/A', 
-                     'value2': f"{specs2.storage_type} {specs2.storage_capacity}" if specs2.storage_type and specs2.storage_capacity else 'N/A'},
+                    {'name': _("RAM"), 'value1': specs1.ram_memory or _("N/A"), 'value2': specs2.ram_memory or _("N/A")},
+                    {'name': _("Almacenamiento"), 
+                     'value1': f"{specs1.storage_type} {specs1.storage_capacity}" if specs1.storage_type and specs1.storage_capacity else _("N/A"), 
+                     'value2': f"{specs2.storage_type} {specs2.storage_capacity}" if specs2.storage_type and specs2.storage_capacity else _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Gráficos',
+                'section': _("Gráficos"),
                 'fields': [
-                    {'name': 'Tarjeta Gráfica', 'value1': specs1.graphics_card or 'N/A', 'value2': specs2.graphics_card or 'N/A'},
+                    {'name': _("Tarjeta Gráfica"), 'value1': specs1.graphics_card or _("N/A"), 'value2': specs2.graphics_card or _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Físico',
+                'section': _("Físico"),
                 'fields': [
-                    {'name': 'Peso', 'value1': f"{specs1.weight} kg" if specs1.weight else 'N/A', 'value2': f"{specs2.weight} kg" if specs2.weight else 'N/A'},
+                    {'name': _("Peso"), 'value1': f"{specs1.weight} kg" if specs1.weight else _("N/A"), 'value2': f"{specs2.weight} kg" if specs2.weight else _("N/A")},
                 ]
             })
             
         elif category_type == 'componentes':
             comparison.append({
-                'section': 'Especificaciones Técnicas',
+                'section': _("Especificaciones Técnicas"),
                 'fields': [
-                    {'name': 'Socket/Tipo', 'value1': specs1.socket_type or 'N/A', 'value2': specs2.socket_type or 'N/A'},
-                    {'name': 'Frecuencia', 'value1': specs1.frequency or 'N/A', 'value2': specs2.frequency or 'N/A'},
-                    {'name': 'Consumo Energético', 'value1': specs1.power_consumption or 'N/A', 'value2': specs2.power_consumption or 'N/A'},
-                    {'name': 'Tipo de Memoria', 'value1': specs1.memory_type or 'N/A', 'value2': specs2.memory_type or 'N/A'},
+                    {'name': _("Socket/Tipo"), 'value1': specs1.socket_type or _("N/A"), 'value2': specs2.socket_type or _("N/A")},
+                    {'name': _("Frecuencia"), 'value1': specs1.frequency or _("N/A"), 'value2': specs2.frequency or _("N/A")},
+                    {'name': _("Consumo Energético"), 'value1': specs1.power_consumption or _("N/A"), 'value2': specs2.power_consumption or _("N/A")},
+                    {'name': _("Tipo de Memoria"), 'value1': specs1.memory_type or _("N/A"), 'value2': specs2.memory_type or _("N/A")},
                 ]
             })
             
         elif category_type == 'audio_video':
             comparison.append({
-                'section': 'Pantalla',
+                'section': _("Pantalla"),
                 'fields': [
-                    {'name': 'Tamaño', 'value1': f"{specs1.screen_size}\"" if specs1.screen_size else 'N/A', 'value2': f"{specs2.screen_size}\"" if specs2.screen_size else 'N/A'},
-                    {'name': 'Resolución', 'value1': specs1.screen_resolution or 'N/A', 'value2': specs2.screen_resolution or 'N/A'},
-                    {'name': 'Tecnología', 'value1': specs1.display_technology or 'N/A', 'value2': specs2.display_technology or 'N/A'},
-                    {'name': 'Frecuencia de Refresco', 'value1': specs1.refresh_rate or 'N/A', 'value2': specs2.refresh_rate or 'N/A'},
+                    {'name': _("Tamaño"), 'value1': f"{specs1.screen_size}\"" if specs1.screen_size else _("N/A"), 
+                     'value2': f"{specs2.screen_size}\"" if specs2.screen_size else _("N/A")},
+                    {'name': _("Resolución"), 'value1': specs1.screen_resolution or _("N/A"), 'value2': specs2.screen_resolution or _("N/A")},
+                    {'name': _("Tecnología"), 'value1': specs1.display_technology or _("N/A"), 'value2': specs2.display_technology or _("N/A")},
+                    {'name': _("Frecuencia de Refresco"), 'value1': specs1.refresh_rate or _("N/A"), 'value2': specs2.refresh_rate or _("N/A")},
                 ]
             })
             comparison.append({
-                'section': 'Audio',
+                'section': _("Audio"),
                 'fields': [
-                    {'name': 'Potencia', 'value1': specs1.audio_power or 'N/A', 'value2': specs2.audio_power or 'N/A'},
-                    {'name': 'Canales', 'value1': specs1.channels or 'N/A', 'value2': specs2.channels or 'N/A'},
+                    {'name': _("Potencia"), 'value1': specs1.audio_power or _("N/A"), 'value2': specs2.audio_power or _("N/A")},
+                    {'name': _("Canales"), 'value1': specs1.channels or _("N/A"), 'value2': specs2.channels or _("N/A")},
                 ]
             })
             
         elif category_type == 'gaming':
             comparison.append({
-                'section': 'Información del Juego',
+                'section': _("Información del Juego"),
                 'fields': [
-                    {'name': 'Plataforma', 'value1': specs1.platform_compatibility or 'N/A', 'value2': specs2.platform_compatibility or 'N/A'},
-                    {'name': 'Género', 'value1': specs1.genre or 'N/A', 'value2': specs2.genre or 'N/A'},
-                    {'name': 'Clasificación', 'value1': specs1.age_rating or 'N/A', 'value2': specs2.age_rating or 'N/A'},
-                    {'name': 'Multijugador', 'value1': 'Sí' if specs1.multiplayer else 'No', 'value2': 'Sí' if specs2.multiplayer else 'No'},
+                    {'name': _("Plataforma"), 'value1': specs1.platform_compatibility or _("N/A"), 'value2': specs2.platform_compatibility or _("N/A")},
+                    {'name': _("Género"), 'value1': specs1.genre or _("N/A"), 'value2': specs2.genre or _("N/A")},
+                    {'name': _("Clasificación"), 'value1': specs1.age_rating or _("N/A"), 'value2': specs2.age_rating or _("N/A")},
+                    {'name': _("Multijugador"), 'value1': _("Sí") if specs1.multiplayer else _("No"), 'value2': _("Sí") if specs2.multiplayer else _("No")},
                 ]
             })
         

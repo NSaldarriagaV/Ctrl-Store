@@ -1,0 +1,1967 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-04 18:40-0500\n"
+"PO-Revision-Date: 2025-11-04 16:45-0500\n"
+"Last-Translator: Esteban Jacob Romero Ríos <EMAIL@ADDRESS>\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\ctrlstore\apps\authx\admin.py:21 .\templates\payment\invoice.html:84
+msgid "Estado"
+msgstr "Status"
+
+#: .\ctrlstore\apps\authx\admin.py:27 .\ctrlstore\apps\authx\models.py:57
+msgid "Usuarios"
+msgstr "Users"
+
+#: .\ctrlstore\apps\authx\admin.py:54
+msgid "Información personal"
+msgstr "Personal information"
+
+#: .\ctrlstore\apps\authx\admin.py:57
+msgid "Permisos"
+msgstr "Permissions"
+
+#: .\ctrlstore\apps\authx\admin.py:67
+msgid "Fechas importantes"
+msgstr "Important dates"
+
+#: .\ctrlstore\apps\authx\forms.py:16
+msgid "Requerido. Ingresa una dirección de email válida."
+msgstr "Required. Enter a valid email address."
+
+#: .\ctrlstore\apps\authx\forms.py:17 .\ctrlstore\apps\authx\forms.py:25
+#: .\ctrlstore\apps\authx\forms.py:77
+msgid "Correo electrónico"
+msgstr "Email"
+
+#: .\ctrlstore\apps\authx\forms.py:24 .\ctrlstore\apps\authx\forms.py:76
+msgid "Nombre de usuario"
+msgstr "Username"
+
+#: .\ctrlstore\apps\authx\forms.py:26 .\templates\authx\login.html:52
+#: .\templates\authx\signup.html:65
+msgid "Contraseña"
+msgstr "Password"
+
+#: .\ctrlstore\apps\authx\forms.py:27
+msgid "Confirmar contraseña"
+msgstr "Confirm password"
+
+#: .\ctrlstore\apps\authx\forms.py:33
+msgid "El email es obligatorio."
+msgstr "Email is required."
+
+#: .\ctrlstore\apps\authx\forms.py:35
+msgid "Este email ya está registrado."
+msgstr "This email is already registered."
+
+#: .\ctrlstore\apps\authx\forms.py:49
+msgid "Cliente"
+msgstr "Customer"
+
+#: .\ctrlstore\apps\authx\forms.py:50
+msgid "Acceso básico de compras"
+msgstr "Basic shopping access"
+
+#: .\ctrlstore\apps\authx\forms.py:78 .\ctrlstore\apps\authx\models.py:16
+#: .\ctrlstore\apps\catalog\views.py:175 .\templates\payment\confirm.html:63
+#: .\templates\payment\invoice.html:60
+msgid "Nombre"
+msgstr "Name"
+
+#: .\ctrlstore\apps\authx\forms.py:79
+msgid "Apellido"
+msgstr "Last name"
+
+#: .\ctrlstore\apps\authx\forms.py:80 .\ctrlstore\apps\authx\models.py:24
+#: .\ctrlstore\apps\authx\models.py:48
+msgid "Rol"
+msgstr "Role"
+
+#: .\ctrlstore\apps\authx\forms.py:81 .\ctrlstore\apps\authx\models.py:18
+msgid "Activo"
+msgstr "Active"
+
+#: .\ctrlstore\apps\authx\models.py:17
+msgid "Descripción"
+msgstr "Description"
+
+#: .\ctrlstore\apps\authx\models.py:19
+msgid "Fecha de creación"
+msgstr "Creation date"
+
+#: .\ctrlstore\apps\authx\models.py:20 .\ctrlstore\apps\authx\models.py:53
+msgid "Fecha de actualización"
+msgstr "Last updated"
+
+#: .\ctrlstore\apps\authx\models.py:25
+msgid "Roles"
+msgstr "Roles"
+
+#: .\ctrlstore\apps\authx\models.py:35 .\ctrlstore\apps\order\forms.py:7
+#: .\templates\order\checkout.html:98 .\templates\payment\confirm.html:86
+msgid "Teléfono"
+msgstr "Phone"
+
+#: .\ctrlstore\apps\authx\models.py:36 .\ctrlstore\apps\order\forms.py:9
+#: .\templates\order\checkout.html:114 .\templates\payment\confirm.html:66
+#: .\templates\payment\invoice.html:62
+msgid "Dirección"
+msgstr "Address"
+
+#: .\ctrlstore\apps\authx\models.py:39
+msgid "Dirección de correo electrónico"
+msgstr "Email address"
+
+#: .\ctrlstore\apps\authx\models.py:52
+msgid "Fecha de registro"
+msgstr "Registration date"
+
+#: .\ctrlstore\apps\authx\models.py:56 .\templates\authx\login.html:39
+#: .\templates\authx\signup.html:39
+msgid "Usuario"
+msgstr "User"
+
+#: .\ctrlstore\apps\authx\models.py:75
+msgid "Sin rol"
+msgstr "No role"
+
+#: .\ctrlstore\apps\authx\views.py:58
+msgid "Error al registrar usuario. Intente nuevamente."
+msgstr "Error registering user. Please try again."
+
+#: .\ctrlstore\apps\cart\views.py:38 .\ctrlstore\apps\cart\views.py:87
+msgid "Cantidad inválida"
+msgstr "Invalid quantity"
+
+#: .\ctrlstore\apps\cart\views.py:46
+#, python-format
+msgid "%(name)s agregado al carrito."
+msgstr "%(name)s added to cart."
+
+#: .\ctrlstore\apps\cart\views.py:71
+msgid "Error al agregar producto al carrito."
+msgstr "Error adding product to cart."
+
+#: .\ctrlstore\apps\cart\views.py:93
+#, python-format
+msgid "%(name)s eliminado del carrito."
+msgstr "%(name)s removed from cart."
+
+#: .\ctrlstore\apps\cart\views.py:101 .\ctrlstore\apps\payment\views.py:145
+msgid "No hay stock suficiente."
+msgstr "Insufficient stock."
+
+#: .\ctrlstore\apps\cart\views.py:107
+#, python-format
+msgid "Cantidad actualizada: %(name)s x%(qty)s"
+msgstr "Quantity updated: %(name)s x%(qty)s"
+
+#: .\ctrlstore\apps\cart\views.py:118
+msgid "Producto eliminado del carrito."
+msgstr "Product removed from cart."
+
+#: .\ctrlstore\apps\catalog\views.py:150
+msgid "Los productos deben ser de la misma categoría"
+msgstr "Products must be from the same category"
+
+#: .\ctrlstore\apps\catalog\views.py:173
+msgid "Información General"
+msgstr "General Information"
+
+#: .\ctrlstore\apps\catalog\views.py:176
+#: .\templates\catalog\product-detail.html:93
+#: .\templates\catalog\product-list.html:233
+#: .\templates\payment\invoice.html:98
+msgid "Precio"
+msgstr "Price"
+
+#: .\ctrlstore\apps\catalog\views.py:177
+msgid "Marca"
+msgstr "Brand"
+
+#: .\ctrlstore\apps\catalog\views.py:177 .\ctrlstore\apps\catalog\views.py:178
+#: .\ctrlstore\apps\catalog\views.py:191 .\ctrlstore\apps\catalog\views.py:192
+#: .\ctrlstore\apps\catalog\views.py:193 .\ctrlstore\apps\catalog\views.py:199
+#: .\ctrlstore\apps\catalog\views.py:200 .\ctrlstore\apps\catalog\views.py:201
+#: .\ctrlstore\apps\catalog\views.py:207 .\ctrlstore\apps\catalog\views.py:208
+#: .\ctrlstore\apps\catalog\views.py:214 .\ctrlstore\apps\catalog\views.py:215
+#: .\ctrlstore\apps\catalog\views.py:223 .\ctrlstore\apps\catalog\views.py:229
+#: .\ctrlstore\apps\catalog\views.py:231 .\ctrlstore\apps\catalog\views.py:232
+#: .\ctrlstore\apps\catalog\views.py:238 .\ctrlstore\apps\catalog\views.py:244
+#: .\ctrlstore\apps\catalog\views.py:252 .\ctrlstore\apps\catalog\views.py:253
+#: .\ctrlstore\apps\catalog\views.py:254 .\ctrlstore\apps\catalog\views.py:255
+#: .\ctrlstore\apps\catalog\views.py:263 .\ctrlstore\apps\catalog\views.py:264
+#: .\ctrlstore\apps\catalog\views.py:265 .\ctrlstore\apps\catalog\views.py:266
+#: .\ctrlstore\apps\catalog\views.py:267 .\ctrlstore\apps\catalog\views.py:273
+#: .\ctrlstore\apps\catalog\views.py:274 .\ctrlstore\apps\catalog\views.py:282
+#: .\ctrlstore\apps\catalog\views.py:283 .\ctrlstore\apps\catalog\views.py:284
+msgid "N/A"
+msgstr "N/A"
+
+#: .\ctrlstore\apps\catalog\views.py:178
+msgid "Modelo"
+msgstr "Model"
+
+#: .\ctrlstore\apps\catalog\views.py:189 .\ctrlstore\apps\catalog\views.py:261
+msgid "Pantalla"
+msgstr "Display"
+
+#: .\ctrlstore\apps\catalog\views.py:191 .\ctrlstore\apps\catalog\views.py:263
+msgid "Tamaño"
+msgstr "Size"
+
+#: .\ctrlstore\apps\catalog\views.py:193 .\ctrlstore\apps\catalog\views.py:265
+msgid "Resolución"
+msgstr "Resolution"
+
+#: .\ctrlstore\apps\catalog\views.py:197
+msgid "Rendimiento"
+msgstr "Performance"
+
+#: .\ctrlstore\apps\catalog\views.py:199
+msgid "Sistema Operativo"
+msgstr "Operating System"
+
+#: .\ctrlstore\apps\catalog\views.py:200 .\ctrlstore\apps\catalog\views.py:229
+#: .\ctrlstore\i18n_fixtures_hints.py:160
+msgid "RAM"
+msgstr "RAM"
+
+#: .\ctrlstore\apps\catalog\views.py:201 .\ctrlstore\apps\catalog\views.py:230
+msgid "Almacenamiento"
+msgstr "Storage"
+
+#: .\ctrlstore\apps\catalog\views.py:205
+msgid "Cámaras"
+msgstr "Cameras"
+
+#: .\ctrlstore\apps\catalog\views.py:207
+msgid "Cámara Principal"
+msgstr "Main Camera"
+
+#: .\ctrlstore\apps\catalog\views.py:208
+msgid "Cámara Frontal"
+msgstr "Front Camera"
+
+#: .\ctrlstore\apps\catalog\views.py:212
+msgid "Batería y Conectividad"
+msgstr "Battery and Connectivity"
+
+#: .\ctrlstore\apps\catalog\views.py:214
+msgid "Batería"
+msgstr "Battery"
+
+#: .\ctrlstore\apps\catalog\views.py:215
+msgid "Conectividad"
+msgstr "Connectivity"
+
+#: .\ctrlstore\apps\catalog\views.py:221
+msgid "Procesador"
+msgstr "Processor"
+
+#: .\ctrlstore\apps\catalog\views.py:223
+msgid "CPU"
+msgstr "CPU"
+
+#: .\ctrlstore\apps\catalog\views.py:227
+msgid "Memoria y Almacenamiento"
+msgstr "Memory and Storage"
+
+#: .\ctrlstore\apps\catalog\views.py:236
+msgid "Gráficos"
+msgstr "Graphics"
+
+#: .\ctrlstore\apps\catalog\views.py:238
+msgid "Tarjeta Gráfica"
+msgstr "Graphics Card"
+
+#: .\ctrlstore\apps\catalog\views.py:242
+msgid "Físico"
+msgstr "Physical"
+
+#: .\ctrlstore\apps\catalog\views.py:244
+msgid "Peso"
+msgstr "Weight"
+
+#: .\ctrlstore\apps\catalog\views.py:250
+msgid "Especificaciones Técnicas"
+msgstr "Technical Specifications"
+
+#: .\ctrlstore\apps\catalog\views.py:252
+msgid "Socket/Tipo"
+msgstr "Socket/Type"
+
+#: .\ctrlstore\apps\catalog\views.py:253
+msgid "Frecuencia"
+msgstr "Frequency"
+
+#: .\ctrlstore\apps\catalog\views.py:254
+msgid "Consumo Energético"
+msgstr "Power Consumption"
+
+#: .\ctrlstore\apps\catalog\views.py:255
+msgid "Tipo de Memoria"
+msgstr "Memory Type"
+
+#: .\ctrlstore\apps\catalog\views.py:266
+msgid "Tecnología"
+msgstr "Technology"
+
+#: .\ctrlstore\apps\catalog\views.py:267
+msgid "Frecuencia de Refresco"
+msgstr "Refresh Rate"
+
+#: .\ctrlstore\apps\catalog\views.py:271
+msgid "Audio"
+msgstr "Audio"
+
+#: .\ctrlstore\apps\catalog\views.py:273
+msgid "Potencia"
+msgstr "Power"
+
+#: .\ctrlstore\apps\catalog\views.py:274
+msgid "Canales"
+msgstr "Channels"
+
+#: .\ctrlstore\apps\catalog\views.py:280
+msgid "Información del Juego"
+msgstr "Game Information"
+
+#: .\ctrlstore\apps\catalog\views.py:282
+msgid "Plataforma"
+msgstr "Platform"
+
+#: .\ctrlstore\apps\catalog\views.py:283
+msgid "Género"
+msgstr "Genre"
+
+#: .\ctrlstore\apps\catalog\views.py:284
+msgid "Clasificación"
+msgstr "Rating"
+
+#: .\ctrlstore\apps\catalog\views.py:285
+msgid "Multijugador"
+msgstr "Multiplayer"
+
+#: .\ctrlstore\apps\catalog\views.py:285
+msgid "Sí"
+msgstr "Yes"
+
+#: .\ctrlstore\apps\catalog\views.py:285
+msgid "No"
+msgstr "No"
+
+#: .\ctrlstore\apps\order\forms.py:5 .\templates\order\checkout.html:53
+msgid "Nombre completo"
+msgstr "Full name"
+
+#: .\ctrlstore\apps\order\forms.py:6 .\templates\order\checkout.html:70
+msgid "Correo"
+msgstr "Email"
+
+#: .\ctrlstore\apps\order\forms.py:10 .\templates\order\checkout.html:130
+msgid "Complemento"
+msgstr "Address line 2"
+
+#: .\ctrlstore\apps\order\forms.py:11 .\templates\order\checkout.html:146
+msgid "Ciudad"
+msgstr "City"
+
+#: .\ctrlstore\apps\order\forms.py:12 .\templates\order\checkout.html:162
+msgid "Departamento/Estado"
+msgstr "State/Province"
+
+#: .\ctrlstore\apps\order\forms.py:13 .\ctrlstore\apps\payment\forms.py:70
+#: .\templates\order\checkout.html:179 .\templates\payment\confirm.html:76
+#: .\templates\payment\invoice.html:69
+msgid "Código Postal"
+msgstr "ZIP/Postal Code"
+
+#: .\ctrlstore\apps\order\forms.py:14 .\templates\order\checkout.html:194
+#: .\templates\payment\confirm.html:79 .\templates\payment\invoice.html:70
+msgid "País"
+msgstr "Country"
+
+#: .\ctrlstore\apps\order\forms.py:14
+msgid "Colombia"
+msgstr "Colombia"
+
+#: .\ctrlstore\apps\order\views.py:37
+msgid "Tu carrito está vacío."
+msgstr "Your cart is empty."
+
+#: .\ctrlstore\apps\order\views.py:102
+msgid "Orden creada correctamente. Continúa con el pago."
+msgstr "Order created successfully. Continue to payment."
+
+#: .\ctrlstore\apps\payment\forms.py:12 .\templates\payment\pay.html:77
+msgid "Titular"
+msgstr "Cardholder"
+
+#: .\ctrlstore\apps\payment\forms.py:18
+msgid "Nombre como en la tarjeta"
+msgstr "Name as on card"
+
+#: .\ctrlstore\apps\payment\forms.py:24 .\templates\payment\pay.html:83
+msgid "Número de tarjeta"
+msgstr "Card number"
+
+#: .\ctrlstore\apps\payment\forms.py:31
+msgid "•••• •••• •••• ••••"
+msgstr "•••• •••• •••• ••••"
+
+#: .\ctrlstore\apps\payment\forms.py:37 .\templates\payment\pay.html:97
+msgid "Vencimiento (MM/YY)"
+msgstr "Expiry (MM/YY)"
+
+#: .\ctrlstore\apps\payment\forms.py:43
+msgid "MM/YY"
+msgstr "MM/YY"
+
+#: .\ctrlstore\apps\payment\forms.py:50 .\ctrlstore\apps\payment\forms.py:57
+#: .\templates\payment\pay.html:103
+msgid "CVV"
+msgstr "CVV"
+
+#: .\ctrlstore\apps\payment\forms.py:63 .\templates\payment\pay.html:109
+msgid "Código Postal (opcional)"
+msgstr "ZIP/Postal Code (optional)"
+
+#: .\ctrlstore\apps\payment\forms.py:89
+msgid "Usa el formato MM/YY."
+msgstr "Use MM/YY format."
+
+#: .\ctrlstore\apps\payment\forms.py:91
+msgid "Usa dígitos en MM/YY."
+msgstr "Use digits in MM/YY."
+
+#: .\ctrlstore\apps\payment\views.py:58
+msgid "La orden ya estaba pagada."
+msgstr "The order was already paid."
+
+#: .\ctrlstore\apps\payment\views.py:104
+#, python-format
+msgid "Producto %(pid)s no existe"
+msgstr "Product %(pid)s does not exist"
+
+#: .\ctrlstore\apps\payment\views.py:109
+#, python-format
+msgid "%(product)s (stock: %(stock)s, requerido: %(req)s)"
+msgstr "%(product)s (stock: %(stock)s, required: %(req)s)"
+
+#: .\ctrlstore\apps\payment\views.py:119
+#, python-format
+msgid "Stock insuficiente para: %(items)s"
+msgstr "Insufficient stock for: %(items)s"
+
+#: .\ctrlstore\apps\payment\views.py:153
+msgid "Pago realizado con éxito."
+msgstr "Payment successful."
+
+#: .\ctrlstore\apps\payment\views.py:159
+msgid "No fue posible procesar el pago."
+msgstr "The payment could not be processed."
+
+#: .\ctrlstore\apps\payment\views.py:196
+msgid "La factura solo está disponible para pagos aprobados."
+msgstr "The invoice is only available for approved payments."
+
+#: .\ctrlstore\apps\payment\views.py:220
+msgid "No se pudo generar el PDF."
+msgstr "Could not generate PDF."
+
+#: .\ctrlstore\apps\payment\views.py:222 .\templates\payment\invoice.html:46
+msgid "Factura"
+msgstr "Invoice"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:5
+msgid "Accesorios"
+msgstr "Accessories"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:6
+msgid "Accesorios Móviles"
+msgstr "Mobile Accessories"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:7
+msgid "Audífonos"
+msgstr "Headphones"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:8
+msgid "Audio y Video"
+msgstr "Audio & Video"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:9
+msgid "Celulares y Tablets"
+msgstr "Phones & Tablets"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:10
+msgid "Componentes"
+msgstr "Components"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:11
+msgid "Componentes y Hardware"
+msgstr "Components & Hardware"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:12
+msgid "Computadores y Periféricos"
+msgstr "Computers & Peripherals"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:13
+msgid "Consolas"
+msgstr "Consoles"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:14
+#: .\templates\catalog\product-detail.html:62
+#: .\templates\catalog\product-list.html:199
+msgid "Gaming"
+msgstr "Gaming"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:15
+msgid "Laptops"
+msgstr "Laptops"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:16
+msgid "Monitores"
+msgstr "Monitors"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:17
+msgid "PC de Escritorio"
+msgstr "Desktop PCs"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:18
+msgid "Portátiles"
+msgstr "Notebooks"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:19
+msgid "Smartphones"
+msgstr "Smartphones"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:20
+msgid "Smartwatches"
+msgstr "Smartwatches"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:21
+msgid "Tablets"
+msgstr "Tablets"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:22
+msgid "Televisores"
+msgstr "TVs"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:23
+msgid "Videojuegos"
+msgstr "Video Games"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:26
+msgid "ASUS TUF Gaming A15"
+msgstr "ASUS TUF Gaming A15"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:27
+msgid "Apple Watch Series 9"
+msgstr "Apple Watch Series 9"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:28
+msgid "Funda iPhone 15 Pro MagSafe"
+msgstr "iPhone 15 Pro MagSafe Case"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:29
+msgid "LG OLED C3 55\""
+msgstr "LG OLED C3 55\""
+
+#: .\ctrlstore\i18n_fixtures_hints.py:30
+msgid "Logitech MX Master 3S"
+msgstr "Logitech MX Master 3S"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:31 .\ctrlstore\i18n_fixtures_hints.py:124
+msgid "MacBook Pro 16\" M3 Max"
+msgstr "MacBook Pro 16\" M3 Max"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:32
+msgid "NVIDIA GeForce RTX 4090"
+msgstr "NVIDIA GeForce RTX 4090"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:33 .\ctrlstore\i18n_fixtures_hints.py:129
+msgid "PlayStation 5 Pro"
+msgstr "PlayStation 5 Pro"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:34
+msgid "Samsung Galaxy S24 Ultra"
+msgstr "Samsung Galaxy S24 Ultra"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:35
+msgid "Samsung Odyssey G7 32\""
+msgstr "Samsung Odyssey G7 32\""
+
+#: .\ctrlstore\i18n_fixtures_hints.py:36
+msgid "Sony WH-1000XM5"
+msgstr "Sony WH-1000XM5"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:37
+msgid "The Legend of Zelda: Tears of the Kingdom"
+msgstr "The Legend of Zelda: Tears of the Kingdom"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:38 .\ctrlstore\i18n_fixtures_hints.py:130
+msgid "Xbox Series X"
+msgstr "Xbox Series X"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:39 .\ctrlstore\i18n_fixtures_hints.py:122
+msgid "iPad Pro 12.9\" M2"
+msgstr "iPad Pro 12.9\" M2"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:40 .\ctrlstore\i18n_fixtures_hints.py:120
+msgid "iPhone 15 Pro Max"
+msgstr "iPhone 15 Pro Max"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:43
+msgid "Aventura épica en los cielos y profundidades de Hyrule"
+msgstr "Epic adventure across the skies and depths of Hyrule"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:44
+msgid "Galaxy S24 Ultra con S Pen y cámara de 200MP"
+msgstr "Galaxy S24 Ultra with S Pen and 200MP camera"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:45
+msgid "GPU RTX 4090 con 24GB GDDR6X y ray tracing avanzado"
+msgstr "RTX 4090 GPU with 24GB GDDR6X and advanced ray tracing"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:46
+msgid "iPad Pro con chip M2 y pantalla Liquid Retina XDR"
+msgstr "iPad Pro with M2 chip and Liquid Retina XDR display"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:47
+msgid "iPhone 15 Pro Max con chip A17 Pro y cámara profesional"
+msgstr "iPhone 15 Pro Max with A17 Pro chip and pro camera system"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:48
+msgid "Laptop gaming AMD Ryzen 7 con RTX 4060 y pantalla 144Hz"
+msgstr "Gaming laptop with AMD Ryzen 7, RTX 4060 and 144Hz display"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:49
+msgid "MacBook Pro con chip M3 Max y pantalla Liquid Retina XDR"
+msgstr "MacBook Pro with M3 Max chip and Liquid Retina XDR display"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:50
+msgid "Monitor gaming curvo QHD 240Hz con tecnología QLED"
+msgstr "Curved QHD 240Hz gaming monitor with QLED"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:51
+msgid "Mouse inalámbrico premium con sensor de 8000 DPI"
+msgstr "Premium wireless mouse with 8000 DPI sensor"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:52
+msgid "PS5 Pro con GPU mejorada y ray tracing avanzado"
+msgstr "PS5 Pro with upgraded GPU and advanced ray tracing"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:53
+msgid "Smart TV OLED 4K con HDR Dolby Vision y webOS 23"
+msgstr "4K OLED Smart TV with HDR Dolby Vision and webOS 23"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:54
+msgid "Xbox Series X con soporte 4K/120fps y SSD de 1TB"
+msgstr "Xbox Series X with 4K/120fps support and 1TB SSD"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:55
+msgid "Audífonos premium con cancelación de ruido y 30h de batería"
+msgstr "Premium headphones with noise cancelling and 30h battery life"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:56
+msgid "Funda oficial Apple con MagSafe en cuero premium"
+msgstr "Official Apple case with MagSafe in premium leather"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:57
+msgid "Apple Watch Series 9 con chip S9 y pantalla Always-On"
+msgstr "Apple Watch Series 9 with S9 chip and Always-On display"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:60
+msgid ""
+"Audífonos inalámbricos premium con cancelación de ruido líder en la "
+"industria, sonido Hi-Res y hasta 30 horas de batería."
+msgstr ""
+"Premium wireless headphones with industry-leading noise cancellation, "
+"Hi-Res sound, and up to 30 hours of battery life."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:61
+msgid ""
+"Consola de videojuegos de Microsoft con arquitectura Zen 2, GPU RDNA 2, "
+"soporte para 4K/120fps y tecnología Quick Resume. Incluye 1TB de "
+"almacenamiento SSD."
+msgstr ""
+"Microsoft gaming console with Zen 2 architecture, RDNA 2 GPU, support for "
+"4K/120fps, and Quick Resume. Includes 1TB SSD storage."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:62
+msgid ""
+"El iPhone más avanzado con chip A17 Pro, sistema de cámaras profesional y "
+"pantalla Super Retina XDR de 6.7 pulgadas. Diseñado con titanio de grado "
+"aeroespacial."
+msgstr ""
+"The most advanced iPhone with the A17 Pro chip, pro camera system, and a "
+"6.7-inch Super Retina XDR display. Built with aerospace-grade titanium."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:63
+msgid ""
+"El smartwatch más avanzado con chip S9, pantalla Always-On Retina y nuevas "
+"funciones de salud. Disponible en múltiples tamaños y colores."
+msgstr ""
+"The most advanced smartwatch with S9 chip, Always-On Retina display, and new "
+"health features. Available in multiple sizes and colors."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:64
+msgid ""
+"La consola de videojuegos más avanzada de Sony con GPU mejorada, ray tracing "
+"avanzado y soporte para 8K. Incluye tecnología PlayStation Spectral Super "
+"Resolution."
+msgstr ""
+"Sony’s most advanced game console with an upgraded GPU, advanced ray tracing, "
+"and 8K support. Includes PlayStation Spectral Super Resolution."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:65
+msgid ""
+"La laptop más potente de Apple con chip M3 Max, pantalla Liquid Retina XDR "
+"de 16 pulgadas y hasta 128GB de memoria unificada. Perfecta para "
+"profesionales creativos."
+msgstr ""
+"Apple’s most powerful laptop with the M3 Max chip, 16-inch Liquid Retina XDR "
+"display, and up to 128GB unified memory. Perfect for creative pros."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:66
+msgid ""
+"La tarjeta gráfica más potente para gaming y creación de contenido. Con "
+"arquitectura Ada Lovelace, 24GB GDDR6X y ray tracing de 3ª generación."
+msgstr ""
+"The most powerful GPU for gaming and content creation. Ada Lovelace "
+"architecture, 24GB GDDR6X, and 3rd-gen ray tracing."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:67
+msgid ""
+"La tablet más potente de Apple con chip M2, pantalla Liquid Retina XDR de "
+"12.9 pulgadas y soporte para Apple Pencil de 2ª generación."
+msgstr ""
+"Apple’s most powerful tablet with M2 chip, 12.9-inch Liquid Retina XDR "
+"display, and support for 2nd-gen Apple Pencil."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:68
+msgid ""
+"Laptop gaming con procesador AMD Ryzen 7, tarjeta gráfica RTX 4060, pantalla "
+"de 144Hz y diseño resistente certificado por estándares militares."
+msgstr ""
+"Gaming laptop with AMD Ryzen 7 processor, RTX 4060 graphics, 144Hz display, "
+"and durable, military-grade design."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:69
+msgid ""
+"Mouse inalámbrico premium con sensor de 8000 DPI, rueda de desplazamiento "
+"electromagnética y conectividad multi-dispositivo. Ideal para productividad."
+msgstr ""
+"Premium wireless mouse with 8000 DPI sensor, electromagnetic scroll wheel, "
+"and multi-device connectivity. Ideal for productivity."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:70
+msgid ""
+"Monitor gaming curvo de 32 pulgadas con resolución QHD, 240Hz, tiempo de "
+"respuesta de 1ms y tecnología QLED. Perfecto para gaming competitivo."
+msgstr ""
+"32-inch curved gaming monitor with QHD resolution, 240Hz refresh rate, "
+"1ms response time, and QLED technology. Perfect for competitive gaming."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:71
+msgid ""
+"Smart TV OLED de 55 pulgadas con resolución 4K, HDR Dolby Vision, webOS 23 y "
+"soporte para gaming con HDMI 2.1 y VRR."
+msgstr ""
+"55-inch 4K OLED Smart TV with HDR Dolby Vision, webOS 23, and gaming support "
+"via HDMI 2.1 and VRR."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:72
+msgid ""
+"Smartphone premium con S Pen integrado, cámara de 200MP y pantalla Dynamic "
+"AMOLED 2X de 6.8 pulgadas. Potenciado por Snapdragon 8 Gen 3."
+msgstr ""
+"Premium smartphone with built-in S Pen, 200MP camera, and 6.8-inch Dynamic "
+"AMOLED 2X display. Powered by Snapdragon 8 Gen 3."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:73
+msgid ""
+"La secuela épica de Breath of the Wild. Explora los cielos, la superficie y "
+"las profundidades de Hyrule en una aventura que redefine los límites de la "
+"creatividad."
+msgstr ""
+"The epic sequel to Breath of the Wild. Explore the skies, surface, and "
+"depths of Hyrule in an adventure that redefines creativity."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:74
+msgid ""
+"Funda oficial de Apple con tecnología MagSafe, fabricada en cuero premium. "
+"Protección completa con acceso a todos los puertos y compatibilidad con "
+"carga inalámbrica."
+msgstr ""
+"Official Apple case with MagSafe, made from premium leather. Full protection "
+"with access to all ports and wireless-charging compatibility."
+
+#: .\ctrlstore\i18n_fixtures_hints.py:77 .\ctrlstore\i18n_fixtures_hints.py:85
+msgid "1TB"
+msgstr "1TB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:78
+msgid "12MP"
+msgstr "12MP"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:79
+msgid "12MP TrueDepth"
+msgstr "12MP TrueDepth"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:80
+msgid "128GB"
+msgstr "128GB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:81
+msgid "16GB"
+msgstr "16GB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:82
+msgid "16GB DDR5"
+msgstr "16GB DDR5"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:83
+msgid "16GB GDDR6"
+msgstr "16GB GDDR6"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:84
+msgid "18 horas"
+msgstr "18 hours"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:86
+msgid "2TB"
+msgstr "2TB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:87
+msgid "24GB GDDR6X"
+msgstr "24GB GDDR6X"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:88
+msgid "2796 x 1290"
+msgstr "2796 x 1290"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:89
+msgid "2732 x 2048"
+msgstr "2732 x 2048"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:90
+msgid "2.16"
+msgstr "2.16"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:91
+msgid "2.30"
+msgstr "2.30"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:92
+msgid "30 horas"
+msgstr "30 hours"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:93
+msgid "32.00"
+msgstr "32.00"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:94
+msgid "3456 x 2234"
+msgstr "3456 x 2234"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:95
+msgid "3840 x 2160"
+msgstr "3840 x 2160"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:96
+msgid "3.85GHz"
+msgstr "3.85GHz"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:97
+msgid "3.8GHz"
+msgstr "3.8GHz"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:98
+msgid "450W"
+msgstr "450W"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:99
+msgid "48MP + 12MP + 12MP"
+msgstr "48MP + 12MP + 12MP"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:100
+msgid "4K"
+msgstr "4K"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:101
+msgid "5000 mAh"
+msgstr "5000 mAh"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:102
+msgid "55.00"
+msgstr "55.00"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:103
+msgid "6.70"
+msgstr "6.70"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:104
+msgid "6.80"
+msgstr "6.80"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:105
+msgid "70 días de uso"
+msgstr "70 days of use"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:106
+msgid "8GB"
+msgstr "8GB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:107
+msgid "8TB"
+msgstr "8TB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:108
+msgid "99.99"
+msgstr "99.99"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:111
+msgid "Apple"
+msgstr "Apple"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:112
+msgid "Samsung"
+msgstr "Samsung"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:113
+msgid "LG"
+msgstr "LG"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:114
+msgid "Sony"
+msgstr "Sony"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:115
+msgid "NVIDIA"
+msgstr "NVIDIA"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:116
+msgid "Microsoft"
+msgstr "Microsoft"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:117
+msgid "Nintendo"
+msgstr "Nintendo"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:118
+msgid "ASUS"
+msgstr "ASUS"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:119
+msgid "Logitech"
+msgstr "Logitech"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:121
+msgid "Galaxy S24 Ultra"
+msgstr "Galaxy S24 Ultra"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:123
+msgid "Watch Series 9"
+msgstr "Watch Series 9"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:125
+msgid "TUF Gaming A15"
+msgstr "TUF Gaming A15"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:126
+msgid "Odyssey G7 32\""
+msgstr "Odyssey G7 32\""
+
+#: .\ctrlstore\i18n_fixtures_hints.py:127
+msgid "OLED C3 55\""
+msgstr "OLED C3 55\""
+
+#: .\ctrlstore\i18n_fixtures_hints.py:128
+msgid "WH-1000XM5"
+msgstr "WH-1000XM5"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:131
+msgid "MX Master 3S"
+msgstr "MX Master 3S"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:132
+msgid "GeForce RTX 4090"
+msgstr "GeForce RTX 4090"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:133
+msgid "Switch Game"
+msgstr "Switch Game"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:134
+msgid "iPhone 15 Pro Case"
+msgstr "iPhone 15 Pro Case"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:137
+msgid "iOS 17"
+msgstr "iOS 17"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:138
+msgid "Android 14"
+msgstr "Android 14"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:139
+msgid "iPadOS 17"
+msgstr "iPadOS 17"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:140
+msgid "watchOS 10"
+msgstr "watchOS 10"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:141
+msgid "macOS Sonoma"
+msgstr "macOS Sonoma"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:142
+msgid "Windows 11"
+msgstr "Windows 11"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:143
+msgid "OLED"
+msgstr "OLED"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:144
+msgid "120Hz"
+msgstr "120Hz"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:147
+msgid "Apple M2 (8-core CPU, 10-core GPU)"
+msgstr "Apple M2 (8-core CPU, 10-core GPU)"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:148
+msgid "Apple M3 Max (12-core CPU, 40-core GPU)"
+msgstr "Apple M3 Max (12-core CPU, 40-core GPU)"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:149
+msgid "AMD Ryzen 7 7735HS"
+msgstr "AMD Ryzen 7 7735HS"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:150
+msgid "AMD Zen 2 8-core CPU @ 3.85GHz"
+msgstr "AMD Zen 2 8-core CPU @ 3.85GHz"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:151
+msgid "AMD Zen 2 8-core CPU @ 3.8GHz"
+msgstr "AMD Zen 2 8-core CPU @ 3.8GHz"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:152
+msgid "AMD RDNA 3 GPU - 16.7 TFLOPS"
+msgstr "AMD RDNA 3 GPU – 16.7 TFLOPS"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:153
+msgid "AMD RDNA 2 GPU - 12 TFLOPS"
+msgstr "AMD RDNA 2 GPU – 12 TFLOPS"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:154
+msgid "NVIDIA GeForce RTX 4060"
+msgstr "NVIDIA GeForce RTX 4060"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:155
+msgid "Ada Lovelace"
+msgstr "Ada Lovelace"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:158
+msgid "SSD"
+msgstr "SSD"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:159
+msgid "SSD NVMe"
+msgstr "NVMe SSD"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:161
+msgid "Bluetooth"
+msgstr "Bluetooth"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:162
+msgid "USB-C"
+msgstr "USB-C"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:165
+msgid "5G, Wi-Fi 6E, Bluetooth 5.3, USB-C"
+msgstr "5G, Wi-Fi 6E, Bluetooth 5.3, USB-C"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:166
+msgid "5G, Wi-Fi 7, Bluetooth 5.3, USB-C"
+msgstr "5G, Wi-Fi 7, Bluetooth 5.3, USB-C"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:167
+msgid "Wi-Fi 6E, Bluetooth 5.3, USB-C"
+msgstr "Wi-Fi 6E, Bluetooth 5.3, USB-C"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:168
+msgid "Wi-Fi, Bluetooth 5.3, GPS"
+msgstr "Wi-Fi, Bluetooth 5.3, GPS"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:169
+msgid "Wi-Fi 6E, Bluetooth 5.3, Thunderbolt 4"
+msgstr "Wi-Fi 6E, Bluetooth 5.3, Thunderbolt 4"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:170
+msgid "Wi-Fi 6, Bluetooth 5.3, USB-C, HDMI 2.1"
+msgstr "Wi-Fi 6, Bluetooth 5.3, USB-C, HDMI 2.1"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:171
+msgid "HDMI 2.1, DisplayPort 1.4, USB 3.0"
+msgstr "HDMI 2.1, DisplayPort 1.4, USB 3.0"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:172
+msgid "Wi-Fi 6, Bluetooth 5.1, HDMI 2.1, USB"
+msgstr "Wi-Fi 6, Bluetooth 5.1, HDMI 2.1, USB"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:173
+msgid "Bluetooth 5.2, USB-C, 3.5mm"
+msgstr "Bluetooth 5.2, USB-C, 3.5mm"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:174
+msgid "Wi-Fi 7, Bluetooth 5.1, Ethernet, USB-C, HDMI 2.1"
+msgstr "Wi-Fi 7, Bluetooth 5.1, Ethernet, USB-C, HDMI 2.1"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:175
+msgid "Wi-Fi 6, Bluetooth 5.1, Ethernet, USB 3.2, HDMI 2.1"
+msgstr "Wi-Fi 6, Bluetooth 5.1, Ethernet, USB 3.2, HDMI 2.1"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:176
+msgid "Bluetooth, USB-C, Logi Bolt"
+msgstr "Bluetooth, USB-C, Logi Bolt"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:177
+msgid "HDMI 2.1, DisplayPort 1.4"
+msgstr "HDMI 2.1, DisplayPort 1.4"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:178
+msgid "MagSafe compatible"
+msgstr "MagSafe compatible"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:181
+msgid "Nintendo Switch"
+msgstr "Nintendo Switch"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:182
+msgid "Aventura, Acción"
+msgstr "Adventure, Action"
+
+#: .\ctrlstore\i18n_fixtures_hints.py:183
+msgid "E10+"
+msgstr "E10+"
+
+#: .\ctrlstore\settings\base.py:18
+msgid "Español"
+msgstr "Spanish"
+
+#: .\ctrlstore\settings\base.py:19
+msgid "English"
+msgstr "English"
+
+#: .\templates\analytics\top-sellers.html:4
+msgid "Top vendidos – Ctrl+Store"
+msgstr "Top sellers – Ctrl+Store"
+
+#: .\templates\analytics\top-sellers.html:10
+#, python-format
+msgid ""
+"\n"
+"      Top %(n)s producto más vendido\n"
+"    "
+msgid_plural ""
+"\n"
+"      Top %(n)s productos más vendidos\n"
+"    "
+msgstr[0] ""
+"\n"
+"      Top %(n)s best-selling product\n"
+"    "
+msgstr[1] ""
+"\n"
+"      Top %(n)s best-selling products\n"
+"    "
+
+#: .\templates\analytics\top-sellers.html:24
+#, python-format
+msgid "Unidades vendidas: %(u)s"
+msgstr "Units sold: %(u)s"
+
+#: .\templates\analytics\top-sellers.html:29
+#, python-format
+msgid "Ingresos: $%(r)s"
+msgstr "Revenue: $%(r)s"
+
+#: .\templates\analytics\top-sellers.html:34
+#, python-format
+msgid "Última venta: %(d)s"
+msgstr "Last sale: %(d)s"
+
+#: .\templates\analytics\top-sellers.html:42
+msgid "Aún no hay ventas registradas."
+msgstr "No sales recorded yet."
+
+#: .\templates\authx\logged_out.html:3
+msgid "Sesión cerrada – Ctrl+Store"
+msgstr "Signed out – Ctrl+Store"
+
+#: .\templates\authx\logged_out.html:6
+msgid "Has cerrado sesión"
+msgstr "You have signed out"
+
+#: .\templates\authx\logged_out.html:7
+msgid "Tu sesión se cerró correctamente."
+msgstr "Your session was closed successfully."
+
+#: .\templates\authx\logged_out.html:10 .\templates\authx\login.html:89
+#: .\templates\authx\signup.html:111
+msgid "Volver al catálogo"
+msgstr "Back to catalog"
+
+#: .\templates\authx\login.html:5
+msgid "Iniciar sesión – Ctrl+Store"
+msgstr "Sign in – Ctrl+Store"
+
+#: .\templates\authx\login.html:18
+msgid "Tu tienda gaming favorita"
+msgstr "Your favorite gaming store"
+
+#: .\templates\authx\login.html:23 .\templates\authx\login.html:69
+#: .\templates\authx\signup.html:103
+msgid "Iniciar Sesión"
+msgstr "Sign In"
+
+#: .\templates\authx\login.html:78
+msgid "¿No tienes cuenta?"
+msgstr "Don't have an account?"
+
+#: .\templates\authx\login.html:81 .\templates\authx\signup.html:23
+#: .\templates\authx\signup.html:91
+msgid "Crear Cuenta"
+msgstr "Sign Up"
+
+#: .\templates\authx\signup.html:5
+msgid "Crear cuenta – Ctrl+Store"
+msgstr "Sign up – Ctrl+Store"
+
+#: .\templates\authx\signup.html:18
+msgid "Únete a la comunidad gaming"
+msgstr "Join the gaming community"
+
+#: .\templates\authx\signup.html:52 .\templates\payment\confirm.html:82
+msgid "Email"
+msgstr "Email"
+
+#: .\templates\authx\signup.html:78
+msgid "Confirmar Contraseña"
+msgstr "Confirm Password"
+
+#: .\templates\authx\signup.html:100
+msgid "¿Ya tienes cuenta?"
+msgstr "Already have an account?"
+
+#: .\templates\base.html:125
+msgid "Clima no disponible"
+msgstr "Weather unavailable"
+
+#: .\templates\base.html:140 .\templates\catalog\product-detail.html:26
+msgid "Catálogo"
+msgstr "Catalog"
+
+#: .\templates\base.html:145
+msgid "Comparador"
+msgstr "Comparator"
+
+#: .\templates\base.html:177
+msgid "Carrito"
+msgstr "Cart"
+
+#: .\templates\base.html:190
+msgid "Panel Admin"
+msgstr "Admin Panel"
+
+#: .\templates\base.html:196
+msgid "Panel Staff"
+msgstr "Staff Panel"
+
+#: .\templates\base.html:204
+msgid "Salir"
+msgstr "Logout"
+
+#: .\templates\base.html:211
+msgid "Ingresar"
+msgstr "Login"
+
+#: .\templates\base.html:241
+msgid "© 2025 Ctrl+Store. Todos los derechos reservados."
+msgstr "© 2025 Ctrl+Store. All rights reserved."
+
+#: .\templates\cart\cart-detail.html:4
+msgid "Carrito – Ctrl+Store"
+msgstr "Cart – Ctrl+Store"
+
+#: .\templates\cart\cart-detail.html:8
+msgid "Tu Carrito"
+msgstr "Your Cart"
+
+#: .\templates\cart\cart-detail.html:32
+msgid "Actualizar"
+msgstr "Update"
+
+#: .\templates\cart\cart-detail.html:39
+msgid "Eliminar"
+msgstr "Remove"
+
+#: .\templates\cart\cart-detail.html:47
+msgid "Total:"
+msgstr "Total:"
+
+#: .\templates\cart\cart-detail.html:49
+msgid "Continuar al checkout"
+msgstr "Continue to checkout"
+
+#: .\templates\cart\cart-detail.html:55
+msgid "Tu carrito está vacío"
+msgstr "Your cart is empty"
+
+#: .\templates\cart\cart-detail.html:56
+msgid "Ir al Catálogo"
+msgstr "Go to Catalog"
+
+#: .\templates\catalog\compare\category-select.html:5
+msgid "Comparador de Productos - Ctrl+Store"
+msgstr "Product Comparison - Ctrl+Store"
+
+#: .\templates\catalog\compare\category-select.html:15
+msgid "Comparador de Productos"
+msgstr "Product Comparison"
+
+#: .\templates\catalog\compare\category-select.html:18
+msgid "Selecciona una categoría para comparar productos lado a lado"
+msgstr "Select a category to compare products side by side"
+
+#: .\templates\catalog\compare\category-select.html:48
+#, python-format
+msgid ""
+"\n"
+"                                            %(count)s producto directo\n"
+"                                            "
+msgid_plural ""
+"\n"
+"                                            %(count)s productos directos\n"
+"                                            "
+msgstr[0] ""
+"\n"
+"                                            %(count)s direct product\n"
+"                                            "
+msgstr[1] ""
+"\n"
+"                                            %(count)s direct products\n"
+"                                            "
+
+#: .\templates\catalog\compare\category-select.html:54
+#, python-format
+msgid ""
+"\n"
+"                                            %(count)s producto en "
+"subcategorías\n"
+"                                            "
+msgid_plural ""
+"\n"
+"                                            %(count)s productos en "
+"subcategorías\n"
+"                                            "
+msgstr[0] ""
+"\n"
+"                                            %(count)s product in "
+"subcategories\n"
+"                                            "
+msgstr[1] ""
+"\n"
+"                                            %(count)s products in "
+"subcategories\n"
+"                                            "
+
+#: .\templates\catalog\compare\category-select.html:71
+#, python-format
+msgid "Comparar %(name)s"
+msgstr "Compare %(name)s"
+
+#: .\templates\catalog\compare\category-select.html:84
+#, python-format
+msgid ""
+"\n"
+"                                                        %(count)s producto\n"
+"                                                        "
+msgid_plural ""
+"\n"
+"                                                        %(count)s productos\n"
+"                                                        "
+msgstr[0] ""
+"\n"
+"                                                        %(count)s product\n"
+"                                                        "
+msgstr[1] ""
+"\n"
+"                                                        %(count)s products\n"
+"                                                        "
+
+#: .\templates\catalog\compare\category-select.html:92
+msgid "Seleccionar subcategoría para comparar"
+msgstr "Select subcategory to compare"
+
+#: .\templates\catalog\compare\category-select.html:108
+msgid "No hay categorías disponibles para comparar."
+msgstr "There are no categories available to compare."
+
+#: .\templates\catalog\compare\category-select.html:121
+msgid "¿Cómo funciona el comparador?"
+msgstr "How does the comparator work?"
+
+#: .\templates\catalog\compare\category-select.html:127
+msgid "Selecciona una categoría"
+msgstr "Select a category"
+
+#: .\templates\catalog\compare\category-select.html:132
+msgid "Elige 2 productos"
+msgstr "Choose 2 products"
+
+#: .\templates\catalog\compare\category-select.html:137
+msgid "Compara características"
+msgstr "Compare features"
+
+#: .\templates\catalog\compare\compare-products.html:6
+#, python-format
+msgid "Comparar: %(p1)s vs %(p2)s - Ctrl+Store"
+msgstr "Compare: %(p1)s vs %(p2)s - Ctrl+Store"
+
+#: .\templates\catalog\compare\compare-products.html:17
+#: .\templates\catalog\compare\product-select.html:16
+#: .\templates\catalog\product-detail.html:137 .\templates\payment\pay.html:117
+msgid "Volver"
+msgstr "Back"
+
+#: .\templates\catalog\compare\compare-products.html:22
+#, python-format
+msgid "Comparación: %(cat)s"
+msgstr "Comparison: %(cat)s"
+
+#: .\templates\catalog\compare\compare-products.html:25
+#, python-format
+msgid "%(p1)s vs %(p2)s"
+msgstr "%(p1)s vs %(p2)s"
+
+#: .\templates\catalog\compare\compare-products.html:31
+msgid "Imprimir"
+msgstr "Print"
+
+#: .\templates\catalog\compare\compare-products.html:68
+#: .\templates\catalog\compare\compare-products.html:113
+msgid "Descripción:"
+msgstr "Description:"
+
+#: .\templates\catalog\compare\compare-products.html:76
+#: .\templates\catalog\compare\compare-products.html:121
+msgid "Ver Producto"
+msgstr "View Product"
+
+#: .\templates\catalog\compare\compare-products.html:136
+msgid "Comparación Detallada de Especificaciones"
+msgstr "Detailed Specifications Comparison"
+
+#: .\templates\catalog\compare\compare-products.html:144
+msgid "Especificación"
+msgstr "Specification"
+
+#: .\templates\catalog\compare\compare-products.html:181
+msgid "Resumen de Diferencias"
+msgstr "Summary of Differences"
+
+#: .\templates\catalog\compare\compare-products.html:214
+#: .\templates\catalog\compare\compare-products.html:284
+msgid "Marca:"
+msgstr "Brand:"
+
+#: .\templates\catalog\compare\compare-products.html:226
+#: .\templates\catalog\compare\compare-products.html:296
+msgid "Modelo:"
+msgstr "Model:"
+
+#: .\templates\catalog\compare\compare-products.html:249
+#: .\templates\catalog\compare\compare-products.html:319
+msgid "Ver Detalles Completos"
+msgstr "View Full Details"
+
+#: .\templates\catalog\compare\compare-products.html:330
+msgid "Comparar Otros Productos"
+msgstr "Compare Other Products"
+
+#: .\templates\catalog\compare\compare-products.html:333
+msgid "Cambiar Categoría"
+msgstr "Change Category"
+
+#: .\templates\catalog\compare\product-select.html:6
+#, python-format
+msgid "Seleccionar Productos - %(name)s - Ctrl+Store"
+msgstr "Select Products - %(name)s - Ctrl+Store"
+
+#: .\templates\catalog\compare\product-select.html:21
+#, python-format
+msgid "Comparar: %(name)s"
+msgstr "Compare: %(name)s"
+
+#: .\templates\catalog\compare\product-select.html:23
+msgid "Selecciona 2 productos para comparar"
+msgstr "Select 2 products to compare"
+
+#: .\templates\catalog\compare\product-select.html:30
+msgid "Instrucciones:"
+msgstr "Instructions:"
+
+#: .\templates\catalog\compare\product-select.html:31
+msgid ""
+"Haz clic en los productos que deseas comparar. Debes seleccionar exactamente "
+"2 productos para continuar."
+msgstr ""
+"Click the products you want to compare. You must select exactly 2 products "
+"to continue."
+
+#: .\templates\catalog\compare\product-select.html:59
+msgid "Seleccionar"
+msgstr "Select"
+
+#: .\templates\catalog\compare\product-select.html:88
+msgid "Ver Detalles"
+msgstr "View Details"
+
+#: .\templates\catalog\compare\product-select.html:97
+msgid "No hay productos disponibles en esta categoría."
+msgstr "There are no products available in this category."
+
+#: .\templates\catalog\compare\product-select.html:108
+msgid "Comparar Productos Seleccionados"
+msgstr "Compare Selected Products"
+
+#: .\templates\catalog\product-detail.html:15
+msgid "Close"
+msgstr "Close"
+
+#: .\templates\catalog\product-detail.html:22
+msgid "breadcrumb"
+msgstr "breadcrumb"
+
+#: .\templates\catalog\product-detail.html:48
+msgid "Imagen no disponible"
+msgstr "Image not available"
+
+#: .\templates\catalog\product-detail.html:57
+#: .\templates\catalog\product-list.html:194
+msgid "Destacado"
+msgstr "Featured"
+
+#: .\templates\catalog\product-detail.html:66
+#: .\templates\catalog\product-list.html:203
+#: .\templates\catalog\product-list.html:248
+msgid "Sin stock"
+msgstr "Out of stock"
+
+#: .\templates\catalog\product-detail.html:70
+#, python-format
+msgid "En stock (%(stock)s)"
+msgstr "In stock (%(stock)s)"
+
+#: .\templates\catalog\product-detail.html:100
+msgid "Resumen"
+msgstr "Summary"
+
+#: .\templates\catalog\product-detail.html:108
+msgid "Características Principales"
+msgstr "Key Features"
+
+#: .\templates\catalog\product-detail.html:128
+msgid "Agregar al Carrito"
+msgstr "Add to Cart"
+
+#: .\templates\catalog\product-detail.html:133
+msgid "Agotado"
+msgstr "Sold out"
+
+#: .\templates\catalog\product-detail.html:149
+msgid "Descripción Completa"
+msgstr "Full Description"
+
+#: .\templates\catalog\product-list.html:3
+msgid "Catálogo – Ctrl+Store"
+msgstr "Catalog – Ctrl+Store"
+
+#: .\templates\catalog\product-list.html:13
+msgid "Cerrar"
+msgstr "Close"
+
+#: .\templates\catalog\product-list.html:25
+msgid "Catálogo de Productos"
+msgstr "Product Catalog"
+
+#: .\templates\catalog\product-list.html:27
+msgid "Descubre nuestra selección de productos electrónicos"
+msgstr "Discover our selection of electronic products"
+
+#: .\templates\catalog\product-list.html:32
+#, python-format
+msgid "%(n)s productos"
+msgstr "%(n)s products"
+
+#: .\templates\catalog\product-list.html:47
+msgid "Categoría"
+msgstr "Category"
+
+#: .\templates\catalog\product-list.html:50
+msgid "Todas las categorías"
+msgstr "All categories"
+
+#: .\templates\catalog\product-list.html:77
+msgid "Solo Gaming"
+msgstr "Gaming only"
+
+#: .\templates\catalog\product-list.html:83
+msgid "Filtrar"
+msgstr "Filter"
+
+#: .\templates\catalog\product-list.html:88
+msgid "Limpiar"
+msgstr "Clear"
+
+#: .\templates\catalog\product-list.html:105
+msgid "Top recomendados"
+msgstr "Top recommended"
+
+#: .\templates\catalog\product-list.html:106
+msgid "más vendidos"
+msgstr "best sellers"
+
+#: .\templates\catalog\product-list.html:109
+msgid "Ver todos"
+msgstr "View all"
+
+#: .\templates\catalog\product-list.html:133
+#, python-format
+msgid "%(u)s vendidos · $%(r)s"
+msgstr "%(u)s sold · $%(r)s"
+
+#: .\templates\catalog\product-list.html:160
+msgid "Más visto:"
+msgstr "Most viewed:"
+
+#: .\templates\catalog\product-list.html:166
+#, python-format
+msgid "%(v)s vistas"
+msgstr "%(v)s views"
+
+#: .\templates\catalog\product-list.html:243
+msgid "Agregar"
+msgstr "Add"
+
+#: .\templates\catalog\product-list.html:262
+msgid "Navegación de productos"
+msgstr "Product navigation"
+
+#: .\templates\catalog\product-list.html:267
+msgid "Anterior"
+msgstr "Previous"
+
+#: .\templates\catalog\product-list.html:274
+#, python-format
+msgid "Página %(n)s de %(t)s"
+msgstr "Page %(n)s of %(t)s"
+
+#: .\templates\catalog\product-list.html:281
+msgid "Siguiente"
+msgstr "Next"
+
+#: .\templates\catalog\product-list.html:295
+msgid "No se encontraron productos"
+msgstr "No products found"
+
+#: .\templates\catalog\product-list.html:296
+msgid "Intenta ajustar los filtros o explora otras categorías"
+msgstr "Try adjusting filters or explore other categories"
+
+#: .\templates\catalog\product-list.html:298
+msgid "Ver todos los productos"
+msgstr "View all products"
+
+#: .\templates\order\checkout.html:4
+msgid "Checkout – Ctrl+Store"
+msgstr "Checkout – Ctrl+Store"
+
+#: .\templates\order\checkout.html:8
+msgid "Checkout"
+msgstr "Checkout"
+
+#: .\templates\order\checkout.html:14
+msgid "Tu pedido"
+msgstr "Your order"
+
+#: .\templates\order\checkout.html:21
+#, python-format
+msgid "x%(qty)s"
+msgstr "x%(qty)s"
+
+#: .\templates\order\checkout.html:26
+msgid "c/u"
+msgstr "each"
+
+#: .\templates\order\checkout.html:32 .\templates\payment\confirm.html:43
+#: .\templates\payment\invoice.html:99 .\templates\payment\invoice.html:112
+#: .\templates\payment\pay.html:31
+msgid "Subtotal"
+msgstr "Subtotal"
+
+#: .\templates\order\checkout.html:35 .\templates\payment\confirm.html:46
+#: .\templates\payment\invoice.html:116 .\templates\payment\pay.html:32
+msgid "Envío"
+msgstr "Shipping"
+
+#: .\templates\order\checkout.html:38 .\templates\payment\confirm.html:49
+#: .\templates\payment\invoice.html:120 .\templates\payment\pay.html:34
+msgid "Total"
+msgstr "Total"
+
+#: .\templates\order\checkout.html:46
+msgid "Datos del comprador y entrega"
+msgstr "Buyer and delivery details"
+
+#: .\templates\order\checkout.html:80
+msgid "Usando el correo de tu cuenta."
+msgstr "Using your account email."
+
+#: .\templates\order\checkout.html:211
+msgid "Ir a pagar"
+msgstr "Proceed to payment"
+
+#: .\templates\order\pay.html:4
+msgid "Pago – Ctrl+Store"
+msgstr "Payment – Ctrl+Store"
+
+#: .\templates\order\pay.html:11
+#, python-format
+msgid "Pagar Orden #%(id)s"
+msgstr "Pay Order #%(id)s"
+
+#: .\templates\order\pay.html:14
+msgid "Total a pagar:"
+msgstr "Total to pay:"
+
+#: .\templates\order\pay.html:17
+msgid "Aquí integrarás tu pasarela (Wompi, PayU, Stripe, etc.)."
+msgstr "Here you will integrate your payment gateway (Wompi, PayU, Stripe, etc.)."
+
+#: .\templates\order\pay.html:20
+msgid "Seguir comprando"
+msgstr "Continue shopping"
+
+#: .\templates\payment\confirm.html:4
+msgid "Confirmación de pedido – Ctrl+Store"
+msgstr "Order confirmation – Ctrl+Store"
+
+#: .\templates\payment\confirm.html:8
+msgid "¡Gracias por tu compra!"
+msgstr "Thank you for your purchase!"
+
+#: .\templates\payment\confirm.html:14
+#, python-format
+msgid ""
+"\n"
+"      Pago con estado: %(status)s — %(error)s\n"
+"      "
+msgstr ""
+"\n"
+"      Payment status: %(status)s — %(error)s\n"
+"      "
+
+#: .\templates\payment\confirm.html:25
+msgid "Resumen de la orden"
+msgstr "Order summary"
+
+#: .\templates\payment\confirm.html:33 .\templates\payment\pay.html:23
+#, python-format
+msgid "x%(qty)s · $%(price)s"
+msgstr "x%(qty)s · $%(price)s"
+
+#: .\templates\payment\confirm.html:60
+msgid "Dirección y Contacto"
+msgstr "Address and Contact"
+
+#: .\templates\payment\confirm.html:71 .\templates\payment\invoice.html:66
+msgid "Ciudad/Estado"
+msgstr "City/State"
+
+#: .\templates\payment\confirm.html:95
+msgid "Método de pago"
+msgstr "Payment method"
+
+#: .\templates\payment\confirm.html:97
+#, python-format
+msgid ""
+"\n"
+"            %(brand)s •••• %(last4)s (%(method)s)\n"
+"            "
+msgstr ""
+"\n"
+"            %(brand)s •••• %(last4)s (%(method)s)\n"
+"            "
+
+#: .\templates\payment\confirm.html:102
+#, python-format
+msgid "Fecha: %(date)s"
+msgstr "Date: %(date)s"
+
+#: .\templates\payment\confirm.html:111
+msgid "Volver a la tienda"
+msgstr "Back to store"
+
+#: .\templates\payment\confirm.html:115
+msgid "Descargar factura (PDF)"
+msgstr "Download invoice (PDF)"
+
+#: .\templates\payment\invoice.html:6
+#, python-format
+msgid "Factura %(invoice)s"
+msgstr "Invoice %(invoice)s"
+
+#: .\templates\payment\invoice.html:47
+msgid "No:"
+msgstr "No.:"
+
+#: .\templates\payment\invoice.html:48
+msgid "Fecha:"
+msgstr "Date:"
+
+#: .\templates\payment\invoice.html:49
+msgid "Orden:"
+msgstr "Order:"
+
+#: .\templates\payment\invoice.html:58
+msgid "Datos de facturación / envío"
+msgstr "Billing / shipping details"
+
+#: .\templates\payment\invoice.html:72
+msgid "Contacto"
+msgstr "Contact"
+
+#: .\templates\payment\invoice.html:78
+msgid "Pago"
+msgstr "Payment"
+
+#: .\templates\payment\invoice.html:81
+msgid "Método"
+msgstr "Method"
+
+#: .\templates\payment\invoice.html:85
+msgid "ID Pago"
+msgstr "Payment ID"
+
+#: .\templates\payment\invoice.html:86
+msgid "Fecha"
+msgstr "Date"
+
+#: .\templates\payment\invoice.html:96
+msgid "Producto"
+msgstr "Product"
+
+#: .\templates\payment\invoice.html:97
+msgid "Cantidad"
+msgstr "Quantity"
+
+#: .\templates\payment\invoice.html:127
+#, python-format
+msgid ""
+"\n"
+"    Gracias por tu compra. Esta factura fue generada electrónicamente el "
+"%(dt)s.\n"
+"    "
+msgstr ""
+"\n"
+"    Thank you for your purchase. This invoice was generated electronically "
+"on %(dt)s.\n"
+"    "
+
+#: .\templates\payment\pay.html:5
+msgid "Pagar orden – Ctrl+Store"
+msgstr "Pay order – Ctrl+Store"
+
+#: .\templates\payment\pay.html:9
+msgid "Pagar orden"
+msgstr "Pay order"
+
+#: .\templates\payment\pay.html:16
+msgid "Resumen del pedido"
+msgstr "Order summary"
+
+#: .\templates\payment\pay.html:42
+msgid "Datos de envío"
+msgstr "Shipping details"
+
+#: .\templates\payment\pay.html:43
+msgid "Nombre:"
+msgstr "Name:"
+
+#: .\templates\payment\pay.html:45
+msgid "Dirección:"
+msgstr "Address:"
+
+#: .\templates\payment\pay.html:49
+msgid "Ciudad/Estado:"
+msgstr "City/State:"
+
+#: .\templates\payment\pay.html:52
+msgid "Código Postal:"
+msgstr "ZIP/Postal Code:"
+
+#: .\templates\payment\pay.html:53
+msgid "País:"
+msgstr "Country:"
+
+#: .\templates\payment\pay.html:55
+msgid "Contacto:"
+msgstr "Contact:"
+
+#: .\templates\payment\pay.html:66
+msgid "Pagar con tarjeta"
+msgstr "Pay with card"
+
+#: .\templates\payment\pay.html:116
+msgid "Pagar ahora"
+msgstr "Pay now"
+
+#: .\templates\payment\pay.html:121
+msgid ""
+"\n"
+"              Usa números de prueba. Terminar en <code>0005</code>, "
+"<code>3333</code> o <code>6666</code> fuerza fallos simulados.\n"
+"              "
+msgstr ""
+"\n"
+"              Use test numbers. Ending in <code>0005</code>, <code>3333</"
+"code> or <code>6666</code> will trigger simulated failures.\n"
+"              "
+
+#: .\templates\payment\pay.html:126
+msgid ""
+"No almacenamos CVV ni el número completo de la tarjeta. Solo se registran "
+"marca y últimos 4 dígitos."
+msgstr ""
+"We do not store the CVV or the full card number. Only the brand and last 4 "
+"digits are recorded."
