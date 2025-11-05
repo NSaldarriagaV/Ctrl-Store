@@ -21,6 +21,33 @@ SECRET_KEY = env("SECRET_KEY", default="dev-only-secret")
 DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
+# --- Seguridad detrás de proxy (Cloud Run) y CSRF ---
+# Cloud Run termina en HTTPS y reenvía cabeceras al contenedor
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
+# Cookies seguras en prod
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Dominios confiables para CSRF (desde env, separados por coma)
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+]
+
+# Permitir pasar un solo host por env para simplificar Cloud Run
+SERVICE_HOST = os.getenv("SERVICE_HOST")  # p.ej. ctrlstore-service-420478585093.us-central1.run.app
+if SERVICE_HOST:
+    # si no vino por CSRF_TRUSTED_ORIGINS, agrégalo
+    host_url = f"https://{SERVICE_HOST}"
+    if host_url not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(host_url)
+
+    # si no definiste ALLOWED_HOSTS por env, usa el SERVICE_HOST
+    if "ALLOWED_HOSTS" not in os.environ:
+        ALLOWED_HOSTS = [SERVICE_HOST]
+
+
 # i18n / tz
 LANGUAGE_CODE = "es-co"
 TIME_ZONE = "America/Bogota"

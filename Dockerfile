@@ -37,7 +37,13 @@ RUN chmod +x /entrypoint.sh
 # Asegura que Django use el settings correcto (evita dummy backend)
 ENV DJANGO_SETTINGS_MODULE=ctrlstore.settings.base
 
-EXPOSE 8000
-
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# Exponer el puerto 8080 que usa Cloud Run
+EXPOSE 8080
+
+COPY media /app/media
+
+# Usar gunicorn en lugar de runserver (más estable en producción)
+CMD exec gunicorn ctrlstore.wsgi:application --bind :8080 --workers 2 --threads 4 --timeout 0
+
