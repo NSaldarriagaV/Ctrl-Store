@@ -31,6 +31,12 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 
+from ctrlstore.apps.order.reporting import (
+    CsvReportGenerator,
+    PdfReportGenerator,
+    ExcelReportGenerator,
+    SalesReportService,
+)
 
 class SignupView(FormView):
     """Vista para registro de nuevos usuarios."""
@@ -1022,13 +1028,18 @@ class AdminSalesReportView(AdminRequiredMixin, TemplateView):
         return context
 
 
-class AdminSalesExportCSVView(AdminRequiredMixin, View):
+class AdminSalesExportView(AdminRequiredMixin, View):
     """
-    Exportación CSV del historial filtrado.
+    Exportación del historial filtrado en CSV / PDF / Excel.
+    Usa inversión de dependencias (ReportGenerator).
     """
-    def get(self, request, *args, **kwargs):
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         Order = apps.get_model("order", "Order")
+
+        # Reutilizamos el mismo helper que usan las vistas de historial/reporte
         start_dt, end_dt, *_ = _parse_dates(request)
+
         qs = (
             Order.objects
             .filter(status="paid", created_at__gte=start_dt, created_at__lt=end_dt)
@@ -1037,23 +1048,24 @@ class AdminSalesExportCSVView(AdminRequiredMixin, View):
             .order_by("-created_at")
         )
 
-        import csv
-        resp = HttpResponse(content_type="text/csv")
-        resp["Content-Disposition"] = 'attachment; filename="ventas.csv"'
-        writer = csv.writer(resp)
-        writer.writerow(["order_id", "fecha", "usuario", "email", "total", "items"])
+        # Elegir formato:
+        fmt = request.GET.get("format", "csv").lower()
 
-        for o in qs:
-            items_str = "; ".join(f"{it.product.name} x{it.quantity}" for it in o.items.all())
-            writer.writerow([
-                o.id,
-                timezone.localtime(o.created_at).strftime("%Y-%m-%d %H:%M"),
-                (o.user.get_full_name() or o.user.username) if o.user_id else "",
-                o.user.email if o.user_id else "",
-                str(o.total_amount),
-                items_str,
-            ])
-        return resp
+        generator_map = {
+            "csv": CsvReportGenerator(),
+            "pdf": PdfReportGenerator(),
+            "excel": ExcelReportGenerator(),
+            "xlsx": ExcelReportGenerator(),
+        }
+        generator = generator_map.get(fmt, generator_map["csv"])
+
+        service = SalesReportService(generator)
+        file_bytes = service.build_report(qs)
+
+        response = HttpResponse(file_bytes, content_type=generator.content_type)
+        filename = f"ventas.{generator.file_extension}"
+        response["Content-Disposition"] = f'attachment; filename=\"{filename}\"'
+        return response
 
 
 
